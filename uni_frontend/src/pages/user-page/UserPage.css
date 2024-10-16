@@ -1,0 +1,58 @@
+.Edit {
+    background-color: aqua;
+    position: relative;
+    float: right;
+    margin: 5px;
+}
+
+.Image-back-container {
+    width: 100%; /* 가로를 화면에 꽉 차게 */
+    max-height: 400px; /* 세로 높이 제한 (예: 500px) */
+    overflow: hidden; /* 이미지가 컨테이너보다 클 경우 잘라내기 */
+    border-bottom: 1px solid black;
+}
+
+.Image-back {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.Image-prof-container {
+    height: 200px;
+    width: 200px;
+    position: absolute;
+    margin-left: 50px;
+    margin-top: -150px;
+    background-color: wheat;
+    border: 8px solid #61dafb;
+    border-radius: 40px;
+}
+
+.Image-prof {
+    height: 100%;
+    width: 100%;
+    border: 10px #61dafb;
+}
+
+.Prof-content {
+    margin-top: 70px;
+}
+
+.ConText {
+    margin: 30px;
+}
+
+.Inform {
+    margin-left: 100px;
+    margin-right: 100px;
+    background-color: #D0D0D0;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    border-radius: 20px;
+}
+.Inform-block {
+    height: 50px;
+    width: 150px;
+}
