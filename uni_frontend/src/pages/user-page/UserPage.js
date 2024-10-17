@@ -1,67 +1,76 @@
-import dummy_back from '../../logo.svg';
-import "./UserPage.css"  /*임의로 css 설정, 디자인 확정 후 추후 분리 및 적용*/
+import dummy_l from '../Dummy';
+import "./UserPage.css";
+import {useLocation} from "react-router-dom";
+import {useEffect, useState} from "react";
 
-const dummy = {
-    img_prof: dummy_back,
-    img_back: dummy_back,
-    region: "서울",
-    explain: "소웨, 4학년",
-    num_employment: 3,
-    star: 4.3,
-    time: "07:00 ~ 20:00"
-}
+const UserPage = () => {
+    const [user, setUser] = useState(null);
+    const {pathname} = useLocation();
+    const main_id = 0;  //접속한 사용자 ID
 
-function UserPage() {
-
-    function Context(props) {
+    const Context = (props) => {
         return (
             <div className="Context">
                 <span>{props.text}</span>
             </div>
         );
     }
-    function Inform() {
-        function InformBox (props) {
+    const Inform = () => {
+        const InformBox = (props) => {
             return (
                 <div className="Inform-block">
                     <span>{props.inform_type}: {props.inform_data}{props.inform_unit}</span>
                 </div>
             );
         }
+
         return (
             <div className="Inform">
-                <InformBox inform_type="고용" inform_data={dummy.num_employment} inform_unit="회"/>
-                <InformBox inform_type="평점" inform_data={dummy.star} inform_unit="점"/>
-                <InformBox inform_type="가능 시간" inform_data={dummy.time} inform_unit="회"/>
+                <InformBox inform_type="고용" inform_data={user.num_employment} inform_unit="회"/>
+                <InformBox inform_type="평점" inform_data={user.star} inform_unit="점"/>
+                <InformBox inform_type="가능 시간" inform_data={user.time} inform_unit="회"/>
             </div>
         );
     }
+    const MoveButton = (props) => {
 
-    function handleClickReport() {
-        alert("신고");
+        const handleClickReport = () => {
+            alert("신고");
+        }
+        const handleClickEdit = () => {
+            alert("편집");
+        }
+        return (
+                (props.owner?
+                <button className="Edit" onClick={handleClickEdit}>Edit</button>:
+                        <button className="Report" onClick={handleClickReport}>Report</button>
+                )
+        )
     }
-    function handleClickEdit() {
-        alert("편집");
-    }
+    useEffect(() => {
+        (async () => {
+            setUser(dummy_l[Number(pathname.split('/').at(2))]);
+        })();
+    }, [user, pathname]);
 
     return (
+        user?(
         <div>
             <div className="Image-back-container">
-                <img className="Image-back" src={dummy.img_back} alt="배경사진"/>
+                <img className="Image-back" src={user.img_back} alt="배경사진"/>
             </div>
             <div className="Image-prof-container">
-                <img className="Image-prof" src={dummy.img_prof} alt="프로필사진"/>
+                <img className="Image-prof" src={user.img_prof} alt="프로필사진"/>
             </div>
             <div>
-                <button className="Edit" onClick={handleClickReport}>Report</button>
-                <button className="Edit" onClick={handleClickEdit}>Edit</button>
+                <MoveButton owner={main_id===user.user_id}/>
             </div>
             <div className="Prof-content">
-                <Context text={dummy.region}></Context>
-                <Context text={dummy.explain}></Context>
+                <Context text={user.region}></Context>
+                <Context text={user.explain}></Context>
                 <Inform></Inform>
             </div>
-        </div>
+        </div>):null
     );
 }
 
