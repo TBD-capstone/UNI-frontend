@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="7141e09f-2a8e-40b4-9e35-8450a5e64986" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/uni_frontend/public/UNI_Logo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/uni_frontend/src/Register.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/uni_frontend/src/Register.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/uni_frontend/src/mainpage.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/uni_frontend/src/mainpage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/App.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/App.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+        <option value="CSS File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/uni_frontend/src/SignUp.js" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 1
+}</component>
+  <component name="ProjectId" id="2nQXoEx4PXiZJdXar6k53oDQZE8" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;6-signin__ui&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/asdf9/OneDrive/바탕 화면/School/WebSys/팀프로젝트/giftichange/client/src/redux/listingSlice.js&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs.jest.jest_package&quot;: &quot;C:/Users/asdf9/OneDrive/바탕 화면/School/4-2/캡스톤/frontend/UNI-frontend/uni_frontend/node_modules/react-scripts&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\asdf9\OneDrive\바탕 화면\School\4-2\캡스톤\frontend\UNI-frontend\uni_frontend\public" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Node.js.Register.js">
+    <configuration name="App.test.js" type="JavaScriptTestRunnerJest" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/uni_frontend/node_modules/react-scripts" />
+      <working-dir value="$PROJECT_DIR$/uni_frontend" />
+      <envs />
+      <scope-kind value="TEST_FILE" />
+      <test-file value="$PROJECT_DIR$/uni_frontend/src/App.test.js" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Register.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/uni_frontend/src/Register.js" working-dir="$PROJECT_DIR$/uni_frontend/src">
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Node.js.Register.js" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="7141e09f-2a8e-40b4-9e35-8450a5e64986" name="Changes" comment="" />
+      <created>1728906447297</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1728906447297</updated>
+      <workItem from="1728906451640" duration="1172000" />
+      <workItem from="1729011624870" duration="377000" />
+      <workItem from="1729157503203" duration="3854000" />
+      <workItem from="1729937244688" duration="4945000" />
+      <workItem from="1730097859784" duration="854000" />
+      <workItem from="1730107110850" duration="8594000" />
+      <workItem from="1730216246870" duration="1826000" />
+      <workItem from="1730218130706" duration="307000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+</project>
