@@ -1,36 +1,33 @@
 import {dummy_l} from '../Dummy';
-import "./UserPage.css";
+import "./EditPage.css";
 import {useLocation} from "react-router-dom";
 import {useEffect, useState} from "react";
 
-const UserPage = () => {
+const EditPage = () => {
     const [user, setUser] = useState(null);
     const {pathname} = useLocation();
     const main_id = 0;  //접속한 사용자 ID
 
-    const Context = (props) => {
-        return (
-            <div className="Context">
-                <span>{props.title}</span>
-                <p className="Explain">{props.text}</p>
-            </div>
-        );
+    const handleChangeRegion = (e) => {
+        setUser((prev) => ({
+            ...prev,
+            region: e.target.value
+        }));
     }
-    const MoveButton = (props) => {
+    const handleChangeTime = (e) => {
+        setUser((prev) => ({
+            ...prev,
+            time: e.target.value
+        }));
+    }
 
-        const handleClickReport = () => {
-            alert("신고");
-        }
-        const handleClickEdit = () => {
-            alert("편집");
-        }
-        return (
-            (props.owner ?
-                    <button className="Edit" onClick={handleClickEdit}>Edit</button> :
-                    <button className="Report" onClick={handleClickReport}>Report</button>
-            )
-        )
+    const handleChangeExplain = (e) => {
+        setUser((prev) => ({
+            ...prev,
+            explain: e.target.value
+        }));
     }
+
     useEffect( () => {
         const user_id = Number(pathname.split('/').at(2));
         (async () => {
@@ -55,7 +52,7 @@ const UserPage = () => {
 
                 });
         })();
-    }, [user, pathname]);
+    }, [pathname]);
 
     return (
         user ? (
@@ -64,7 +61,7 @@ const UserPage = () => {
                     <img className="Image-back" src={user.img_back} alt="배경사진"/>
                 </div>
                 <div>
-                    <MoveButton owner={main_id === user.user_id}/>
+                    <button className="Complete">수정</button>
                 </div>
                 <div className="Content-container">
                     <div className="Profile-container">
@@ -74,17 +71,37 @@ const UserPage = () => {
                         <div className="Profile-content">
                             <p>{user.star}</p>
                             <span>{user.name}</span>
-                            <span className="Region">{user.region}</span>
+                            <input
+                                className="Region"
+                                type="text"
+                                value={user.region}
+                                onChange={handleChangeRegion}
+                            />
                             <p>{user.university}</p>
                             <p>{user.num_employment}회 고용</p>
-                            <p>{user.time}</p>
+                            <input
+                                type="text"
+                                value={user.time}
+                                onChange={handleChangeTime}
+                            />
                         </div>
                     </div>
-                    <Context title="지도" text={"heelo"}></Context>
-                    <Context title="자기소개" text={user.explain}></Context>
+                    <div className="Context">
+                        <span>지도</span>
+                        <p>{user.region}</p>
+                    </div>
+                    <div className="Context">
+                        <span>자기 소개</span>
+                        <input
+                            type="text"
+                            className="Explain"
+                            value={user.explain}
+                            onChange={handleChangeExplain}
+                        />
+                    </div>
                 </div>
             </div>) : null
     );
 }
 
-export default UserPage;
+export default EditPage;

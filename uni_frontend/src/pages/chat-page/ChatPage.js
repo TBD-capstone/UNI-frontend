@@ -1,9 +1,34 @@
-import {dummy_chat} from '../Dummy';
-import {useEffect, useState} from "react";
+import {dummy_chat, dummy_l} from '../Dummy';
+import {useEffect, useRef, useState} from "react";
 import "./ChatPage.css";
+import {useLocation} from "react-router-dom";
 
-const BottomInput = () => {
+const ChatPage = () => {
+    const [chatRoom, setChatRoom] = useState(null);
     const [message, setMessage] = useState("");
+    const webSocket = useRef(null);
+    const {pathname} = useLocation();
+    const ChatRoom = (props) => {
+        const Chat = (props) => {
+            return (
+                <div className="Chat">
+                    <span className={props.owner?"Mine":"Them"}>{props.text}</span>
+                </div>
+            )
+        };
+        return (
+            (props.chatList) && (props.chatList).map((d, i) => {
+                return (
+                    <Chat
+                        owner={d.id===props.userId}
+                        userId={props.userId}
+                        text={d.text}
+                        key={`chat-${i}`}
+                    />
+                )
+            })
+        )
+    }
     const handleChangeMessage = (e) => {
         setMessage((prev) => (e.target.value));
     }
@@ -13,58 +38,50 @@ const BottomInput = () => {
         setMessage("");
     }
 
-    return (
-        <div className="Bottom">
-            <button>+</button>
-            <input
-                value={message}
-                onChange={handleChangeMessage}
-                placeholder={'메시지 입력'}/>
-            <button onClick={handleClickSend}>send</button>
-        </div>
-    );
-}
-
-const ChatPage = () => {
-    const [chatRoom, setChatRoom] = useState(null);
-    const ChatRoom = (props) => {
-        let login_user_id = 1
-        const Chat = (props) => {
-            return (
-                <div>
-                    <span>{props.text}</span>
-                </div>
-            )
-        };
-        return (
-            (props.chatList) && (props.chatList).map((d, i) => {
-                return (
-                    <Chat
-                        own={d.id===login_user_id}
-                        text={d.text}
-                        key={`chat-${i}`}
-                    />
-                )
-            })
-        )
-    }
-
-    const handleClickTest = () => {
-        console.log(chatRoom);
-    }
-
-    useEffect(() => {
+    useEffect( () => {
+        const chat_id = Number(pathname.split('/').at(2));
         (async () => {
-            setChatRoom(dummy_chat);
+            const result = fetch(`http://localhost:8080/api/chat/${chat_id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+                .catch((err) => {
+                    console.log(err);
+                    alert('error: fetch fail');
+                    setChatRoom(dummy_chat);
+                })
+                .then(response => response.json())
+                .then((data) => {
+                    setChatRoom(() => data);
+                })
+                .catch((err) => {
+                    console.log(err);
+
+                });
         })();
     }, [chatRoom]);
 
     return (
         chatRoom?(
-            <div>
-                <button onClick={handleClickTest}>test</button>
-                <ChatRoom chatList={chatRoom} />
-                <BottomInput />
+            <div className="Chat-page">
+                <div className="Chat-room">
+                    <ChatRoom chatList={chatRoom} userId={"1"}/>
+                </div>
+                <div className="Input-section">
+                    <button className="Match-button">+</button>
+                    <input
+                        className="Input-box"
+                        value={message}
+                        onChange={handleChangeMessage}
+                        placeholder={'메시지 입력'}/>
+                    <button
+                        className="Send-button"
+                        onClick={handleClickSend}>send
+                    </button>
+                </div>
             </div>):null
     );
 }
