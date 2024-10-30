@@ -6,7 +6,7 @@ const categories = [
     { icon: './icons/travel-guide.png', label: '여행가이드' },
     { icon: './icons/property.png', label: '부동산행정업무' },
     { icon: './icons/language-exchange.png', label: '언어교환' },
-    { icon: './icons/find-room.png', label: '자기방 구하기' },
+    { icon: './icons/find-room.png', label: '자취방 구하기' },
     { icon: './icons/category5.png', label: '맛집 탐방' },
 ];
 
@@ -15,8 +15,9 @@ const ITEMS_PER_PAGE = 8;
 const ProfileGrid = () => {
     const [profiles, setProfiles] = useState([]); // 프로필 데이터를 저장할 상태
     const [currentPage, setCurrentPage] = useState(1);
+    const [selectedCategory, setSelectedCategory] = useState(null); // 선택된 카테고리 상태
 
-    // 데이터베이스에서 프로필 데이터를 가져오기 위한 useEffect(수정 필요, 디비랑 연결 안되서 아무것도 안뜸)
+    // 데이터베이스에서 프로필 데이터를 가져오기 위한 useEffect
     useEffect(() => {
         const fetchProfiles = async () => {
             try {
@@ -31,17 +32,28 @@ const ProfileGrid = () => {
         fetchProfiles();
     }, []); // 첫 번째 렌더링 시에만 실행
 
+    // 선택된 카테고리와 일치하는 프로필 필터링
+    const filteredProfiles = selectedCategory
+        ? profiles.filter(profile => profile.tags && profile.tags.includes(selectedCategory))
+        : profiles;
+
     // 현재 페이지에서 보여줄 프로필의 시작과 끝 인덱스 계산
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
-    const currentProfiles = profiles.slice(startIndex, endIndex);
+    const currentProfiles = filteredProfiles.slice(startIndex, endIndex);
 
     // 전체 페이지 수 계산
-    const totalPages = Math.ceil(profiles.length / ITEMS_PER_PAGE);
+    const totalPages = Math.ceil(filteredProfiles.length / ITEMS_PER_PAGE);
 
     // 페이지 변경 핸들러
     const handlePageChange = (page) => {
         setCurrentPage(page);
+    };
+
+    // 카테고리 클릭 핸들러
+    const handleCategoryClick = (label) => {
+        setSelectedCategory(label === selectedCategory ? null : label); // 동일 카테고리 클릭 시 필터 해제
+        setCurrentPage(1); // 페이지를 첫 페이지로 리셋
     };
 
     return (
@@ -72,8 +84,12 @@ const ProfileGrid = () => {
             {/* 카테고리 아이콘 */}
             <div className="category">
                 {categories.map((category, index) => (
-                    <div className="category-item" key={index}>
-                        <img src={category.icon} alt={category.label} />
+                    <div
+                        className={`category-item ${selectedCategory === category.label ? 'active' : ''}`}
+                        key={index}
+                        onClick={() => handleCategoryClick(category.label)}
+                    >
+                        <img src={category.icon} alt="" /> {/* alt 속성을 빈 문자열로 설정 */}
                         <span>{category.label}</span>
                     </div>
                 ))}

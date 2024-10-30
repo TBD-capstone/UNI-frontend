@@ -96,10 +96,14 @@
 }
 
 .category-item {
-    display: flex;
-    align-items: center;
-    color: #333;
+    cursor: pointer;
 }
+
+.category-item.active {
+    background-color: #f0f0f0; /* 클릭된 상태를 표시할 색상 */
+    border-radius: 8px;
+}
+
 
 .category-item img {
     width: 24px;

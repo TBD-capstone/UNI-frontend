@@ -1,43 +1,138 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Register.css';
 
 function Register() {
+    const [isKorean, setIsKorean] = useState(true);
+    const [email, setEmail] = useState('');
+    const [univName, setUnivName] = useState('');
+    const [nickname, setNickname] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [statusMessage, setStatusMessage] = useState('');
+    const [emailVerified, setEmailVerified] = useState(false);
+    const [univVerified, setUnivVerified] = useState(false);
+
+    const handleUserTypeChange = (e) => {
+        setIsKorean(e.target.value === 'korean');
+        setEmailVerified(false);  // 사용자 유형이 바뀔 때 이메일 인증 상태 초기화
+    };
+
+    const handleEmailVerification = async () => {
+        const endpoint = isKorean ? '/auth/api/validate' : '/auth/api/foreign';
+        try {
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email }),
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                setEmailVerified(true);
+                setStatusMessage("이메일 인증 성공!");
+            } else {
+                setEmailVerified(false);
+                setStatusMessage("이메일 인증 실패");
+            }
+        } catch (error) {
+            setEmailVerified(false);
+            setStatusMessage("이메일 인증 중 오류가 발생했습니다");
+            console.error(error);
+        }
+    };
+
+    const handleUnivVerification = async () => {
+        try {
+            const response = await fetch('/auth/api/univ', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ univ_name: univName }),
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                setUnivVerified(true);
+                setStatusMessage("대학 인증 성공!");
+            } else {
+                setUnivVerified(false);
+                setStatusMessage("대학 인증 실패");
+            }
+        } catch (error) {
+            setUnivVerified(false);
+            setStatusMessage("대학 인증 중 오류가 발생했습니다");
+            console.error(error);
+        }
+    };
+
+    const handleSubmit = async () => {
+        if (password !== confirmPassword) {
+            setStatusMessage("비밀번호가 일치하지 않습니다");
+            return;
+        }
+
+        if (!emailVerified) {
+            setStatusMessage("이메일 인증을 완료해주세요");
+            return;
+        }
+
+        if (!univVerified) {
+            setStatusMessage("대학 인증을 완료해주세요");
+            return;
+        }
+
+        try {
+            const response = await fetch('/auth/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    is_korean: isKorean,
+                    email: email,
+                    univ_name: univName,
+                    nickname: nickname,
+                    password: password,
+                }),
+            });
+
+            const data = await response.json();
+            if (data.status === 'success') {
+                setStatusMessage("회원가입 성공!");
+            } else {
+                setStatusMessage("회원가입 실패");
+            }
+        } catch (error) {
+            setStatusMessage("회원가입 중 오류가 발생했습니다");
+            console.error(error);
+        }
+    };
+
     return (
         <div className="signup-page">
-
-            {/* 메인 로고 */}
             <div className="main-logo"></div>
-
-            {/* 회원가입 제목 */}
             <h1 className="signup-title">회원가입</h1>
 
-            {/* 사용자 유형 선택 */}
             <div className="user-type">
-                <label><input type="radio" name="userType" value="korean" /> 한국인 대학생</label>
-                <label><input type="radio" name="userType" value="foreigner" /> Foreigner</label>
+                <label>
+                    <input type="radio" name="userType" value="korean" checked={isKorean} onChange={handleUserTypeChange} /> 한국인 대학생
+                </label>
+                <label>
+                    <input type="radio" name="userType" value="foreigner" checked={!isKorean} onChange={handleUserTypeChange} /> 외국인
+                </label>
             </div>
 
-            {/* 이메일 입력 필드와 인증 버튼 */}
-            <input type="email" className="input-field" placeholder="이메일" />
-            <button className="verify-button">인증하기</button>
+            <input type="email" className="input-field" placeholder="이메일" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <button className="verify-button" onClick={handleEmailVerification}>이메일 인증하기</button>
 
-            {/* 인증번호 입력 필드 */}
-            <input type="text" className="input-field" placeholder="인증번호" />
-            <button className="verify-button">인증확인</button>
+            <input type="text" className="input-field" placeholder="대학명" value={univName} onChange={(e) => setUnivName(e.target.value)} />
+            <button className="verify-button" onClick={handleUnivVerification}>대학 인증하기</button>
 
-            {/* 이름 입력 필드 */}
-            <input type="text" className="input-field" placeholder="이름" />
+            <input type="text" className="input-field" placeholder="이름" value={nickname} onChange={(e) => setNickname(e.target.value)} />
 
-            {/* 비밀번호 입력 필드 */}
-            <input type="password" className="input-field" placeholder="비밀번호" />
+            <input type="password" className="input-field" placeholder="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} />
 
-            {/* 비밀번호 확인 입력 필드 */}
-            <input type="password" className="input-field" placeholder="비밀번호 확인" />
+            <input type="password" className="input-field" placeholder="비밀번호 확인" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
 
-            {/* 회원가입 버튼 */}
-            <button className="signup-button">회원가입</button>
+            <button className="signup-button" onClick={handleSubmit}>회원가입</button>
 
-            {/* 하단 링크 */}
+            <div className="status-message">{statusMessage}</div>
+
             <div className="bottom-link">회원이신가요? 로그인하세요</div>
         </div>
     );
