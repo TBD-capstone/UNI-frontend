@@ -1,19 +1,21 @@
-.Edit {
+button {
     height: 30px;
     width: 60px;
-    background-color: aqua;
+    margin: 5px;
+    border: none;
     position: relative;
     float: right;
-    margin: 5px;
+    border-radius: 20px;
+    color: white;
+}
+.Edit {
+    background-color: #a0886b;
+    margin-right: 50px;
 }
 
 .Report {
-    height: 30px;
-    width: 60px;
     background-color: indianred;
-    position: relative;
-    float: right;
-    margin: 5px;
+    margin-right: 50px;
 }
 
 .Image-back-container {
@@ -30,15 +32,27 @@
     object-fit: cover;
 }
 
+.Content-container {
+    margin-left: 50px;
+    margin-right: 50px;
+    background-color: #fff;
+    max-width: 1200px;
+    border-radius: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.Profile-container {
+    width: 200px;
+    margin-top: -150px;
+}
+
 .Image-prof-container {
     height: 200px;
     width: 200px;
-    position: absolute;
-    margin-left: 50px;
-    margin-top: -150px;
     background-color: wheat;
-    border: 8px solid #61dafb;
-    border-radius: 40px;
+    border-radius: 20px;
 }
 
 .Image-prof {
@@ -47,12 +61,17 @@
     border: 10px #61dafb;
 }
 
-.Prof-content {
-    margin-top: 70px;
+.Profile-content {
+    text-align: left;
 }
 
-.ConText {
-    margin: 30px;
+.Main-content {
+}
+
+.Context {
+    padding: 10px;
+    width: 300px;
+    background-color: #D0D0D0;
 }
 
 .Inform {
@@ -68,3 +87,4 @@
     height: 50px;
     width: 150px;
 }
+

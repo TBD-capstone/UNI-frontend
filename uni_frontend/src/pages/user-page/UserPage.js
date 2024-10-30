@@ -1,4 +1,4 @@
-import dummy_l from '../Dummy';
+import {dummy_l} from '../Dummy';
 import "./UserPage.css";
 import {useLocation} from "react-router-dom";
 import {useEffect, useState} from "react";
@@ -11,24 +11,8 @@ const UserPage = () => {
     const Context = (props) => {
         return (
             <div className="Context">
-                <span>{props.text}</span>
-            </div>
-        );
-    }
-    const Inform = () => {
-        const InformBox = (props) => {
-            return (
-                <div className="Inform-block">
-                    <span>{props.inform_type}: {props.inform_data}{props.inform_unit}</span>
-                </div>
-            );
-        }
-
-        return (
-            <div className="Inform">
-                <InformBox inform_type="고용" inform_data={user.num_employment} inform_unit="회"/>
-                <InformBox inform_type="평점" inform_data={user.star} inform_unit="점"/>
-                <InformBox inform_type="가능 시간" inform_data={user.time} inform_unit="회"/>
+                <span>{props.title}</span>
+                <p>{props.text}</p>
             </div>
         );
     }
@@ -41,36 +25,64 @@ const UserPage = () => {
             alert("편집");
         }
         return (
-                (props.owner?
-                <button className="Edit" onClick={handleClickEdit}>Edit</button>:
-                        <button className="Report" onClick={handleClickReport}>Report</button>
-                )
+            (props.owner ?
+                    <button className="Edit" onClick={handleClickEdit}>Edit</button> :
+                    <button className="Report" onClick={handleClickReport}>Report</button>
+            )
         )
     }
     useEffect(() => {
         (async () => {
-            setUser(dummy_l[Number(pathname.split('/').at(2))]);
+            const result = fetch(`http://localhost:8080/user`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+                .catch((err) => {
+                    console.log(err);
+                    alert('error: fetch fail');
+                    setUser(dummy_l[Number(pathname.split('/').at(2))]);
+                })
+                .then(response => response.json())
+                .then((data) => {
+                    setUser(() => data);
+                })
+                .catch((err) => {
+                    console.log(err);
+
+                });
         })();
     }, [user, pathname]);
 
     return (
-        user?(
-        <div>
-            <div className="Image-back-container">
-                <img className="Image-back" src={user.img_back} alt="배경사진"/>
-            </div>
-            <div className="Image-prof-container">
-                <img className="Image-prof" src={user.img_prof} alt="프로필사진"/>
-            </div>
+        user ? (
             <div>
-                <MoveButton owner={main_id===user.user_id}/>
-            </div>
-            <div className="Prof-content">
-                <Context text={user.region}></Context>
-                <Context text={user.explain}></Context>
-                <Inform></Inform>
-            </div>
-        </div>):null
+                <div className="Image-back-container">
+                    <img className="Image-back" src={user.img_back} alt="배경사진"/>
+                </div>
+                <div>
+                    <MoveButton owner={main_id === user.user_id}/>
+                </div>
+                <div className="Content-container">
+                    <div className="Profile-container">
+                        <div className="Image-prof-container">
+                            <img className="Image-prof" src={user.img_prof} alt="프로필사진"/>
+                        </div>
+                        <div className="Profile-content">
+                            <p>{user.star}</p>
+                            <span>{user.name}</span>
+                            <span>{user.region}</span>
+                            <p>{user.university}</p>
+                            <p>{user.num_employment}회 고용</p>
+                            <p>{user.time}</p>
+                        </div>
+                    </div>
+                    <Context title="지도" text={"heelo"}></Context>
+                    <Context title="자기소개" text={user.explain}></Context>
+                </div>
+            </div>) : null
     );
 }
 

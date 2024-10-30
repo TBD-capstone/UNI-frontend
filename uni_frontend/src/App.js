@@ -2,6 +2,7 @@ import './App.css';
 import {Routes, Route, BrowserRouter} from 'react-router-dom';
 import UserPage from './pages/user-page/UserPage'
 import MainPage from './pages/Mainpage'
+import ChatPage from "./pages/chat-page/ChatPage";
 
 const App = () => {
     return (
@@ -11,6 +12,7 @@ const App = () => {
                     <Route path="/" element={<MainPage/>}></Route>
                     <Route path="/user" element={<UserPage/>}></Route>
                     <Route path="/user/:id" element={<UserPage/>}></Route>
+                    <Route path="/chat/:id" element={<ChatPage/>}></Route>
                 </Routes>
             </BrowserRouter>
         </div>

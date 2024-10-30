@@ -1,0 +1,35 @@
+.Bottom {
+    position: absolute;
+    bottom: 0;
+}
+.Me {
+    margin-top: 10px;
+    margin-right: 20px;
+    text-align: right;
+}
+.You {
+    margin-right: auto;
+}
+.myChat {
+    margin-top: 10px;
+    margin-right: 20px;
+    text-align: right;
+}
+
+.chatBox {
+    display: inline-block;
+    position: relative;
+    background-color: #ea5936;
+    border-radius: 20px;
+    color: #fff;
+    padding: 7px 12px;
+    margin-bottom: 10px;
+    max-width: 230px;
+}
+
+.chatTime {
+    position: absolute;
+    left: -72px;
+    top: 15px;
+    color: #171717;
+}
