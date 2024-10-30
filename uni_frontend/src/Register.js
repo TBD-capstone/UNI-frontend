@@ -45,7 +45,7 @@ function Register() {
             const response = await fetch('/auth/api/univ', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ univ_name: univName }),
+                body: JSON.stringify({ univName: univName }), // CamelCase 적용
             });
             const data = await response.json();
             if (data.status === 'success') {
@@ -83,9 +83,9 @@ function Register() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    is_korean: isKorean,
+                    isKorean: isKorean, // CamelCase 적용
                     email: email,
-                    univ_name: univName,
+                    univName: univName, // CamelCase 적용
                     nickname: nickname,
                     password: password,
                 }),

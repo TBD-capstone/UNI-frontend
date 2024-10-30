@@ -11,19 +11,23 @@ const categories = [
 ];
 
 const ITEMS_PER_PAGE = 8;
+const DEFAULT_LANGUAGE_ID = 'ko'; // 기본 언어 ID를 'ko'로 설정
 
 const ProfileGrid = () => {
-    const [profiles, setProfiles] = useState([]); // 프로필 데이터를 저장할 상태
+    const [profiles, setProfiles] = useState([]); // 전체 프로필 데이터를 저장할 상태
+    const [filteredProfiles, setFilteredProfiles] = useState([]); // 필터링된 프로필 데이터를 저장할 상태
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedCategory, setSelectedCategory] = useState(null); // 선택된 카테고리 상태
+    const [searchQuery, setSearchQuery] = useState(''); // 검색어 상태
 
-    // 데이터베이스에서 프로필 데이터를 가져오기 위한 useEffect
+    // API에서 프로필 데이터를 가져오는 useEffect
     useEffect(() => {
         const fetchProfiles = async () => {
             try {
-                const response = await fetch('/api/profiles'); // 프로필 데이터를 가져올 API 엔드포인트
+                const response = await fetch(`/api/home/${DEFAULT_LANGUAGE_ID}`); // lang_id를 사용하여 프로필 데이터 가져오기
                 const data = await response.json();
-                setProfiles(data); // 데이터를 상태에 저장
+                setProfiles(data.data); // API로부터 받아온 프로필 데이터를 상태에 저장
+                setFilteredProfiles(data.data); // 초기 상태에서는 전체 프로필을 필터링된 프로필로 설정
             } catch (error) {
                 console.error('프로필 데이터를 불러오는 중 오류가 발생했습니다:', error);
             }
@@ -32,10 +36,33 @@ const ProfileGrid = () => {
         fetchProfiles();
     }, []); // 첫 번째 렌더링 시에만 실행
 
-    // 선택된 카테고리와 일치하는 프로필 필터링
-    const filteredProfiles = selectedCategory
-        ? profiles.filter(profile => profile.tags && profile.tags.includes(selectedCategory))
-        : profiles;
+    // 선택된 카테고리와 검색어로 프로필 필터링
+    useEffect(() => {
+        const filterProfiles = () => {
+            let filtered = profiles;
+
+            // 카테고리 필터링
+            if (selectedCategory) {
+                filtered = filtered.filter(profile =>
+                    profile.hashtags && profile.hashtags.includes(selectedCategory)
+                );
+            }
+
+            // 검색어 필터링
+            if (searchQuery) {
+                filtered = filtered.filter(profile =>
+                    profile.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    profile.univ_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    (profile.hashtags && profile.hashtags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())))
+                );
+            }
+
+            setFilteredProfiles(filtered);
+            setCurrentPage(1); // 필터링이 변경되면 페이지를 첫 페이지로 리셋
+        };
+
+        filterProfiles();
+    }, [selectedCategory, searchQuery, profiles]); // selectedCategory, searchQuery, profiles 변경 시 필터링 실행
 
     // 현재 페이지에서 보여줄 프로필의 시작과 끝 인덱스 계산
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -53,7 +80,11 @@ const ProfileGrid = () => {
     // 카테고리 클릭 핸들러
     const handleCategoryClick = (label) => {
         setSelectedCategory(label === selectedCategory ? null : label); // 동일 카테고리 클릭 시 필터 해제
-        setCurrentPage(1); // 페이지를 첫 페이지로 리셋
+    };
+
+    // 검색어 입력 핸들러
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
     };
 
     return (
@@ -68,7 +99,12 @@ const ProfileGrid = () => {
                 <img src="./UNI_Logo.png" alt="Logo" />
                 {/* 검색창 */}
                 <div className="search-bar">
-                    <input type="text" placeholder="국가별 검색, 등록비별 검색, 해시태그로 검색" />
+                    <input
+                        type="text"
+                        placeholder="국가별 검색, 등록비별 검색, 해시태그로 검색"
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                    />
                     <button>검색</button>
                 </div>
 
@@ -99,12 +135,12 @@ const ProfileGrid = () => {
             <div className="profile-grid">
                 {currentProfiles.map((profile, index) => (
                     <div className="profile-card" key={index}>
-                        <img src={profile.image || '/path/to/default-image.jpg'} alt="Profile" />
-                        <div className="profile-name">{profile.name}</div>
-                        <div className="profile-university">{profile.university}</div>
+                        <img src={profile.background_image || '/path/to/default-image.jpg'} alt="Profile" />
+                        <div className="profile-name">{profile.username}</div>
+                        <div className="profile-university">{profile.univ_name}</div>
                         <div className="rating">
                             <span className="star">⭐</span>
-                            <span>{profile.rating}</span>
+                            <span>{profile.star}</span>
                         </div>
                     </div>
                 ))}
