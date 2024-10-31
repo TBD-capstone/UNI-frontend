@@ -8,6 +8,7 @@
     color: white;
     background-color: #a0886b;
     margin-right: 50px;
+    cursor: pointer;
 }
 
 .Report {
@@ -20,6 +21,7 @@
     color: white;
     background-color: indianred;
     margin-right: 50px;
+    cursor: pointer;
 }
 
 .Image-back-container {

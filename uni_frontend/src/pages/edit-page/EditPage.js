@@ -1,11 +1,12 @@
 import {dummy_l} from '../Dummy';
 import "./EditPage.css";
-import {useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 
 const EditPage = () => {
     const [user, setUser] = useState(null);
     const {pathname} = useLocation();
+    const navigate = useNavigate();
     const main_id = 0;  //접속한 사용자 ID
 
     const handleChangeRegion = (e) => {
@@ -44,6 +45,7 @@ const EditPage = () => {
                 console.log(err);
                 alert('error: fetch fail');
             });
+        navigate(`/user/${user.userId}`);
     }
 
     useEffect( () => {

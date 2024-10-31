@@ -1,11 +1,12 @@
 import {dummy_l} from '../Dummy';
 import "./UserPage.css";
-import {useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 
 const UserPage = () => {
     const [user, setUser] = useState(null);
     const {pathname} = useLocation();
+    const navigate = useNavigate();
     const main_id = 0;  //접속한 사용자 ID
 
     const Context = (props) => {
@@ -22,7 +23,7 @@ const UserPage = () => {
             alert("신고");
         }
         const handleClickEdit = () => {
-            alert("편집");
+            navigate(`${pathname}/edit`);
         }
         return (
             (props.owner ?
