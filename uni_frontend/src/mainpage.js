@@ -28,7 +28,6 @@ const ProfileGrid = () => {
                 console.log("hihi3");
                 const response = await fetch(`http://localhost:8080/api/home`); // lang_id를 사용하여 프로필 데이터 가져오기
                 const data = await response.json();
-                // setProfileString(data.profileString); // profileString 상태에 저장
                 setProfileString("dummy data");
                 console.log(data);
                 setProfiles(data.data); // API로부터 받아온 프로필 데이터를 상태에 저장
@@ -136,16 +135,16 @@ const ProfileGrid = () => {
 
             {/* 프로필 카드 */}
             <div className="profile-grid">
-                {currentProfiles.map((profile, index) => (
-                    <div className="profile-card" key={index}>
-                        <img src={profile.imgProf || '/path/to/default-image.jpg'} alt="Profile" />
-                        <div className="profile-name">{profile.username}</div>
-                        <div className="profile-university">{profile.univName}</div>
+                {currentProfiles.map((user, index) => (
+                    <Link to={`/user/${user.id}`} key={index} className="profile-card">
+                        <img src={user.imgProf || '/path/to/default-image.jpg'} alt="Profile" />
+                        <div className="profile-name">{user.username}</div>
+                        <div className="profile-university">{user.univName}</div>
                         <div className="rating">
                             <span className="star">⭐</span>
-                            <span>{profile.star}</span>
+                            <span>{user.star}</span>
                         </div>
-                    </div>
+                    </Link>
                 ))}
             </div>
 
