@@ -67,7 +67,7 @@ export const dummy_l = [{
     region: "서울",
     university: "아주대학교 소프트웨어학과 4학년",
     explain: "소웨, 4학년",
-    num_employment: 3,
+    numEmployment: 3,
     star: 4.3,
     time: "07:00 ~ 20:00"
 },{
@@ -77,7 +77,7 @@ export const dummy_l = [{
     name: "홍길동",
     region: "수원",
     explain: "자취중, 부동산에 대해 잘 앎",
-    num_employment: 0,
+    numEmployment: 0,
     star: 0.0,
     time: "10:00 ~ 24:00"
 },{
@@ -86,7 +86,7 @@ export const dummy_l = [{
     img_back: dummy_back,
     region: "제주도, 대전",
     explain: "가이드 중 가이드",
-    num_employment: 3,
+    numEmployment: 3,
     star: 4.3,
     time: "평일 오후"
 },
