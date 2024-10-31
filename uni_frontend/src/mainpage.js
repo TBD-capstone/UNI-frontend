@@ -56,9 +56,7 @@ const ProfileGrid = () => {
             // 검색어 필터링
             if (searchQuery) {
                 filtered = filtered.filter(profile =>
-                    profile.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    profile.univName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    (profile.hashtags && profile.hashtags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())))
+                    profile.hashtags && profile.hashtags.includes(searchQuery)
                 );
             }
 
@@ -106,7 +104,7 @@ const ProfileGrid = () => {
                 <div className="search-bar">
                     <input
                         type="text"
-                        placeholder="국가별 검색, 등록비별 검색, 해시태그로 검색"
+                        placeholder="해시태그로 검색"
                         value={searchQuery}
                         onChange={handleSearchChange}
                     />
