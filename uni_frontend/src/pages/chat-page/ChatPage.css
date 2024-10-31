@@ -1,0 +1,78 @@
+.Chat-page {
+}
+
+.Chat-room {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    margin-bottom: 60px;
+}
+
+.Chat {
+    margin: 10px;
+}
+
+.Mine {
+    max-width: 80%;
+    margin-bottom: 10px;
+    padding: 10px 15px;
+    border-radius: 10px;
+    display: inline-block;
+    background-color: #ffd3b6;
+    color: #333;
+    float: right;
+}
+
+.Them {
+    max-width: 80%;
+    margin-bottom: 10px;
+    padding: 10px 15px;
+    border-radius: 10px;
+    display: inline-block;
+    background-color: #a8e6cf;
+    color: #333;
+    float: left;
+}
+
+.Input-section {
+    background-color: #D0D0D0;
+    display: flex;
+    width: calc(100% - 2 * (5px + 5px));
+    position: fixed;
+    bottom: 0;
+    border-radius: 20px;
+    margin: 5px;
+    padding: 5px;
+}
+
+.Input-box {
+    background-color: #D0D0D0;
+    flex : 1 0 auto;
+    padding: 10px;
+    border: none;
+    outline: none;
+    font-size: 18px;
+}
+
+.Match-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    margin: 5px;
+}
+.Send-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    margin: 5px;
+}
