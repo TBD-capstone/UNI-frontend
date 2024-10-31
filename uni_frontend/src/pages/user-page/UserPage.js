@@ -34,7 +34,7 @@ const UserPage = () => {
     useEffect( () => {
         const user_id = Number(pathname.split('/').at(2));
         (async () => {
-            const result = fetch(`http://localhost:8080/api/user/${user_id}`, {
+            const result = fetch(`/api/user/${user_id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -54,7 +54,7 @@ const UserPage = () => {
 
                 });
         })();
-    }, [user, pathname]);
+    }, [pathname]);
 
     return (
         user ? (
@@ -63,7 +63,7 @@ const UserPage = () => {
                     <img className="Image-back" src={user.img_back} alt="배경사진"/>
                 </div>
                 <div>
-                    <MoveButton owner={main_id === user.user_id}/>
+                    <MoveButton owner={true}/>
                 </div>
                 <div className="Content-container">
                     <div className="Profile-container">
@@ -74,13 +74,13 @@ const UserPage = () => {
                             <p>{user.star}</p>
                             <span>{user.name}</span>
                             <span className="Region">{user.region}</span>
-                            <p>{user.university}</p>
+                            <p>{user.univ}</p>
                             <p>{user.numEmployment}회 고용</p>
                             <p>{user.time}</p>
                         </div>
                     </div>
-                    <Context title="지도" text={"heelo"}></Context>
-                    <Context title="자기소개" text={user.explain}></Context>
+                    <Context title="지도" text={user.region}></Context>
+                    <Context title="자기소개" text={user.description}></Context>
                 </div>
             </div>) : null
     );

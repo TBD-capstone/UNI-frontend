@@ -21,22 +21,25 @@ const EditPage = () => {
         }));
     }
 
-    const handleChangeExplain = (e) => {
+    const handleChangeDescription = (e) => {
         setUser((prev) => ({
             ...prev,
-            explain: e.target.value
+            description: e.target.value
         }));
     }
 
     const handleClickComplete = () => {
         const user_id = Number(pathname.split('/').at(2));
-        const result = fetch(`http://localhost:8080/api/user/${user_id}`, {
+        const result = fetch(`/api/user/${user_id}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({user})
+            body: JSON.stringify(user)
         })
+            .then(() => {
+                alert("성공");
+            })
             .catch((err) => {
                 console.log(err);
                 alert('error: fetch fail');
@@ -46,12 +49,11 @@ const EditPage = () => {
     useEffect( () => {
         const user_id = Number(pathname.split('/').at(2));
         (async () => {
-            const result = fetch(`http://localhost:8080/api/user/${user_id}`, {
+            const result = fetch(`/api/user/${user_id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({})
+                }
             })
                 .catch((err) => {
                     console.log(err);
@@ -95,7 +97,7 @@ const EditPage = () => {
                                 value={user.region}
                                 onChange={handleChangeRegion}
                             />
-                            <p>{user.university}</p>
+                            <p>{user.univ}</p>
                             <p>{user.numEmployment}회 고용</p>
                             <input
                                 type="text"
@@ -113,8 +115,8 @@ const EditPage = () => {
                         <input
                             type="text"
                             className="Explain"
-                            value={user.explain}
-                            onChange={handleChangeExplain}
+                            value={user.description}
+                            onChange={handleChangeDescription}
                         />
                     </div>
                 </div>
