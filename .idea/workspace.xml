@@ -5,15 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7141e09f-2a8e-40b4-9e35-8450a5e64986" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/uni_frontend/public/UNI_Logo.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/uni_frontend/src/Register.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/uni_frontend/src/Register.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/uni_frontend/src/mainpage.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/uni_frontend/src/mainpage.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/App.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/App.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/Register.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/Register.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/mainpage.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/mainpage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/pages/edit-page/EditPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/pages/edit-page/EditPage.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,6 +35,18 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="UPDATE_TYPE" value="REBASE" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "jaeyongleejy"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/TBD-capstone/UNI-frontend.git",
+    "accountId": "64866fe0-8511-422b-ba26-a9cf3def8e3e"
+  }
+}]]></component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/uni_frontend/src/SignUp.js" root0="SKIP_INSPECTION" />
   </component>
@@ -55,30 +65,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;6-signin__ui&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/asdf9/OneDrive/바탕 화면/School/WebSys/팀프로젝트/giftichange/client/src/redux/listingSlice.js&quot;,
-    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs.jest.jest_package&quot;: &quot;C:/Users/asdf9/OneDrive/바탕 화면/School/4-2/캡스톤/frontend/UNI-frontend/uni_frontend/node_modules/react-scripts&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "Node.js.App.js.executor": "Run",
+    "Node.js.Register.js.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "dev",
+    "last_opened_file_path": "C:/Users/asdf9/OneDrive/바탕 화면/School/WebSys/팀프로젝트/giftichange/client/src/redux/listingSlice.js",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs.jest.jest_package": "C:/Users/asdf9/OneDrive/바탕 화면/School/4-2/캡스톤/frontend/UNI-frontend/uni_frontend/node_modules/react-scripts",
+    "nodejs_package_manager_path": "npm",
+    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2024.2.0.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\asdf9\OneDrive\바탕 화면\School\4-2\캡스톤\frontend\UNI-frontend\uni_frontend\public" />
     </key>
   </component>
-  <component name="RunManager" selected="Node.js.Register.js">
+  <component name="RunManager" selected="Node.js.App.js">
     <configuration name="App.test.js" type="JavaScriptTestRunnerJest" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/uni_frontend/node_modules/react-scripts" />
@@ -88,14 +101,26 @@
       <test-file value="$PROJECT_DIR$/uni_frontend/src/App.test.js" />
       <method v="2" />
     </configuration>
+    <configuration name="App.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/uni_frontend/src/App.js" working-dir="$PROJECT_DIR$/uni_frontend/src">
+      <method v="2" />
+    </configuration>
     <configuration name="Register.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/uni_frontend/src/Register.js" working-dir="$PROJECT_DIR$/uni_frontend/src">
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Node.js.App.js" />
         <item itemvalue="Node.js.Register.js" />
       </list>
     </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-b114ca120d71-intellij.indexing.shared.core-IU-242.21829.142" />
+        <option value="bundled-js-predefined-d6986cc7102b-7c0b70fcd90d-JavaScript-IU-242.21829.142" />
+      </set>
+    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">

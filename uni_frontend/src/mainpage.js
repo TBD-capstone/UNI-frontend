@@ -25,9 +25,12 @@ const ProfileGrid = () => {
     useEffect(() => {
         const fetchProfiles = async () => {
             try {
-                const response = await fetch(`/api/home/${DEFAULT_LANGUAGE_ID}`); // lang_id를 사용하여 프로필 데이터 가져오기
+                console.log("hihi3");
+                const response = await fetch(`http://localhost:8080/api/home`); // lang_id를 사용하여 프로필 데이터 가져오기
                 const data = await response.json();
-                setProfileString(data.profileString); // profileString 상태에 저장
+                // setProfileString(data.profileString); // profileString 상태에 저장
+                setProfileString("dummy data");
+                console.log(data);
                 setProfiles(data.data); // API로부터 받아온 프로필 데이터를 상태에 저장
                 setFilteredProfiles(data.data); // 초기 상태에서는 전체 프로필을 필터링된 프로필로 설정
             } catch (error) {
