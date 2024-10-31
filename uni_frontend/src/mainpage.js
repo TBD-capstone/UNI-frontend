@@ -15,6 +15,7 @@ const DEFAULT_LANGUAGE_ID = 'ko'; // 기본 언어 ID를 'ko'로 설정
 
 const ProfileGrid = () => {
     const [profiles, setProfiles] = useState([]); // 전체 프로필 데이터를 저장할 상태
+    const [profileString, setProfileString] = useState(''); // profileString을 저장할 상태
     const [filteredProfiles, setFilteredProfiles] = useState([]); // 필터링된 프로필 데이터를 저장할 상태
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedCategory, setSelectedCategory] = useState(null); // 선택된 카테고리 상태
@@ -26,6 +27,7 @@ const ProfileGrid = () => {
             try {
                 const response = await fetch(`/api/home/${DEFAULT_LANGUAGE_ID}`); // lang_id를 사용하여 프로필 데이터 가져오기
                 const data = await response.json();
+                setProfileString(data.profileString); // profileString 상태에 저장
                 setProfiles(data.data); // API로부터 받아온 프로필 데이터를 상태에 저장
                 setFilteredProfiles(data.data); // 초기 상태에서는 전체 프로필을 필터링된 프로필로 설정
             } catch (error) {
@@ -52,7 +54,7 @@ const ProfileGrid = () => {
             if (searchQuery) {
                 filtered = filtered.filter(profile =>
                     profile.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    profile.univ_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    profile.univName.toLowerCase().includes(searchQuery.toLowerCase()) ||
                     (profile.hashtags && profile.hashtags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())))
                 );
             }
@@ -125,7 +127,7 @@ const ProfileGrid = () => {
                         key={index}
                         onClick={() => handleCategoryClick(category.label)}
                     >
-                        <img src={category.icon} alt="" /> {/* alt 속성을 빈 문자열로 설정 */}
+                        <img src={category.icon} alt="" />
                         <span>{category.label}</span>
                     </div>
                 ))}
@@ -135,9 +137,9 @@ const ProfileGrid = () => {
             <div className="profile-grid">
                 {currentProfiles.map((profile, index) => (
                     <div className="profile-card" key={index}>
-                        <img src={profile.background_image || '/path/to/default-image.jpg'} alt="Profile" />
+                        <img src={profile.imgProf || '/path/to/default-image.jpg'} alt="Profile" />
                         <div className="profile-name">{profile.username}</div>
-                        <div className="profile-university">{profile.univ_name}</div>
+                        <div className="profile-university">{profile.univName}</div>
                         <div className="rating">
                             <span className="star">⭐</span>
                             <span>{profile.star}</span>

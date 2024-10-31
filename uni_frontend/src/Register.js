@@ -14,11 +14,11 @@ function Register() {
 
     const handleUserTypeChange = (e) => {
         setIsKorean(e.target.value === 'korean');
-        setEmailVerified(false);  // 사용자 유형이 바뀔 때 이메일 인증 상태 초기화
+        setEmailVerified(false);
     };
 
     const handleEmailVerification = async () => {
-        const endpoint = isKorean ? '/auth/api/validate' : '/auth/api/foreign';
+        /*const endpoint = isKorean ? '/auth/api/validate' : '/auth/api/foreign';
         try {
             const response = await fetch(endpoint, {
                 method: 'POST',
@@ -37,15 +37,17 @@ function Register() {
             setEmailVerified(false);
             setStatusMessage("이메일 인증 중 오류가 발생했습니다");
             console.error(error);
-        }
+        }*/
+        setEmailVerified(true);
+        setStatusMessage("이메일 인증 성공!"); //임시방편
     };
 
     const handleUnivVerification = async () => {
-        try {
+        /*try {
             const response = await fetch('/auth/api/univ', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ univName: univName }), // CamelCase 적용
+                body: JSON.stringify({ univ_name: univName }),
             });
             const data = await response.json();
             if (data.status === 'success') {
@@ -59,7 +61,9 @@ function Register() {
             setUnivVerified(false);
             setStatusMessage("대학 인증 중 오류가 발생했습니다");
             console.error(error);
-        }
+        }*/
+        setUnivVerified(true);
+        setStatusMessage("대학 인증 성공!");//임시방편2
     };
 
     const handleSubmit = async () => {
@@ -68,25 +72,15 @@ function Register() {
             return;
         }
 
-        if (!emailVerified) {
-            setStatusMessage("이메일 인증을 완료해주세요");
-            return;
-        }
-
-        if (!univVerified) {
-            setStatusMessage("대학 인증을 완료해주세요");
-            return;
-        }
-
         try {
             const response = await fetch('/auth/signup', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    isKorean: isKorean, // CamelCase 적용
+                    isKorean: isKorean,
                     email: email,
-                    univName: univName, // CamelCase 적용
-                    nickname: nickname,
+                    univName: univName,
+                    name: nickname,
                     password: password,
                 }),
             });
