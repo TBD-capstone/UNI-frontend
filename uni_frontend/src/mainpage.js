@@ -136,7 +136,7 @@ const ProfileGrid = () => {
             {/* 프로필 카드 */}
             <div className="profile-grid">
                 {currentProfiles.map((user, index) => (
-                    <Link to={`/user/${userId}`} key={index} className="profile-card">
+                    <Link to={`/user/${user.userId}`} key={index} className="profile-card">
                         <img src={user.imgProf || '/path/to/default-image.jpg'} alt="Profile" />
                         <div className="profile-name">{user.username}</div>
                         <div className="profile-university">{user.univName}</div>
