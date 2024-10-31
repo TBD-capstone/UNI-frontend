@@ -33,7 +33,7 @@ const EditPage = () => {
         const result = fetch(`http://localhost:8080/api/user/${user_id}`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json   '
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({user})
         })
@@ -73,10 +73,13 @@ const EditPage = () => {
         user ? (
             <div>
                 <div className="Image-back-container">
-                        <img className="Image-back" src={user.img_back} alt="배경사진"/>
+                    <img className="Image-back" src={user.img_back} alt="배경사진"/>
                 </div>
                 <div>
-                    <button className="Complete" onClick={handleClickComplete   }>수정</button>
+                    <button
+                        className="Complete"
+                        onClick={handleClickComplete}
+                    >수정</button>
                 </div>
                 <div className="Content-container">
                     <div className="Profile-container">
@@ -93,7 +96,7 @@ const EditPage = () => {
                                 onChange={handleChangeRegion}
                             />
                             <p>{user.university}</p>
-                            <p>{user.num_employment}회 고용</p>
+                            <p>{user.numEmployment}회 고용</p>
                             <input
                                 type="text"
                                 value={user.time}

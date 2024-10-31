@@ -38,8 +38,7 @@ const UserPage = () => {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({})
+                }
             })
                 .catch((err) => {
                     console.log(err);
@@ -76,7 +75,7 @@ const UserPage = () => {
                             <span>{user.name}</span>
                             <span className="Region">{user.region}</span>
                             <p>{user.university}</p>
-                            <p>{user.num_employment}회 고용</p>
+                            <p>{user.numEmployment}회 고용</p>
                             <p>{user.time}</p>
                         </div>
                     </div>
