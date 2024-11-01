@@ -6,6 +6,7 @@ import Login from './login';
 import UserPage from './pages/user-page/UserPage';
 import EditPage from "./pages/edit-page/EditPage";
 import ChatPage from "./pages/chat-page/ChatPage";
+import Admin from "./admin";
 
 
 
@@ -19,6 +20,7 @@ function App() {
                 <Route path="/user/:id" element={<UserPage/>} />
                 <Route path="/user/:id/edit" element={<EditPage/>} />
                 <Route path="/chat/:id" element={<ChatPage/>} />
+                <Route path="/admin" element={<Admin/>} />
             </Routes>
         </Router>
     );

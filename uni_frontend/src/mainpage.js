@@ -11,48 +11,59 @@ const categories = [
 ];
 
 const ITEMS_PER_PAGE = 8;
-const DEFAULT_LANGUAGE_ID = 'ko'; // 기본 언어 ID를 'ko'로 설정
+const DEFAULT_LANGUAGE_ID = 'ko';
 
 const ProfileGrid = () => {
-    const [profiles, setProfiles] = useState([]); // 전체 프로필 데이터를 저장할 상태
-    const [profileString, setProfileString] = useState(''); // profileString을 저장할 상태
-    const [filteredProfiles, setFilteredProfiles] = useState([]); // 필터링된 프로필 데이터를 저장할 상태
+    const [profiles, setProfiles] = useState([]);
+    const [filteredProfiles, setFilteredProfiles] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [selectedCategory, setSelectedCategory] = useState(null); // 선택된 카테고리 상태
-    const [searchQuery, setSearchQuery] = useState(''); // 검색어 상태
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [ads, setAds] = useState([]);
+    const [currentAd, setCurrentAd] = useState(null);
 
-    // API에서 프로필 데이터를 가져오는 useEffect
+    // API에서 프로필 및 광고 데이터를 가져오는 useEffect
     useEffect(() => {
         const fetchProfiles = async () => {
             try {
-                console.log("hihi3");
-                const response = await fetch(`http://localhost:8080/api/home`); // lang_id를 사용하여 프로필 데이터 가져오기
+                const response = await fetch('http://localhost:8080/api/home');
                 const data = await response.json();
-                setProfileString("dummy data");
-                console.log(data);
-                setProfiles(data.data); // API로부터 받아온 프로필 데이터를 상태에 저장
-                setFilteredProfiles(data.data); // 초기 상태에서는 전체 프로필을 필터링된 프로필로 설정
+                setProfiles(data.data);
+                setFilteredProfiles(data.data);
             } catch (error) {
                 console.error('프로필 데이터를 불러오는 중 오류가 발생했습니다:', error);
             }
         };
 
+        const fetchAds = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/api/ads');
+                const adData = await response.json();
+                const activeAds = adData.filter(ad => ad.status === '개시중');
+                setAds(activeAds);
+                if (activeAds.length > 0) {
+                    setCurrentAd(activeAds[0]);
+                }
+            } catch (error) {
+                console.error('광고 데이터를 불러오는 중 오류가 발생했습니다:', error);
+            }
+        };
+
         fetchProfiles();
-    }, []); // 첫 번째 렌더링 시에만 실행
+        fetchAds();
+    }, []);
 
     // 선택된 카테고리와 검색어로 프로필 필터링
     useEffect(() => {
         const filterProfiles = () => {
             let filtered = profiles;
 
-            // 카테고리 필터링
             if (selectedCategory) {
                 filtered = filtered.filter(profile =>
                     profile.hashtags && profile.hashtags.includes(selectedCategory)
                 );
             }
 
-            // 검색어 필터링
             if (searchQuery) {
                 filtered = filtered.filter(profile =>
                     profile.hashtags && profile.hashtags.includes(searchQuery)
@@ -60,18 +71,15 @@ const ProfileGrid = () => {
             }
 
             setFilteredProfiles(filtered);
-            setCurrentPage(1); // 필터링이 변경되면 페이지를 첫 페이지로 리셋
+            setCurrentPage(1);
         };
 
         filterProfiles();
-    }, [selectedCategory, searchQuery, profiles]); // selectedCategory, searchQuery, profiles 변경 시 필터링 실행
+    }, [selectedCategory, searchQuery, profiles]);
 
-    // 현재 페이지에서 보여줄 프로필의 시작과 끝 인덱스 계산
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
     const currentProfiles = filteredProfiles.slice(startIndex, endIndex);
-
-    // 전체 페이지 수 계산
     const totalPages = Math.ceil(filteredProfiles.length / ITEMS_PER_PAGE);
 
     // 페이지 변경 핸들러
@@ -81,7 +89,7 @@ const ProfileGrid = () => {
 
     // 카테고리 클릭 핸들러
     const handleCategoryClick = (label) => {
-        setSelectedCategory(label === selectedCategory ? null : label); // 동일 카테고리 클릭 시 필터 해제
+        setSelectedCategory(label === selectedCategory ? null : label);
     };
 
     // 검색어 입력 핸들러
@@ -91,15 +99,17 @@ const ProfileGrid = () => {
 
     return (
         <div className="container">
-            {/* 광고 배너 */}
-            <div className="ad-banner">
-                <img src="./ads/banner.png" alt="광고 배너" />
-            </div>
+            {/* 개시중인 광고 배너 */}
+            {currentAd && (
+                <div className="ad-banner">
+                    <img src={currentAd.imageUrl} alt="광고 배너" />
+                </div>
+            )}
 
             {/* 헤더 */}
             <div className="header">
                 <img src="./UNI_Logo.png" alt="Logo" />
-                {/* 검색창 */}
+
                 <div className="search-bar">
                     <input
                         type="text"
