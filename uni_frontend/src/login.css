@@ -1,0 +1,175 @@
+/* Login page container */
+.login-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    font-family: Arial, sans-serif;
+    background-color: #FFFFFF;
+}
+
+/* Logo and Title */
+.logo {
+    width: 20vw;
+    height: 20vw;
+    max-width: 120px;
+    max-height: 120px;
+    background-image: url('../public/UNI_Logo.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin-bottom: 20px;
+}
+
+/* Login Title with max font-size */
+.login-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Input Fields */
+.input-field {
+    width: 100%;
+    padding: 10px 15px;
+    margin-top: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+
+.input-container {
+    position: relative;
+    width: 100%;
+    max-width: 350px;
+    margin-bottom: 15px;
+}
+
+.input-field-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #888;
+}
+
+/* Buttons */
+.login-button {
+    width: 100%;
+    max-width: 350px;
+    background-color: #6AB24F;
+    color: #FFFFFF;
+    font-size: 18px;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+    text-align: center;
+}
+
+.login-button:hover {
+    background-color: #4e8c3a;
+}
+
+/* Social Login */
+.social-login {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.social-button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: white;
+    cursor: pointer;
+}
+
+
+
+/* Bottom Links */
+.bottom-link {
+    font-size: 14px;
+    color: #777777;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.bottom-link a {
+    color: #333;
+    text-decoration: none;
+}
+
+.bottom-link a:hover {
+    text-decoration: underline;
+}
+
+/* Media Queries for Responsive Design */
+@media (max-width: 768px) {
+    .login-page {
+        max-width: 90%;
+    }
+
+    .login-title {
+        font-size: 20px;
+    }
+
+    .input-field {
+        font-size: 14px;
+        padding: 8px 10px;
+    }
+
+    .login-button {
+        font-size: 16px;
+        padding: 10px;
+    }
+
+    .social-button {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo {
+        width: 80px;
+        height: 80px;
+    }
+
+    .login-title {
+        font-size: 16px;
+    }
+
+    .input-field {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    .login-button {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .social-button {
+        width: 35px;
+        height: 35px;
+    }
+
+    .bottom-link {
+        font-size: 12px;
+    }
+}
