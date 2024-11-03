@@ -113,17 +113,7 @@
     cursor: pointer;
 }
 
-.facebook-button {
-    background-color: #3b5998;
-}
 
-.google-button {
-    background-color: #db4437;
-}
-
-.apple-button {
-    background-color: #000000;
-}
 
 /* 하단 링크 */
 .bottom-link {
@@ -131,6 +121,31 @@
     color: #777777;
     margin-top: 20px;
     text-align: center;
+}
+
+/* 드롭다운 메뉴 스타일 */
+.dropdown-menu {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ddd;
+    max-height: 150px;
+    overflow-y: auto;
+    width: 100%;
+    max-width: 400px; /* input-field의 너비와 일치시킴 */
+    z-index: 1000;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 5px;
+}
+
+.dropdown-item {
+    padding: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+}
+
+.dropdown-item:hover {
+    background-color: #f0f0f0;
 }
 
 
