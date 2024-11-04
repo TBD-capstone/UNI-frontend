@@ -1,13 +1,13 @@
 import {dummy_l} from '../Dummy';
 import "./UserPage.css";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 
 const UserPage = () => {
+    const {userId} = useParams();
     const [user, setUser] = useState(null);
     const {pathname} = useLocation();
     const navigate = useNavigate();
-    const main_id = 0;  //접속한 사용자 ID
 
     const Context = (props) => {
         return (
@@ -25,17 +25,46 @@ const UserPage = () => {
         const handleClickEdit = () => {
             navigate(`${pathname}/edit`);
         }
+        const handleClickChat = () => {
+                const result = fetch("/api/chat/request", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify( {"receiverId": userId })
+                })
+                    .catch((err) => {
+                        console.log(err);
+                        alert('error: fetch fail - chat');
+                    })
+                    .then(response => response.json())
+                    .then((data) => {
+                        navigate(`/chat/${data.chatRoomId}`, {
+                                state: data
+                            });
+                        console.log(data);
+                    })
+                    .catch((err) => {
+                        console.log(err);
+
+                    });
+        }
         return (
             (props.owner ?
-                    <button className="Edit" onClick={handleClickEdit}>Edit</button> :
-                    <button className="Report" onClick={handleClickReport}>Report</button>
+                    <div>
+                        <button className="Edit" onClick={handleClickEdit}>Edit</button>
+                        <button className="Easter">Easter</button>
+                    </div> :
+                    <div>
+                        <button className="Chatting" onClick={handleClickChat}>Chat</button>
+                        <button className="Report" onClick={handleClickReport}>Report</button>
+                    </div>
             )
         )
     }
     useEffect( () => {
-        const user_id = Number(pathname.split('/').at(2));
         (async () => {
-            const result = fetch(`/api/user/${user_id}`, {
+            const result = fetch(`/api/user/${userId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -44,7 +73,7 @@ const UserPage = () => {
                 .catch((err) => {
                     console.log(err);
                     alert('error: fetch fail');
-                    setUser(dummy_l[user_id]);
+                    setUser(dummy_l[userId]);
                 })
                 .then(response => response.json())
                 .then((data) => {
@@ -55,7 +84,7 @@ const UserPage = () => {
 
                 });
         })();
-    }, [pathname]);
+    }, [userId, pathname]);
 
     return (
         user ? (
@@ -63,8 +92,8 @@ const UserPage = () => {
                 <div className="Image-back-container">
                     <img className="Image-back" src={user.img_back} alt="배경사진"/>
                 </div>
-                <div>
-                    <MoveButton owner={true}/>
+                <div className="Button-section">
+                    <MoveButton owner={false}/>
                 </div>
                 <div className="Content-container">
                     <div className="Profile-container">

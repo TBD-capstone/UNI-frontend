@@ -65,7 +65,7 @@ export const dummy_l = [{
     img_back: dummy_back,
     name: "홍길동",
     region: "서울",
-    university: "아주대학교 소프트웨어학과 4학년",
+    univ: "아주대학교 소프트웨어학과 4학년",
     explain: "소웨, 4학년",
     numEmployment: 3,
     star: 4.3,

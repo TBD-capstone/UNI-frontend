@@ -1,14 +1,19 @@
-import {dummy_chat, dummy_l} from '../Dummy';
-import {useEffect, useRef, useState} from "react";
+import {dummy_chat} from '../Dummy';
+import {useEffect, useState} from "react";
 import "./ChatPage.css";
-import {useLocation} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
+import { Stomp } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
+
 
 const ChatPage = () => {
-    const [chatRoom, setChatRoom] = useState(null);
+    const { roomId } = useParams();
+    const {state} = useLocation();
+    const [messages, setMessages] = useState(state.chatMessages);
     const [message, setMessage] = useState("");
-    const webSocket = useRef(null);
-    const {pathname} = useLocation();
-    const ChatRoom = (props) => {
+    const [stompClient, setStompClient] = useState(null);
+
+    const ChatBox = (props) => {
         const Chat = (props) => {
             return (
                 <div className="Chat">
@@ -20,62 +25,102 @@ const ChatPage = () => {
             (props.chatList) && (props.chatList).map((d, i) => {
                 return (
                     <Chat
-                        owner={d.id===props.userId}
-                        userId={props.userId}
-                        text={d.text}
+                        owner={d.senderId===props.userId}
+                        text={d.content}
                         key={`chat-${i}`}
                     />
                 )
             })
         )
     }
+    const handleClickMatch = () => {
+        console.log(roomId);
+    }
     const handleChangeMessage = (e) => {
         setMessage((prev) => (e.target.value));
     }
+    const handleKeyDownMessage = (e) => {
+        if(e.key === "Enter") {
+            handleClickSend();
+        }
+    }
 
     const handleClickSend = () => {
-        alert(message);
-        setMessage("");
+        if (stompClient && message.trim() !== '') {
+            console.log("Sending message:", message);  // 발신 메시지 로그 출력
+            stompClient.send(
+                `/pub/message`,
+                {},
+                JSON.stringify({ roomId: roomId, content: message })
+            );
+        }
+
     }
 
     useEffect( () => {
-        const chat_id = Number(pathname.split('/').at(2));
-        (async () => {
-            const result = fetch(`http://localhost:8080/api/chat/${chat_id}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({})
-            })
-                .catch((err) => {
-                    console.log(err);
-                    alert('error: fetch fail');
-                    setChatRoom(dummy_chat);
-                })
-                .then(response => response.json())
-                .then((data) => {
-                    setChatRoom(() => data);
-                })
-                .catch((err) => {
-                    console.log(err);
+        // (async () => {
+        //     const result = fetch(`/api/chat/room/${roomId}`, {
+        //         method: 'GET',
+        //         headers: {
+        //             'Content-Type': 'application/json'
+        //         }
+        //     })
+        //         .catch((err) => {
+        //             console.log(err);
+        //             alert('error: fetch fail');
+        //             setMessages(dummy_chat);
+        //         })
+        //         .then(response => response.json())
+        //         .then((data) => {
+        //             setMessages(() => data);
+        //         })
+        //         .catch((err) => {
+        //             console.log(err);
+        //
+        //         });
+        // })();
+        const socket = new SockJS('http://localhost:8080/ws/chat');
+        const stompClientInstance = Stomp.over(socket);
 
-                });
-        })();
-    }, [chatRoom]);
+        stompClientInstance.debug = (str) => console.log(str);
+
+        stompClientInstance.connect({}, () => {
+            console.log("Connected to WebSocket");
+
+            stompClientInstance.subscribe(`/sub/chat/room/${roomId}`, (msg) => {
+                console.log("Received message:", msg.body);  // 수신 메시지 로그 출력
+                const newMessage = JSON.parse(msg.body);
+                setMessages((prevMessages) => [...prevMessages, newMessage]);
+            });
+        }, (error) => {
+            console.error("WebSocket connection error:", error);
+        });
+
+        setStompClient(stompClientInstance);
+
+        return () => {
+            if (stompClientInstance) {
+                stompClientInstance.disconnect();
+                console.log("Disconnected from WebSocket");
+            }
+        };
+
+
+    }, []);
 
     return (
-        chatRoom?(
+        messages?(
             <div className="Chat-page">
                 <div className="Chat-room">
-                    <ChatRoom chatList={chatRoom} userId={"1"}/>
+                    <ChatBox chatList={messages} userId={state.myId}/>
                 </div>
                 <div className="Input-section">
-                    <button className="Match-button">+</button>
+                    <button className="Match-button" onClick={handleClickMatch}>match</button>
                     <input
                         className="Input-box"
                         value={message}
                         onChange={handleChangeMessage}
+                        onKeyDown={(e) => handleKeyDownMessage(e)}
                         placeholder={'메시지 입력'}/>
                     <button
                         className="Send-button"

@@ -2,26 +2,45 @@
     height: 30px;
     width: 60px;
     border: none;
-    position: relative;
-    float: right;
     border-radius: 20px;
     color: white;
     background-color: #a0886b;
-    margin-right: 50px;
     cursor: pointer;
+}
+
+.Easter {
+    height: 30px;
+    width: 60px;
+    border: none;
+    border-radius: 20px;
+    color: white;
+    background-color: #a0986b;
 }
 
 .Report {
     height: 30px;
     width: 60px;
     border: none;
-    position: relative;
-    float: right;
     border-radius: 20px;
     color: white;
     background-color: indianred;
-    margin-right: 50px;
     cursor: pointer;
+}
+
+.Chatting {
+    height: 30px;
+    width: 60px;
+    border: none;
+    border-radius: 20px;
+    color: white;
+    background-color: #4CAF50;
+    cursor: pointer;
+}
+
+.Button-section {
+    float: right;
+    margin-left: auto;
+    position: relative;
 }
 
 .Image-back-container {
