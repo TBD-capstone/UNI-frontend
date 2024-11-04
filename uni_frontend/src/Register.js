@@ -15,7 +15,7 @@ function Register() {
     const [verificationCode, setVerificationCode] = useState('');
     const [codeVerified, setCodeVerified] = useState(false);
 
-    const universities = ["서울대학교", "연세대학교", "고려대학교", "한양대학교", "성균관대학교"]; // 대학 목록
+    let univList = []; // 대학 목록
 
     // 사용자 유형 변경 핸들러
     const handleUserTypeChange = (e) => {
@@ -28,10 +28,21 @@ function Register() {
     // 대학 인증 핸들러
     const handleUnivVerification = async () => {
         try {
+            const univList = await fetch('/api/auth/univ', {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify({univName: univName}),
+            });// 대학 이름이 json 형식인지 확인 필요
+             return (
+                 <dev>
+                     {univList.map(())}
+                 </dev>
+             )
+
             const response = await fetch('/api/auth/univ', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ univname: univName }),
+                body: JSON.stringify({ univName: univName }),
             });
             const data = await response.json();
             if (data.status === 'success') {
@@ -154,7 +165,7 @@ function Register() {
                 onClick={handleUnivVerification}
             >
                 <option value="">대학교 선택</option>
-                {universities.map((university, index) => (
+                {univList.map((university, index) => (
                     <option key={index} value={university}>{university}</option>
                 ))}
             </select>
@@ -178,7 +189,7 @@ function Register() {
             <div className="status-message">{statusMessage}</div>
 
             <div className="bottom-link">
-                회원이신가요? <Link to="/login">로그인하세요</Link>
+                <Link to="/login">회원이신가요? 로그인하세요</Link>
             </div>
         </div>
     );

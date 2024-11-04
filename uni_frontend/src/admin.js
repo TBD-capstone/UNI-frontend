@@ -53,6 +53,21 @@ function AdminPage() {
         setCurrentPage(page);
     };
 
+    const handleNewAdSubmit = (e) => {
+        e.preventDefault();
+        const newAd = {
+            id: adData.length + 1,
+            advertiser: e.target.advertiser.value,
+            title: e.target.title.value,
+            status: '개시하기',
+            startDate: e.target.startDate.value,
+            endDate: e.target.endDate.value,
+            imageUrl: e.target.imageUrl.value
+        };
+        setAdData([...adData, newAd]);
+        alert("광고가 성공적으로 등록되었습니다.");
+    };
+
     // 현재 탭에 따라 데이터를 선택
     const data = activeTab === '신고확인' ? reportData : adData;
     const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
@@ -77,8 +92,11 @@ function AdminPage() {
                 <div className={`tab ${activeTab === '신고확인' ? 'active' : ''}`} onClick={() => handleTabClick('신고확인')}>
                     신고확인
                 </div>
-                <div className={`tab ${activeTab === '광고관리' ? 'active' : ''}`} onClick={() => handleTabClick('광고관리')}>
-                    광고관리
+                <div className={`tab ${activeTab === '광고게시' ? 'active' : ''}`} onClick={() => handleTabClick('광고게시')}>
+                    광고게시
+                </div>
+                <div className={`tab ${activeTab === '광고등록' ? 'active' : ''}`} onClick={() => handleTabClick('광고등록')}>
+                    광고등록
                 </div>
             </div>
 
@@ -95,7 +113,7 @@ function AdminPage() {
                         <tbody>
                         {currentData.map((report) => (
                             <React.Fragment key={report.id}>
-                                <tr onClick={() => setSelectedAdId(report.id)}>
+                                <tr>
                                     <td>{report.reporter}</td>
                                     <td>{report.content}</td>
                                     <td>{report.date}</td>
@@ -107,7 +125,7 @@ function AdminPage() {
                 </div>
             )}
 
-            {activeTab === '광고관리' && (
+            {activeTab === '광고게시' && (
                 <div className="table-container">
                     <table className="table">
                         <thead>
@@ -146,17 +164,48 @@ function AdminPage() {
                 </div>
             )}
 
-            <div className="pagination">
-                {[...Array(totalPages)].map((_, index) => (
-                    <button
-                        key={index}
-                        onClick={() => handlePageChange(index + 1)}
-                        className={currentPage === index + 1 ? 'active' : ''}
-                    >
-                        {index + 1}
-                    </button>
-                ))}
-            </div>
+            {activeTab === '광고등록' && (
+                <div className="ad-registration">
+                    <h3>새 광고 등록</h3>
+                    <form onSubmit={handleNewAdSubmit}>
+                        <label>
+                            광고주:
+                            <input type="text" name="advertiser" required />
+                        </label>
+                        <label>
+                            광고 제목:
+                            <input type="text" name="title" required />
+                        </label>
+                        <label>
+                            시작 날짜:
+                            <input type="date" name="startDate" required />
+                        </label>
+                        <label>
+                            종료 날짜:
+                            <input type="date" name="endDate" required />
+                        </label>
+                        <label>
+                            이미지 URL:
+                            <input type="text" name="imageUrl" required />
+                        </label>
+                        <button type="submit">등록</button>
+                    </form>
+                </div>
+            )}
+
+            {activeTab !== '광고등록' && (
+                <div className="pagination">
+                    {[...Array(totalPages)].map((_, index) => (
+                        <button
+                            key={index}
+                            onClick={() => handlePageChange(index + 1)}
+                            className={currentPage === index + 1 ? 'active' : ''}
+                        >
+                            {index + 1}
+                        </button>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }
