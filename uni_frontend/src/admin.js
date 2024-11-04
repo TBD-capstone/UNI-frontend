@@ -19,9 +19,9 @@ function AdminPage() {
 
     // 샘플 광고 데이터
     const [adData, setAdData] = useState([
-        { id: 1, advertiser: '회사 A', title: '여름 세일 광고', status: '개시중', startDate: '2024-01-01', endDate: '2024-01-31', imageUrl: 'https://via.placeholder.com/300x200' },
-        { id: 2, advertiser: '회사 B', title: '신제품 출시', status: '개시하기', startDate: '2024-02-01', endDate: '2024-02-28', imageUrl: 'https://via.placeholder.com/300x200' },
-        { id: 3, advertiser: '회사 C', title: '할인 이벤트', status: '개시중', startDate: '2024-03-01', endDate: '2024-03-31', imageUrl: 'https://via.placeholder.com/300x200' },
+        { id: 1, advertiser: '회사 A', title: '여름 세일 광고', status: '게시 전', startDate: '2024-01-01', endDate: '2024-01-31', imageUrl: 'https://via.placeholder.com/300x200' },
+        { id: 2, advertiser: '회사 B', title: '신제품 출시', status: '게시 중', startDate: '2024-02-01', endDate: '2024-02-28', imageUrl: 'https://via.placeholder.com/300x200' },
+        { id: 3, advertiser: '회사 C', title: '할인 이벤트', status: '게시 종료', startDate: '2024-03-01', endDate: '2024-03-31', imageUrl: 'https://via.placeholder.com/300x200' },
     ]);
 
     useEffect(() => {
@@ -39,14 +39,15 @@ function AdminPage() {
         setSelectedAdId(selectedAdId === adId ? null : adId);
     };
 
-    const toggleAdStatus = (adId) => {
+    const changeAdStatus = (adId, newStatus) => {
         setAdData((prevData) =>
             prevData.map((ad) =>
                 ad.id === adId
-                    ? { ...ad, status: ad.status === '개시중' ? '개시하기' : '개시중' }
+                    ? { ...ad, status: newStatus }
                     : ad
             )
         );
+        setSelectedAdId(null);
     };
 
     const handlePageChange = (page) => {
@@ -59,7 +60,7 @@ function AdminPage() {
             id: adData.length + 1,
             advertiser: e.target.advertiser.value,
             title: e.target.title.value,
-            status: '개시하기',
+            status: '게시 전', // 기본 상태를 "게시 전"으로 설정
             startDate: e.target.startDate.value,
             endDate: e.target.endDate.value,
             imageUrl: e.target.imageUrl.value
@@ -143,16 +144,17 @@ function AdminPage() {
                                     <td>{ad.advertiser}</td>
                                     <td>{ad.title}</td>
                                     <td>{ad.startDate} ~ {ad.endDate}</td>
-                                    <td className="status" onClick={(e) => { e.stopPropagation(); toggleAdStatus(ad.id); }}>
+                                    <td className="status">
                                         {ad.status}
                                     </td>
                                 </tr>
                                 {selectedAdId === ad.id && (
                                     <tr className="ad-details">
                                         <td colSpan="4">
-                                            <div className="ad-image-content">
-                                                <h4>광고 이미지</h4>
-                                                <img src={ad.imageUrl} alt="광고 이미지" className="image-placeholder" />
+                                            <div className="ad-status-options">
+                                                <button onClick={() => changeAdStatus(ad.id, '게시 전')}>게시 전</button>
+                                                <button onClick={() => changeAdStatus(ad.id, '게시 중')}>게시 중</button>
+                                                <button onClick={() => changeAdStatus(ad.id, '게시 종료')}>게시 종료</button>
                                             </div>
                                         </td>
                                     </tr>

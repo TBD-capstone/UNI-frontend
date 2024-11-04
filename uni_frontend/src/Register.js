@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './Register.css';
 
@@ -14,8 +14,30 @@ function Register() {
     const [univVerified, setUnivVerified] = useState(false);
     const [verificationCode, setVerificationCode] = useState('');
     const [codeVerified, setCodeVerified] = useState(false);
+    const [univList, setUnivList] = useState([]); // 대학 목록 상태 추가
 
-    let univList = []; // 대학 목록
+    // 컴포넌트가 처음 렌더링될 때 대학 목록을 서버에서 가져옴
+    useEffect(() => {
+        const fetchUnivList = async () => {
+            try {
+                const response = await fetch(`/api/auth/univ`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await response.json();
+                if (data.status === 'success' && data.universities) {
+                    setUnivList(data.universities); // 서버에서 받은 대학 목록을 상태로 저장
+                } else {
+                    setStatusMessage("대학 목록을 불러오는 데 실패했습니다.");
+                }
+            } catch (error) {
+                setStatusMessage("대학 목록을 불러오는 중 오류가 발생했습니다.");
+                console.error(error);
+            }
+        };
+
+        fetchUnivList();
+    }, [univName]);
 
     // 사용자 유형 변경 핸들러
     const handleUserTypeChange = (e) => {
@@ -23,38 +45,6 @@ function Register() {
         setEmailVerified(false);
         setUnivVerified(false);
         setCodeVerified(false);
-    };
-
-    // 대학 인증 핸들러
-    const handleUnivVerification = async () => {
-        try {
-            const univList = await fetch('/api/auth/univ', {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json'},
-                body: JSON.stringify({univName: univName}),
-            });// 대학 이름이 json 형식인지 확인 필요
-             return (
-                 <dev>
-                     {univList.map(())}
-                 </dev>
-             )
-
-            const response = await fetch('/api/auth/univ', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ univName: univName }),
-            });
-            const data = await response.json();
-            if (data.status === 'success') {
-                setUnivVerified(true);
-                setStatusMessage("대학 인증 성공!");
-            } else {
-                setStatusMessage(data.message || "인증 불가능한 대학입니다.");
-            }
-        } catch (error) {
-            setStatusMessage("대학 인증 중 오류가 발생했습니다.");
-            console.error(error);
-        }
     };
 
     // 이메일 인증 요청 핸들러
@@ -162,7 +152,6 @@ function Register() {
                 className="input-field"
                 value={univName}
                 onChange={(e) => setUnivName(e.target.value)}
-                onClick={handleUnivVerification}
             >
                 <option value="">대학교 선택</option>
                 {univList.map((university, index) => (
