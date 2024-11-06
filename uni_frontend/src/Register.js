@@ -20,24 +20,26 @@ function Register() {
     useEffect(() => {
         const fetchUnivList = async () => {
             try {
-                const response = await fetch(`/api/auth/univ`, {
+                const response = await fetch(`http://localhost:8080/api/auth/univ`, {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' }
                 });
                 const data = await response.json();
-                if (data.status === 'success' && data.universities) {
-                    setUnivList(data.universities); // 서버에서 받은 대학 목록을 상태로 저장
+                console.log("Fetched university data:", data); // 데이터 확인용 로그
+
+                if (Array.isArray(data)) {
+                    setUnivList(data); // 서버에서 받은 대학 목록을 상태로 저장
                 } else {
                     setStatusMessage("대학 목록을 불러오는 데 실패했습니다.");
                 }
             } catch (error) {
                 setStatusMessage("대학 목록을 불러오는 중 오류가 발생했습니다.");
-                console.error(error);
+                console.error("Error fetching university list:", error);
             }
         };
 
         fetchUnivList();
-    }, [univName]);
+    }, []);
 
     // 사용자 유형 변경 핸들러
     const handleUserTypeChange = (e) => {
@@ -154,8 +156,10 @@ function Register() {
                 onChange={(e) => setUnivName(e.target.value)}
             >
                 <option value="">대학교 선택</option>
-                {univList.map((university, index) => (
-                    <option key={index} value={university}>{university}</option>
+                {univList.map((university) => (
+                    <option key={university.universityId} value={university.univName}>
+                        {university.univName}
+                    </option>
                 ))}
             </select>
 

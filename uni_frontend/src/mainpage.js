@@ -154,6 +154,12 @@ const ProfileGrid = () => {
                             <span className="star">⭐</span>
                             <span>{user.star}</span>
                         </div>
+                        {/* 해시태그 표시 */}
+                        <div className="profile-hashtags">
+                            {user.hashtags && user.hashtags.map((tag, i) => (
+                                <span key={i} className="hashtag">#{tag}</span>
+                            ))}
+                        </div>
                     </Link>
                 ))}
             </div>
