@@ -9,6 +9,56 @@ const UserPage = () => {
     const {pathname} = useLocation();
     const navigate = useNavigate();
 
+    const MoveButton = (props) => {
+
+        const handleClickReport = () => {
+            alert("신고");
+        };
+        const handleClickEdit = () => {
+            navigate(`${pathname}/edit`);
+        };
+        const handleClickChatRoom = () => {
+            navigate("/chatroom");
+        };
+        const handleClickChat = () => {
+            const result = fetch("/api/chat/request", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({"receiverId": userId})
+            })
+                .catch((err) => {
+                    console.log(err);
+                    alert('error: fetch fail - chat');
+                })
+                .then(response => response.json())
+                .then((data) => {
+                    navigate(`/chat/${data.chatRoomId}`, {
+                        state: data
+                    });
+                    console.log(data);
+                })
+                .catch((err) => {
+                    console.log(err);
+
+                });
+        }
+        return (
+            (props.owner ?
+                    <div>
+                        <button className="Easter" onClick={handleClickChatRoom}>채팅방</button>
+                        <button className="Edit" onClick={handleClickEdit}>Edit</button>
+                        <button className="Easter">Easter</button>
+                    </div> :
+                    <div>
+                        <button className="Easter" onClick={handleClickChatRoom}>채팅방</button>
+                        <button className="Chatting" onClick={handleClickChat}>Chat</button>
+                        <button className="Report" onClick={handleClickReport}>Report</button>
+                    </div>
+            )
+        )
+    }
     const Context = (props) => {
         return (
             <div className="Context">
@@ -17,52 +67,53 @@ const UserPage = () => {
             </div>
         );
     }
-    const MoveButton = (props) => {
-
-        const handleClickReport = () => {
-            alert("신고");
-        }
-        const handleClickEdit = () => {
-            navigate(`${pathname}/edit`);
-        }
-        const handleClickChat = () => {
-                const result = fetch("/api/chat/request", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify( {"receiverId": userId })
-                })
-                    .catch((err) => {
-                        console.log(err);
-                        alert('error: fetch fail - chat');
-                    })
-                    .then(response => response.json())
-                    .then((data) => {
-                        navigate(`/chat/${data.chatRoomId}`, {
-                                state: data
-                            });
-                        console.log(data);
-                    })
-                    .catch((err) => {
-                        console.log(err);
-
-                    });
-        }
+    const QnaBox = (props) => {
         return (
-            (props.owner ?
-                    <div>
-                        <button className="Edit" onClick={handleClickEdit}>Edit</button>
-                        <button className="Easter">Easter</button>
-                    </div> :
-                    <div>
-                        <button className="Chatting" onClick={handleClickChat}>Chat</button>
-                        <button className="Report" onClick={handleClickReport}>Report</button>
+            <div>
+                <div className="chat-container">
+                    <div className="message">
+                        <img src="../../../public/UNI_Logo.png" alt="User Icon"/>
+                        <div>
+                            <div className="message-content">질문이 있으세요?</div>
+                        </div>
                     </div>
-            )
+
+                    <div className="message user">
+                        <img src="user-icon.png" alt="User Icon"/>
+                        <div>
+                            <div className="message-content">시간이 언제가 제일 편하세요?</div>
+                            <div className="message-options">
+                                <button>게시</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="message">
+                        <img src="user-icon.png" alt="User Icon"/>
+                        <div>
+                            <div className="message-content">매일 아침 9시부터 오후 6시까지입니다</div>
+                        </div>
+                    </div>
+
+                    <div className="message user">
+                        <img src="user-icon.png" alt="User Icon"/>
+                        <div>
+                            <div className="message-content">시간이 언제가 제일 편하세요?</div>
+                            <div className="message-options">
+                                <button>댓글달기</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="reply-box">
+                        <input type="text" placeholder="댓글을 써보세요"/>
+                        <button>게시</button>
+                    </div>
+                </div>
+            </div>
         )
-    }
-    useEffect( () => {
+    };
+    useEffect(() => {
         (async () => {
             const result = fetch(`/api/user/${userId}`, {
                 method: 'GET',
@@ -107,11 +158,17 @@ const UserPage = () => {
                             <p>{user.univ}</p>
                             <p>{user.numEmployment}회 고용</p>
                             <p>{user.time}</p>
+                            {user.hashtags && user.hashtags.map((hashtag, i) => {
+                                return (
+                                    <span>#{hashtag} </span>
+                                )
+                            })}
                         </div>
                     </div>
                     <Context title="지도" text={user.region}></Context>
                     <Context title="자기소개" text={user.description}></Context>
                 </div>
+                <QnaBox/>
             </div>) : null
     );
 }
