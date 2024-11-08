@@ -1,47 +1,35 @@
-.Edit {
-    height: 30px;
-    width: 60px;
-    border: none;
-    border-radius: 20px;
-    color: white;
-    background-color: #a0886b;
-    cursor: pointer;
-}
-
-.Easter {
-    height: 30px;
-    width: 60px;
-    border: none;
-    border-radius: 20px;
-    color: white;
-    background-color: #a0986b;
-}
-
-.Report {
-    height: 30px;
-    width: 60px;
-    border: none;
-    border-radius: 20px;
-    color: white;
-    background-color: indianred;
-    cursor: pointer;
-}
-
-.Chatting {
-    height: 30px;
-    width: 60px;
-    border: none;
-    border-radius: 20px;
-    color: white;
-    background-color: #4CAF50;
-    cursor: pointer;
-}
-
 .Button-section {
     float: right;
     margin-left: auto;
     position: relative;
 }
+
+.Button-section button{
+    height: 30px;
+    width: 60px;
+    border: none;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.Edit {
+    background-color: #a0886b;
+}
+
+.ChatRoom {
+    background-color: #a0986b;
+}
+
+.Report {
+    background-color: indianred;
+}
+
+.Chatting {
+    background-color: #4CAF50;
+}
+
 
 .Image-back-container {
     width: 100%;
@@ -107,30 +95,33 @@
     text-align: left;
 }
 
-.chat-container {
-    margin-top: 50px;
+.Qna-container {
+    margin: auto;
     max-width: 80%;
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.message {
+.Qna-box {
+    margin-left: 50px;
+}
+
+.Reply {
     padding: 10px 15px;
     display: flex;
     align-items: flex-start;
 }
 
-.message img {
+.Reply img {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     margin-right: 10px;
 }
 
-.message-content {
+.Reply-content {
     background-color: #f9f9f9;
     border-radius: 10px;
     padding: 10px 15px;
@@ -139,17 +130,17 @@
     max-width: 200px;
 }
 
-.message.user .message-content {
+.Reply.user .Reply-content {
     background-color: #e1f5fe;
 }
 
-.reply-box {
+.Input-box {
     display: flex;
     padding: 10px;
     border-top: 1px solid #ddd;
 }
 
-.reply-box input[type="text"] {
+.Input-box input[type="text"] {
     flex: 1;
     padding: 8px;
     border: 1px solid #ddd;
@@ -157,7 +148,7 @@
     font-size: 14px;
 }
 
-.reply-box button {
+.Input-box button {
     background-color: #007bff;
     color: #fff;
     padding: 8px 12px;
@@ -168,17 +159,17 @@
     font-size: 14px;
 }
 
-.reply-box button:hover {
+.Input-box button:hover {
     background-color: #0056b3;
 }
 
-.message-options {
+.Qna-options {
     display: flex;
     justify-content: space-between;
     margin-top: 5px;
 }
 
-.message-options button {
+.Qna-options button {
     background: none;
     border: none;
     color: #007bff;
@@ -186,6 +177,6 @@
     font-size: 12px;
 }
 
-.message-options button:hover {
+.Qna-options button:hover {
     text-decoration: underline;
 }

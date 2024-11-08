@@ -10,7 +10,7 @@ const ChatPage = () => {
     const {state} = useLocation();
     const [messages, setMessages] = useState(state.chatMessages);
     const [message, setMessage] = useState("");
-    const [request, setRequest] = useState(false);
+    const [requestId, setRequestId] = useState(null);
     const [stompClient, setStompClient] = useState(null)
 
     const ChatBox = (props) => {
@@ -34,22 +34,27 @@ const ChatPage = () => {
         )
     }
     const handleClickMatch = () => {
-        if (stompClient) {
-            if (request) {
-                stompClient.send(
-                    `/pub/match/respond`,
-                    {},
-                    JSON.stringify({receiverId: state.myId, accepted: true})
-                );
-            }
-            else {
-                stompClient.send(
-                    `/pub/match/request`,
-                    {},
-                    JSON.stringify({requestId: state.myId, receiverId: state.otherId})
-                );
-                console.log({requestId: state.myId, receiverId: state.otherId})
-            }
+        if (stompClient && !requestId) {
+            stompClient.send(
+                `/pub/match/request`,
+                {},
+                JSON.stringify({requesterId: state.myId, receiverId: state.otherId})
+            );
+            console.log({requesterId: state.myId, receiverId: state.otherId})
+        }
+        else{
+            alert("매칭을 수락해주세요");
+        }
+    };
+    const handleClickAccept = () => {
+        if (stompClient && requestId) {
+            stompClient.send(
+                `/pub/match/respond`,
+                {},
+                JSON.stringify({requestId: requestId, accepted: true})
+            );
+            console.log({requestId: requestId, accepted: true})
+            setRequestId(()=>null);
         }
     }
     const handleChangeMessage = (e) => {
@@ -104,13 +109,18 @@ const ChatPage = () => {
             console.log("Connected to WebSocket");
 
             stompClientInstance.subscribe(`/sub/chat/room/${roomId}`, (msg) => {
-                console.log("Received message:", msg.body);  // 수신 메시지 로그 출력
+                console.log("Received message:", msg.body);
                 const newMessage = JSON.parse(msg.body);
                 setMessages((prevMessages) => [...prevMessages, newMessage]);
             });
             stompClientInstance.subscribe(`/sub/match-request/${state.myId}`, (msg) => {
-                console.log("Received message:", msg.body);  // 수신 메시지 로그 출력
-                setRequest(() => true);
+                console.log("Received message:", msg.body);
+                const newMessage = JSON.parse(msg.body);
+                setRequestId(() => newMessage.requestId)
+            });
+            stompClientInstance.subscribe(`/sub/match-response/${state.myId}`, (msg) => {
+                console.log("Received message:", msg.body);
+                alert(msg.body);
             });
         }, (error) => {
             console.error("WebSocket connection error:", error);
@@ -126,7 +136,7 @@ const ChatPage = () => {
         };
 
 
-    }, []);
+    }, [roomId, state]);
 
     return (
         messages ? (
@@ -149,7 +159,7 @@ const ChatPage = () => {
                     <div className="map">
                         <img src="https://via.placeholder.com/250x150" alt="활동영역 지도"/>
                     </div>
-                    {request && (<button className="apply-button">매칭 신청</button>)}
+                    {requestId && (<button className="apply-button" onClick={handleClickAccept}>매칭 수락</button>)}
                 </div>
                 <div className="Chat-section">
                     <div className="Chat-room">

@@ -1,11 +1,46 @@
-import {dummy_l} from '../Dummy';
 import "./UserPage.css";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 
+const dummy_qna = [
+    {
+        qnaId: 1,
+        userId: 2,
+        content: "이건 더미에요",
+        reply: [{
+            replyId: 1,
+            userId: 2,
+            content: "진짜요?"
+        }, {
+            replyId: 2,
+            userId: 2,
+            content: "시간 언제 괜찮으세요"
+        }, {
+            replyId: 3,
+            userId: 1,
+            content: "시간 언제 괜찮으세요"
+        }]
+    }, {
+        qnaId: 2,
+        userId: 1,
+        content: "시간 언제 괜찮으세요",
+        reply: []
+    }, {
+        qnaId: 3,
+        userId: 2,
+        content: "시간 언제 괜찮으세요",
+        reply: []
+    }, {
+        qnaId: 4,
+        userId: 1,
+        content: "시간 언제 괜찮으세요",
+        reply: []
+    }
+]
 const UserPage = () => {
     const {userId} = useParams();
     const [user, setUser] = useState(null);
+    const [replyInput, setReplyInput] = useState("");
     const {pathname} = useLocation();
     const navigate = useNavigate();
 
@@ -41,24 +76,29 @@ const UserPage = () => {
                 })
                 .catch((err) => {
                     console.log(err);
-
                 });
         }
         return (
-            (props.owner ?
-                    <div>
-                        <button className="Easter" onClick={handleClickChatRoom}>채팅방</button>
-                        <button className="Edit" onClick={handleClickEdit}>Edit</button>
-                        <button className="Easter">Easter</button>
-                    </div> :
-                    <div>
-                        <button className="Easter" onClick={handleClickChatRoom}>채팅방</button>
-                        <button className="Chatting" onClick={handleClickChat}>Chat</button>
-                        <button className="Report" onClick={handleClickReport}>Report</button>
-                    </div>
-            )
+            <div>
+                <button className="ChatRoom" onClick={handleClickChatRoom}>ChatRoom</button>
+                <button className="Edit" onClick={handleClickEdit}>Edit</button>
+                <button className="Chatting" onClick={handleClickChat}>Chat</button>
+                <button className="Report" onClick={handleClickReport}>Report</button>
+            </div>
+            // (props.owner ?
+            //         <div>
+            //             <button className="ChatRoom" onClick={handleClickChatRoom}>채팅방</button>
+            //             <button className="Edit" onClick={handleClickEdit}>Edit</button>
+            //             <button className="ChatRoom">Easter</button>
+            //         </div> :
+            //         <div>
+            //             <button className="ChatRoom" onClick={handleClickChatRoom}>채팅방</button>
+            //             <button className="Chatting" onClick={handleClickChat}>Chat</button>
+            //             <button className="Report" onClick={handleClickReport}>Report</button>
+            //         </div>
+            // )
         )
-    }
+    };
     const Context = (props) => {
         return (
             <div className="Context">
@@ -67,52 +107,84 @@ const UserPage = () => {
             </div>
         );
     }
-    const QnaBox = (props) => {
-        return (
-            <div>
-                <div className="chat-container">
-                    <div className="message">
-                        <img src="../../../public/UNI_Logo.png" alt="User Icon"/>
-                        <div>
-                            <div className="message-content">질문이 있으세요?</div>
+    const QnaSection = (props) => {
+        const Qna = (props) => {
+            const handleClickReply = () => {
+                const result = fetch(`/user/${userId}/qnas/${props.data.qnaId}/replies`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({"content": userId})
+                })
+                    .catch((err) => {
+                        console.log(err);
+                        alert('error: fetch fail - chat');
+                    });
+                setReplyInput(() => "");
+            };
+            return (
+                <div className="Reply">
+                    <img src={props.data.imageUrl} alt="User Icon"/>
+                    <div>
+                        <div className="Reply-content">{props.data.content}</div>
+                        <div className="Qna-options">
+                            <button onClick={handleClickReply}>Reply</button>
                         </div>
-                    </div>
-
-                    <div className="message user">
-                        <img src="user-icon.png" alt="User Icon"/>
-                        <div>
-                            <div className="message-content">시간이 언제가 제일 편하세요?</div>
-                            <div className="message-options">
-                                <button>게시</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="message">
-                        <img src="user-icon.png" alt="User Icon"/>
-                        <div>
-                            <div className="message-content">매일 아침 9시부터 오후 6시까지입니다</div>
-                        </div>
-                    </div>
-
-                    <div className="message user">
-                        <img src="user-icon.png" alt="User Icon"/>
-                        <div>
-                            <div className="message-content">시간이 언제가 제일 편하세요?</div>
-                            <div className="message-options">
-                                <button>댓글달기</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="reply-box">
-                        <input type="text" placeholder="댓글을 써보세요"/>
-                        <button>게시</button>
                     </div>
                 </div>
-            </div>
+            );
+        };
+        const Reply = (props) => {
+            return (
+                <div className="Reply">
+                    <img src={props.data.imageUrl} alt="User Icon"/>
+                    <div>
+                        <div className="Reply-content">{props.data.content}</div>
+                    </div>
+                </div>
+            );
+        }
+
+        const QnaBox = (props) => {
+            return (
+                props.data && props.data.map((data, i) => {
+                    return <Reply data={data} key={`Reply-${data.qnaId}-${data.replyId}`}/>;
+                })
+            )
+        }
+
+        return (
+            props.qnas.map((data, i) => {
+                return (
+                    <div key={`Qna-${data.qnaId}`}>
+                        <Qna data={data}/>
+                        <div className="Qna-box">
+                            <QnaBox data={data.reply} key={`QnaBox-${data.qnaId}`}/>
+                        </div>
+                    </div>
+                );
+            })
         )
     };
+    const handleChangeReplyInput = (e) => {
+        setReplyInput(() => e.target.value);
+    }
+    const handleClickPost = () => {
+        const result = fetch(`/user/${userId}/qnas`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({"content": userId})
+        })
+            .catch((err) => {
+                console.log(err);
+                alert('error: fetch fail - chat');
+            });
+        setReplyInput(() => "");
+    };
+
     useEffect(() => {
         (async () => {
             const result = fetch(`/api/user/${userId}`, {
@@ -124,7 +196,6 @@ const UserPage = () => {
                 .catch((err) => {
                     console.log(err);
                     alert('error: fetch fail');
-                    setUser(dummy_l[userId]);
                 })
                 .then(response => response.json())
                 .then((data) => {
@@ -153,11 +224,11 @@ const UserPage = () => {
                         </div>
                         <div className="Profile-content">
                             <p>{user.star}</p>
-                            <span>{user.name}</span>
-                            <span className="Region">{user.region}</span>
-                            <p>{user.univ}</p>
-                            <p>{user.numEmployment}회 고용</p>
-                            <p>{user.time}</p>
+                            <p>User: {user.userName}</p>
+                            <p>Region: {user.region}</p>
+                            <p>Univ: {user.univ}</p>
+                            <p>Employ count: {user.numEmployment}</p>
+                            <p>Time: {user.time}</p>
                             {user.hashtags && user.hashtags.map((hashtag, i) => {
                                 return (
                                     <span>#{hashtag} </span>
@@ -168,7 +239,13 @@ const UserPage = () => {
                     <Context title="지도" text={user.region}></Context>
                     <Context title="자기소개" text={user.description}></Context>
                 </div>
-                <QnaBox/>
+                <div className="Qna-container">
+                    <QnaSection qnas={user.qnas?user.qnas:dummy_qna}/>
+                    <div className="Input-box">
+                        <input type="text" value={replyInput} onChange={handleChangeReplyInput} placeholder="댓글을 써보세요"/>
+                        <button onClick={handleClickPost}>Post</button>
+                    </div>
+                </div>
             </div>) : null
     );
 }
