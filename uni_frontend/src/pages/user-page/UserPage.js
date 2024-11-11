@@ -40,7 +40,6 @@ const dummy_qna = [
 const UserPage = () => {
     const {userId} = useParams();
     const [user, setUser] = useState(null);
-    const [replyInput, setReplyInput] = useState("");
     const {pathname} = useLocation();
     const navigate = useNavigate();
 
@@ -99,38 +98,48 @@ const UserPage = () => {
             // )
         )
     };
-    const Context = (props) => {
+    const SelfPR = (props) => {
         return (
-            <div className="Context">
+            <div className="SelfPR">
                 <span>{props.title}</span>
                 <p className="Explain">{props.text}</p>
             </div>
         );
     }
+    const InputBox = (props) => {
+        const [content, setContent] = useState("");
+
+        const handleChangeContent = (e) => {
+            setContent(() => e.target.value);
+        }
+        const handleClickPost = () => {
+            const result = fetch(`${props.url}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({"content": content})
+            })
+                .catch((err) => {
+                    console.log(err);
+                    alert('error: fetch fail - chat');
+                });
+            setContent(() => "");
+        };
+        return (
+            <div className="Input-box">
+                <input type="text" value={content} onChange={handleChangeContent} placeholder="댓글을 써보세요"/>
+                <button onClick={handleClickPost}>Post</button>
+            </div>
+        )
+    }
     const QnaSection = (props) => {
         const Qna = (props) => {
-            const handleClickReply = () => {
-                const result = fetch(`/user/${userId}/qnas/${props.data.qnaId}/replies`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({"content": userId})
-                })
-                    .catch((err) => {
-                        console.log(err);
-                        alert('error: fetch fail - chat');
-                    });
-                setReplyInput(() => "");
-            };
             return (
                 <div className="Reply">
                     <img src={props.data.imageUrl} alt="User Icon"/>
                     <div>
                         <div className="Reply-content">{props.data.content}</div>
-                        <div className="Qna-options">
-                            <button onClick={handleClickReply}>Reply</button>
-                        </div>
                     </div>
                 </div>
             );
@@ -153,6 +162,20 @@ const UserPage = () => {
                 })
             )
         }
+        const ReplyInput = (props) => {
+            const [replyShow, setReplyShow] = useState(false);
+            const handleClickReply = () => {
+                setReplyShow((p)=>!p);
+            }
+            return (
+                <>
+                    {replyShow && <InputBox url={props.url}/>}
+                    <div className="Qna-options">
+                        <button onClick={handleClickReply}>Reply</button>
+                    </div>
+                </>
+            )
+        }
 
         return (
             props.qnas.map((data, i) => {
@@ -161,28 +184,12 @@ const UserPage = () => {
                         <Qna data={data}/>
                         <div className="Qna-box">
                             <QnaBox data={data.reply} key={`QnaBox-${data.qnaId}`}/>
+                            <ReplyInput url={`/user/${userId}/qnas/${data.qnaId}/replies`} />
                         </div>
                     </div>
                 );
             })
         )
-    };
-    const handleChangeReplyInput = (e) => {
-        setReplyInput(() => e.target.value);
-    }
-    const handleClickPost = () => {
-        const result = fetch(`/user/${userId}/qnas`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({"content": userId})
-        })
-            .catch((err) => {
-                console.log(err);
-                alert('error: fetch fail - chat');
-            });
-        setReplyInput(() => "");
     };
 
     useEffect(() => {
@@ -200,10 +207,10 @@ const UserPage = () => {
                 .then(response => response.json())
                 .then((data) => {
                     setUser(() => data);
+                    // console.log(data); // for debug
                 })
                 .catch((err) => {
                     console.log(err);
-
                 });
         })();
     }, [userId, pathname]);
@@ -231,20 +238,17 @@ const UserPage = () => {
                             <p>Time: {user.time}</p>
                             {user.hashtags && user.hashtags.map((hashtag, i) => {
                                 return (
-                                    <span>#{hashtag} </span>
+                                    <span className="Hashtag" key={`hashtag-${i}`}>#{hashtag} </span>
                                 )
                             })}
                         </div>
                     </div>
-                    <Context title="지도" text={user.region}></Context>
-                    <Context title="자기소개" text={user.description}></Context>
+                    <SelfPR title="지도" text={user.region}></SelfPR>
+                    <SelfPR title="자기소개" text={user.description}></SelfPR>
                 </div>
                 <div className="Qna-container">
                     <QnaSection qnas={user.qnas?user.qnas:dummy_qna}/>
-                    <div className="Input-box">
-                        <input type="text" value={replyInput} onChange={handleChangeReplyInput} placeholder="댓글을 써보세요"/>
-                        <button onClick={handleClickPost}>Post</button>
-                    </div>
+                    <InputBox url={`/user/${userId}/qnas`}/>
                 </div>
             </div>) : null
     );

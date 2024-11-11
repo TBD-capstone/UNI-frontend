@@ -55,7 +55,21 @@
 }
 
 .Profile-content {
-    text-align: left;
+    /*text-align: left;*/
+}
+
+.Hashtag {
+    max-width: max-content;
+    margin: 2px;
+    padding: 2px;
+    border-radius: 10px;
+    background-color: aquamarine;
+}
+
+.Hashtag button {
+    border: none;
+    cursor: pointer;
+    background-color: inherit;
 }
 
 .Region {
@@ -64,7 +78,7 @@
     text-align: right;
 }
 
-.Context {
+.SelfPR {
     margin-top: 40px;
     width: 250px;
     height: 250px;
