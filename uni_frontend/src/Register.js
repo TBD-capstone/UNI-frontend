@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import Select from 'react-select';
 import './Register.css';
 
 function Register() {
@@ -14,9 +15,8 @@ function Register() {
     const [univVerified, setUnivVerified] = useState(false);
     const [verificationCode, setVerificationCode] = useState('');
     const [codeVerified, setCodeVerified] = useState(false);
-    const [univList, setUnivList] = useState([]); // 대학 목록 상태 추가
+    const [univList, setUnivList] = useState([]);
 
-    // 컴포넌트가 처음 렌더링될 때 대학 목록을 서버에서 가져옴
     useEffect(() => {
         const fetchUnivList = async () => {
             try {
@@ -25,10 +25,13 @@ function Register() {
                     headers: { 'Content-Type': 'application/json' }
                 });
                 const data = await response.json();
-                console.log("Fetched university data:", data); // 데이터 확인용 로그
+                console.log("Fetched university data:", data);
 
                 if (Array.isArray(data)) {
-                    setUnivList(data); // 서버에서 받은 대학 목록을 상태로 저장
+                    setUnivList(data.map((university) => ({
+                        value: university.univName,
+                        label: university.univName
+                    })));
                 } else {
                     setStatusMessage("대학 목록을 불러오는 데 실패했습니다.");
                 }
@@ -41,7 +44,6 @@ function Register() {
         fetchUnivList();
     }, []);
 
-    // 사용자 유형 변경 핸들러
     const handleUserTypeChange = (e) => {
         setIsKorean(e.target.value === 'korean');
         setEmailVerified(false);
@@ -49,16 +51,20 @@ function Register() {
         setCodeVerified(false);
     };
 
-    // 이메일 인증 요청 핸들러
+    const handleUnivVerification = () => {
+        setUnivVerified(true);
+    };
+
     const handleEmailVerification = async () => {
         if (univVerified) {
             try {
                 const response = await fetch('/api/auth/validate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: email, univName: univName }),
+                    body: JSON.stringify({ email, univName })
                 });
                 const data = await response.json();
+                console.log("Email verification response:", data);
                 if (data.status === 'success') {
                     setEmailVerified(true);
                     setStatusMessage("이메일 인증 요청 성공!");
@@ -67,21 +73,24 @@ function Register() {
                 }
             } catch (error) {
                 setStatusMessage("이메일 인증 중 오류가 발생했습니다.");
-                console.error(error);
+                console.error("Email verification error:", error);
             }
         } else {
             setStatusMessage("먼저 대학 인증을 완료해주세요.");
         }
     };
 
-    // 인증 코드 확인 핸들러
     const handleCodeVerification = async () => {
         if (emailVerified) {
             try {
                 const response = await fetch('/api/auth/verify', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: email, univName: univName, code: verificationCode }),
+                    body: JSON.stringify({
+                        email,
+                        univName,
+                        code: parseInt(verificationCode)
+                    })
                 });
                 const data = await response.json();
                 if (data.status === 'success') {
@@ -99,7 +108,6 @@ function Register() {
         }
     };
 
-    // 회원가입 핸들러
     const handleSubmit = async () => {
         if (!codeVerified) {
             setStatusMessage("모든 인증 단계를 완료해주세요.");
@@ -115,12 +123,12 @@ function Register() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    isKorean: isKorean,
-                    email: email,
-                    univName: univName,
+                    isKorean,
+                    email,
+                    univName,
                     name: nickname,
-                    password: password,
-                }),
+                    password
+                })
             });
 
             const data = await response.json();
@@ -149,25 +157,20 @@ function Register() {
                 </label>
             </div>
 
-            {/* 대학 선택 */}
-            <select
-                className="input-field"
-                value={univName}
-                onChange={(e) => setUnivName(e.target.value)}
-            >
-                <option value="">대학교 선택</option>
-                {univList.map((university) => (
-                    <option key={university.universityId} value={university.univName}>
-                        {university.univName}
-                    </option>
-                ))}
-            </select>
+            <Select
+                className="select-field"
+                options={univList}
+                onChange={(selectedOption) => {
+                    setUnivName(selectedOption.value);
+                    handleUnivVerification();
+                }}
+                placeholder="대학교 선택"
+                isSearchable
+            />
 
-            {/* 이메일 입력 */}
             <input type="email" className="input-field" placeholder="이메일" value={email} onChange={(e) => setEmail(e.target.value)} />
             <button className="verify-button" onClick={handleEmailVerification} disabled={!univVerified}>이메일 인증하기</button>
 
-            {/* 인증 코드 입력 */}
             <input type="text" className="input-field" placeholder="인증 코드" value={verificationCode} onChange={(e) => setVerificationCode(e.target.value)} />
             <button className="verify-button" onClick={handleCodeVerification} disabled={!emailVerified}>인증 코드 확인</button>
 

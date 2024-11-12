@@ -11,7 +11,6 @@ const categories = [
 ];
 
 const ITEMS_PER_PAGE = 8;
-const DEFAULT_LANGUAGE_ID = 'ko';
 
 const ProfileGrid = () => {
     const [profiles, setProfiles] = useState([]);
@@ -21,8 +20,9 @@ const ProfileGrid = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [ads, setAds] = useState([]);
     const [currentAd, setCurrentAd] = useState(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [username, setUsername] = useState('');
 
-    // API에서 프로필 및 광고 데이터를 가져오는 useEffect
     useEffect(() => {
         const fetchProfiles = async () => {
             try {
@@ -49,11 +49,20 @@ const ProfileGrid = () => {
             }
         };
 
+        // 로컬 스토리지에서 로그인 상태 확인
+        const checkLoginStatus = () => {
+            const storedUsername = localStorage.getItem('username');
+            if (storedUsername) {
+                setIsLoggedIn(true);
+                setUsername(storedUsername);
+            }
+        };
+
         fetchProfiles();
         fetchAds();
+        checkLoginStatus();
     }, []);
 
-    // 선택된 카테고리와 검색어로 프로필 필터링
     useEffect(() => {
         const filterProfiles = () => {
             let filtered = profiles;
@@ -82,31 +91,26 @@ const ProfileGrid = () => {
     const currentProfiles = filteredProfiles.slice(startIndex, endIndex);
     const totalPages = Math.ceil(filteredProfiles.length / ITEMS_PER_PAGE);
 
-    // 페이지 변경 핸들러
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
 
-    // 카테고리 클릭 핸들러
     const handleCategoryClick = (label) => {
         setSelectedCategory(label === selectedCategory ? null : label);
     };
 
-    // 검색어 입력 핸들러
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);
     };
 
     return (
         <div className="container">
-            {/* 개시중인 광고 배너 */}
             {currentAd && (
                 <div className="ad-banner">
                     <img src={currentAd.imageUrl} alt="광고 배너" />
                 </div>
             )}
 
-            {/* 헤더 */}
             <div className="header">
                 <img src="./UNI_Logo.png" alt="Logo" />
 
@@ -121,15 +125,22 @@ const ProfileGrid = () => {
                 </div>
 
                 <div className="dropdown">
-                    <button>로그인</button>
-                    <div className="dropdown-content">
-                        <Link to="/register">회원가입</Link>
-                        <Link to="/login">로그인</Link>
-                    </div>
+                    {isLoggedIn ? (
+                        <Link to="/profile" className="profile-link">
+                            {username}님
+                        </Link>
+                    ) : (
+                        <>
+                            <button>로그인</button>
+                            <div className="dropdown-content">
+                                <Link to="/register">회원가입</Link>
+                                <Link to="/login">로그인</Link>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
 
-            {/* 카테고리 아이콘 */}
             <div className="category">
                 {categories.map((category, index) => (
                     <div
@@ -143,7 +154,6 @@ const ProfileGrid = () => {
                 ))}
             </div>
 
-            {/* 프로필 카드 */}
             <div className="profile-grid">
                 {currentProfiles.map((user, index) => (
                     <Link to={`/user/${user.userId}`} key={index} className="profile-card">
@@ -154,7 +164,6 @@ const ProfileGrid = () => {
                             <span className="star">⭐</span>
                             <span>{user.star}</span>
                         </div>
-                        {/* 해시태그 표시 */}
                         <div className="profile-hashtags">
                             {user.hashtags && user.hashtags.map((tag, i) => (
                                 <span key={i} className="hashtag">#{tag}</span>
@@ -164,7 +173,6 @@ const ProfileGrid = () => {
                 ))}
             </div>
 
-            {/* 페이지네이션 */}
             <div className="pagination">
                 {[...Array(totalPages)].map((_, index) => (
                     <button
