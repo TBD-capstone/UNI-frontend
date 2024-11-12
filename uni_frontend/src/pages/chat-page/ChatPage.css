@@ -1,50 +1,100 @@
 .Chat-page {
-    display: flex;
-    flex-direction: row;
+    --match-height: 100px;
+    --button-color: #00aaff;
+    --hover-coler: #007acf;
+    background-color: #E7E7E7;
+    height: 100vh;
 }
 
 .Match-section {
+    padding: 1px;
+    display: flex;
+    background-color: white;
+    height: 100px;
+}
+
+.logo {
+    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%;
+    height: 90%;
+}
+
+.Profile {
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.Profile img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 2px;
+}
+
+.Profile-name {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.Match-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Match-button button {
+    color: white;
+    border: none;
+    border-radius: 20px;
+    width: 80px;
+    height: 80px;
+    font-weight: bold;
+    margin: 2px;
+}
+.Activated-button {
+    background-color: var(--button-color);
+    cursor: pointer;
+}
+.Activated-button:hover {
+    background-color: var(--hover-coler);
+}
+.Unactivated-button {
+    background-color: #D0D0D0;
 }
 
 .Chat-section {
-    border: 1px solid black;
     min-width: 400px;
-}
-
-.Chat-room {
     display: flex;
     flex-direction: column;
     width: 100%;
-    max-height: 100%;
+    height: calc(100vh - 180px);
     overflow: hidden scroll;
-    margin-bottom: 60px;
 }
 
 .Chat {
     margin: 10px;
 }
 
-.Mine {
+.Chat span {
     max-width: 80%;
     margin-bottom: 10px;
     padding: 10px 15px;
     border-radius: 10px;
     display: inline-block;
+}
+
+.Mine {
     background-color: #ffd3b6;
     color: #333;
     float: right;
 }
 
 .Them {
-    max-width: 80%;
-    margin-bottom: 10px;
-    padding: 10px 15px;
-    border-radius: 10px;
-    display: inline-block;
     background-color: #a8e6cf;
     color: #333;
     float: left;
@@ -54,24 +104,22 @@
     background-color: #D0D0D0;
     display: flex;
     width: auto;
-    position: fixed;
     bottom: 0;
     border-radius: 20px;
-    margin: 5px;
+    margin: auto 5px 5px 5px;
     padding: 5px;
 }
 
 .Input-box {
     background-color: #D0D0D0;
     flex : 1 0 auto;
-    padding: 10px;
     border: none;
     outline: none;
     font-size: 18px;
 }
 
-.Match-button {
-    background-color: #007bff;
+.Input-section button {
+    background-color: var(--button-color);
     color: #fff;
     border: none;
     padding: 10px;
@@ -81,14 +129,7 @@
     cursor: pointer;
     margin: 5px;
 }
-.Send-button {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    padding: 10px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    cursor: pointer;
-    margin: 5px;
+
+.Input-section button:hover {
+    background-color: var(--hover-coler);
 }

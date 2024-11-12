@@ -219,7 +219,7 @@ const UserPage = () => {
         user ? (
             <div>
                 <div className="Image-back-container">
-                    <img className="Image-back" src={user.img_back} alt="배경사진"/>
+                    <img className="Image-back" src={"/UNI_Logo.png"} alt="배경사진"/>
                 </div>
                 <div className="Button-section">
                     <MoveButton owner={false}/>
@@ -227,7 +227,7 @@ const UserPage = () => {
                 <div className="Content-container">
                     <div className="Profile-container">
                         <div className="Image-prof-container">
-                            <img className="Image-prof" src={user.img_prof} alt="프로필사진"/>
+                            <img className="Image-prof" src={"/UNI_Logo.png"} alt="프로필사진"/>
                         </div>
                         <div className="Profile-content">
                             <p>{user.star}</p>

@@ -11,25 +11,28 @@
     border-radius: 20px;
     color: white;
     cursor: pointer;
+    background-color: #4CAF50;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-
-.Edit {
-    background-color: #a0886b;
+.Button-section button:hover {
+    background-color: #1C6F20;
 }
 
-.ChatRoom {
-    background-color: #a0986b;
-}
+/*.Edit {*/
+/*    background-color: #a0886b;*/
+/*}*/
 
-.Report {
-    background-color: indianred;
-}
+/*.ChatRoom {*/
+/*    background-color: #a0886b;*/
+/*}*/
 
-.Chatting {
-    background-color: #4CAF50;
-}
+/*.Report {*/
+/*    background-color: indianred;*/
+/*}*/
 
+/*.Chatting {*/
+/*    background-color: #4CAF50;*/
+/*}*/
 
 .Image-back-container {
     width: 100%;
@@ -64,7 +67,7 @@
 .Image-prof-container {
     height: 200px;
     width: 200px;
-    background-color: wheat;
+    background-color: white;
     border-radius: 20px;
 }
 
