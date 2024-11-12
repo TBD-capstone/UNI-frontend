@@ -14,20 +14,20 @@ const EditPage = () => {
             ...prev,
             region: e.target.value
         }));
-    }
+    };
     const handleChangeTime = (e) => {
         setUser((prev) => ({
             ...prev,
             time: e.target.value
         }));
-    }
+    };
 
     const handleChangeDescription = (e) => {
         setUser((prev) => ({
             ...prev,
             description: e.target.value
         }));
-    }
+    };
 
     const handleClickComplete = () => {
         const user_id = Number(pathname.split('/').at(2));
@@ -40,13 +40,13 @@ const EditPage = () => {
         })
             .then(() => {
                 alert("성공");
+                navigate(`/user/${user.userId}`);
             })
             .catch((err) => {
                 console.log(err);
                 alert('error: fetch fail');
             });
-        navigate(`/user/${user.userId}`);
-    }
+    };
 
     useEffect( () => {
         const user_id = Number(pathname.split('/').at(2));
@@ -92,15 +92,17 @@ const EditPage = () => {
                         </div>
                         <div className="Profile-content">
                             <p>{user.star}</p>
-                            <span>{user.name}</span>
+                            <p>User: {user.userName}</p>
+                            <p>Region: {user.region}</p>
+                            <span>Region: </span>
                             <input
-                                className="Region"
                                 type="text"
                                 value={user.region}
                                 onChange={handleChangeRegion}
                             />
-                            <p>{user.univ}</p>
-                            <p>{user.numEmployment}회 고용</p>
+                            <p>Univ: {user.univ}</p>
+                            <p>Employ count: {user.numEmployment}</p>
+                            <span>Time: </span>
                             <input
                                 type="text"
                                 value={user.time}
@@ -114,8 +116,7 @@ const EditPage = () => {
                     </div>
                     <div className="Context">
                         <span>자기 소개</span>
-                        <input
-                            type="text"
+                        <textarea
                             className="Explain"
                             value={user.description}
                             onChange={handleChangeDescription}
