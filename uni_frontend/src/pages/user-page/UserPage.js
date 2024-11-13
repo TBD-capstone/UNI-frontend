@@ -1,6 +1,7 @@
 import "./UserPage.css";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {useRef, useEffect, useState} from "react";
+import {Status, Wrapper} from "@googlemaps/react-wrapper";
 
 const UserPage = () => {
     const {userId} = useParams();
@@ -8,6 +9,40 @@ const UserPage = () => {
     const {pathname} = useLocation();
     const navigate = useNavigate();
     const commenterId = 1;  // 쿠키 적용 예정
+
+    const render = (status) => {
+        switch (status) {
+            case Status.LOADING:
+                return <>로딩중...</>;
+            case Status.FAILURE:
+                return <>에러 발생</>;
+            case Status.SUCCESS:
+                return <GoogleMap/>;
+        }
+    };
+
+    const GoogleMap = () => {
+
+        const ref = useRef(null);
+        const [googleMap, setGoogleMap] = useState();
+
+        useEffect(() => {
+            if (ref.current) {
+                const initialMap = new window.google.maps.Map(ref.current, {
+                    center: {
+                        lat: 37.5,
+                        lng: 127.0,
+                    },
+                    zoom: 16,
+                    mapId: '42ab71f8619ee4da'
+                });
+
+                setGoogleMap(initialMap);
+            }
+        }, []);
+
+        return <div ref={ref} id='map' style={{ minHeight: '100%' }} />
+    }
 
     const MoveButton = (props) => {
 
@@ -233,7 +268,7 @@ const UserPage = () => {
         user ? (
             <div>
                 <div className="Image-back-container">
-                    <img className="Image-back" src={"/UNI_Logo.png"} alt="배경사진"/>
+                    <img className="Image-back" src={"/UNI_Background.png"} alt="배경사진"/>
                 </div>
                 <div className="Button-section">
                     <MoveButton owner={false}/>
@@ -257,8 +292,11 @@ const UserPage = () => {
                             })}
                         </div>
                     </div>
-                    <SelfPR title="지도" text={user.region}></SelfPR>
-                    <SelfPR title="자기소개" text={user.description}></SelfPR>
+                    <div className="SelfPR">
+                        <span>지도</span>
+                        <Wrapper apiKey={process.env.REACT_APP_API_KEY} render={render}/>
+                    </div>
+                    <SelfPR title="자기소개" text={process.env.REACT_APP_TEST}></SelfPR>
                 </div>
                 <QnaSection userId={user.userId} commenterId={commenterId}/>
             </div>) : null
