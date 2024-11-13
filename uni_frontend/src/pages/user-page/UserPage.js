@@ -2,46 +2,12 @@ import "./UserPage.css";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 
-const dummy_qna = [
-    {
-        qnaId: 1,
-        userId: 2,
-        content: "이건 더미에요",
-        reply: [{
-            replyId: 1,
-            userId: 2,
-            content: "진짜요?"
-        }, {
-            replyId: 2,
-            userId: 2,
-            content: "시간 언제 괜찮으세요"
-        }, {
-            replyId: 3,
-            userId: 1,
-            content: "시간 언제 괜찮으세요"
-        }]
-    }, {
-        qnaId: 2,
-        userId: 1,
-        content: "시간 언제 괜찮으세요",
-        reply: []
-    }, {
-        qnaId: 3,
-        userId: 2,
-        content: "시간 언제 괜찮으세요",
-        reply: []
-    }, {
-        qnaId: 4,
-        userId: 1,
-        content: "시간 언제 괜찮으세요",
-        reply: []
-    }
-]
 const UserPage = () => {
     const {userId} = useParams();
     const [user, setUser] = useState(null);
     const {pathname} = useLocation();
     const navigate = useNavigate();
+    const commenterId = 1;  // 쿠키 적용 예정
 
     const MoveButton = (props) => {
 
@@ -106,34 +72,56 @@ const UserPage = () => {
             </div>
         );
     }
-    const InputBox = (props) => {
-        const [content, setContent] = useState("");
 
-        const handleChangeContent = (e) => {
-            setContent(() => e.target.value);
-        }
-        const handleClickPost = () => {
-            const result = fetch(`${props.url}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({"content": content})
-            })
-                .catch((err) => {
-                    console.log(err);
-                    alert('error: fetch fail - chat');
-                });
-            setContent(() => "");
-        };
-        return (
-            <div className="Input-box">
-                <input type="text" value={content} onChange={handleChangeContent} placeholder="댓글을 써보세요"/>
-                <button onClick={handleClickPost}>Post</button>
-            </div>
-        )
-    }
     const QnaSection = (props) => {
+        const [qnas, setQnas] = useState(null);
+
+        const InputBox = (props) => {
+            const [content, setContent] = useState("");
+
+            const handleChangeContent = (e) => {
+                setContent(() => e.target.value);
+            }
+            const handleClickPost = async () => {
+                const result = fetch(`${props.url}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({"content": content})
+                })
+                    .catch((err) => {
+                        console.log(err);
+                        alert('error: fetch fail - chat');
+                    });
+                setContent(() => "");
+                await fetch(`/api/user/${props.userId}/qnas`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .catch((err) => {
+                        console.log(err);
+                        alert('error: fetch fail');
+                    })
+                    .then(response => response.json())
+                    .then((data) => {
+                        setQnas(() => data);
+                        console.log(data);
+                        // console.log(data); // for debug
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+            };
+            return (
+                <div className="Input-box">
+                    <input type="text" value={content} onChange={handleChangeContent} placeholder="댓글을 써보세요"/>
+                    <button onClick={handleClickPost}>Post</button>
+                </div>
+            )
+        }
         const Qna = (props) => {
             return (
                 <div className="Reply">
@@ -165,30 +153,56 @@ const UserPage = () => {
         const ReplyInput = (props) => {
             const [replyShow, setReplyShow] = useState(false);
             const handleClickReply = () => {
-                setReplyShow((p)=>!p);
+                setReplyShow((p) => !p);
             }
             return (
                 <>
-                    {replyShow && <InputBox url={props.url}/>}
+                    {replyShow && <InputBox userId={props.userId} url={props.url}/>}
                     <div className="Qna-options">
                         <button onClick={handleClickReply}>Reply</button>
                     </div>
                 </>
             )
         }
+        useEffect(() => {
+            fetch(`/api/user/${props.userId}/qnas`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .catch((err) => {
+                    console.log(err);
+                    alert('error: fetch fail');
+                })
+                .then(response => response.json())
+                .then((data) => {
+                    setQnas(() => data);
+                    // console.log(data); // for debug
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }, [props.userId]);
 
         return (
-            props.qnas.map((data, i) => {
-                return (
-                    <div key={`Qna-${data.qnaId}`}>
-                        <Qna data={data}/>
-                        <div className="Qna-box">
-                            <QnaBox data={data.reply} key={`QnaBox-${data.qnaId}`}/>
-                            <ReplyInput url={`/user/${userId}/qnas/${data.qnaId}/replies`} />
+            <div className="Qna-container">
+                {Array.isArray(qnas) && qnas.map((data, i) => {
+                    return (
+                        <div key={`Qna-${i}`}>
+                            <Qna data={data}/>
+                            <div className="Qna-box">
+                                <QnaBox data={data.replies} key={`QnaBox-${i}`}/>
+                                <ReplyInput
+                                    userId={props.userId}
+                                    url={`/api/users/${props.userId}/qnas/${data.qnaId}/replies/${props.commenterId}`}
+                                />
+                            </div>
                         </div>
-                    </div>
-                );
-            })
+                    );
+                })}
+                <InputBox userId={props.userId} url={`/api/user/${props.userId}/qnas/${props.commenterId}`}/>
+            </div>
         )
     };
 
@@ -246,10 +260,7 @@ const UserPage = () => {
                     <SelfPR title="지도" text={user.region}></SelfPR>
                     <SelfPR title="자기소개" text={user.description}></SelfPR>
                 </div>
-                <div className="Qna-container">
-                    <QnaSection qnas={user.qnas?user.qnas:dummy_qna}/>
-                    <InputBox url={`/user/${userId}/qnas`}/>
-                </div>
+                <QnaSection userId={user.userId} commenterId={commenterId}/>
             </div>) : null
     );
 }
