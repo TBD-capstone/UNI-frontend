@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import './login.css';
 
 function Login() {
@@ -31,8 +32,17 @@ function Login() {
             const data = await response.json();
 
             if (data.status === 'success') {
+                console.log('로그인 성공 데이터:', data); // 데이터 확인용 로그
+                // 로그인 성공 시 쿠키에 유저 정보 저장
+                Cookies.set('username', data.username, { expires: 1 });
+                Cookies.set('userId', data.userId, { expires: 1 });
+
+                console.log('쿠키에서 가져온 유저명:', Cookies.get('username'));
+                console.log('쿠키에서 가져온 유저 ID:', Cookies.get('userId'));
+
+
                 setStatusMessage(data.message || '로그인 성공!');
-                // 로그인 성공 시 메인 페이지로 이동
+                // 메인 페이지로 이동
                 navigate('/');
             } else {
                 setStatusMessage(data.message || '로그인 실패: 정보가 올바르지 않습니다');

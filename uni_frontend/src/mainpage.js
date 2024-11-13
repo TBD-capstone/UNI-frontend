@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import './mainpage.css';
 
 const categories = [
@@ -22,6 +23,7 @@ const ProfileGrid = () => {
     const [currentAd, setCurrentAd] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [username, setUsername] = useState('');
+    const [userId, setUserId] = useState('');
 
     useEffect(() => {
         const fetchProfiles = async () => {
@@ -49,12 +51,15 @@ const ProfileGrid = () => {
             }
         };
 
-        // 로컬 스토리지에서 로그인 상태 확인
+        // 쿠키에서 로그인 상태 확인
         const checkLoginStatus = () => {
-            const storedUsername = localStorage.getItem('username');
-            if (storedUsername) {
+            const cookieUsername = Cookies.get('username'); // 쿠키에서 username 가져오기
+            const cookieUserId = Cookies.get('userId'); // 쿠키에서 userId 가져오기
+
+            if (cookieUsername && cookieUserId) {
                 setIsLoggedIn(true);
-                setUsername(storedUsername);
+                setUsername(cookieUsername);
+                setUserId(cookieUserId);
             }
         };
 
@@ -126,7 +131,7 @@ const ProfileGrid = () => {
 
                 <div className="dropdown">
                     {isLoggedIn ? (
-                        <Link to="/profile" className="profile-link">
+                        <Link to={`/user/${userId}`} className="user-link">
                             {username}님
                         </Link>
                     ) : (
