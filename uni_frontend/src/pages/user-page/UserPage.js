@@ -94,37 +94,43 @@ const UserPage = () => {
                 setContent(() => e.target.value);
             }
             const handleClickPost = async () => {
-                fetch(`${props.url}`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({"content": content})
-                })
-                    .catch((err) => {
-                        console.log(err);
-                        alert('error: fetch fail - chat');
-                    });
+                const fetchPOST = () => {
+                    return fetch(`${props.url}`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({"content": content})
+                    })
+                        .catch((err) => {
+                            console.log(err);
+                            alert('error: fetch fail - chat');
+                        });
+                }
+                const fetchGET = () => {
+                    return fetch(`/api/user/${props.userId}/qnas`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .catch((err) => {
+                            console.log(err);
+                            alert('error: fetch fail');
+                        })
+                        .then(response => response.json())
+                        .then((data) => {
+                            setQnas(() => data);
+                            console.log(data);
+                            // console.log(data); // for debug
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                        });
+                }
+                await fetchPOST();
+                await fetchGET();
                 setContent(() => "");
-                await fetch(`/api/user/${props.userId}/qnas`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                    .catch((err) => {
-                        console.log(err);
-                        alert('error: fetch fail');
-                    })
-                    .then(response => response.json())
-                    .then((data) => {
-                        setQnas(() => data);
-                        console.log(data);
-                        // console.log(data); // for debug
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                    });
             };
             return (
                 <div className="Input-box">
@@ -206,7 +212,7 @@ const UserPage = () => {
                                 <QnaBox data={data.replies} key={`QnaBox-${i}`}/>
                                 <ReplyInput
                                     userId={props.userId}
-                                    url={`/api/users/${props.userId}/qnas/${data.qnaId}/replies/${props.commenterId}`}
+                                    url={`/api/user/${props.userId}/qnas/${data.qnaId}/replies/${props.commenterId}`}
                                 />
                             </div>
                         </div>
