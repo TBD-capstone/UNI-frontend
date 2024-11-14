@@ -132,7 +132,7 @@ const ProfileGrid = () => {
                 <div className="dropdown">
                     {isLoggedIn ? (
                         <Link to={`/user/${userId}`} className="user-link">
-                            {username}님
+                            {userName}님
                         </Link>
                     ) : (
                         <>
