@@ -22,7 +22,7 @@ const ProfileGrid = () => {
     const [ads, setAds] = useState([]);
     const [currentAd, setCurrentAd] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [username, setUsername] = useState('');
+    const [userName, setUserName] = useState('');
     const [userId, setUserId] = useState('');
 
     useEffect(() => {
@@ -53,12 +53,12 @@ const ProfileGrid = () => {
 
         // 쿠키에서 로그인 상태 확인
         const checkLoginStatus = () => {
-            const cookieUsername = Cookies.get('username'); // 쿠키에서 username 가져오기
+            const cookieUsername = Cookies.get('username'); // 쿠키에서 userName 가져오기
             const cookieUserId = Cookies.get('userId'); // 쿠키에서 userId 가져오기
 
             if (cookieUsername && cookieUserId) {
                 setIsLoggedIn(true);
-                setUsername(cookieUsername);
+                setUserName(cookieUsername);
                 setUserId(cookieUserId);
             }
         };

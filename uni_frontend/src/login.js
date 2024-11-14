@@ -34,7 +34,7 @@ function Login() {
             if (data.status === 'success') {
                 console.log('로그인 성공 데이터:', data); // 데이터 확인용 로그
                 // 로그인 성공 시 쿠키에 유저 정보 저장
-                Cookies.set('userName', data.userName, { expires: 1 });
+                Cookies.set('userName', data.username, { expires: 1 });
                 Cookies.set('userId', data.userId, { expires: 1 });
 
                 console.log('쿠키에서 가져온 유저명:', Cookies.get('userName'));
