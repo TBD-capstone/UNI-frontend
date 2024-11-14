@@ -1,10 +1,26 @@
 .Chat-page {
+    display: flex;
+    flex-direction: row;
+}
+
+.Match-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.Chat-section {
+    border: 1px solid black;
+    min-width: 400px;
 }
 
 .Chat-room {
     display: flex;
     flex-direction: column;
-    overflow: auto;
+    width: 100%;
+    max-height: 100%;
+    overflow: hidden scroll;
     margin-bottom: 60px;
 }
 
@@ -37,7 +53,7 @@
 .Input-section {
     background-color: #D0D0D0;
     display: flex;
-    width: calc(100% - 2 * (5px + 5px));
+    width: auto;
     position: fixed;
     bottom: 0;
     border-radius: 20px;
