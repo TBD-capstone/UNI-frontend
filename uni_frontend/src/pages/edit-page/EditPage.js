@@ -1,11 +1,15 @@
 import "./EditPage.css";
 import {useNavigate, useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {useRef, useEffect, useState} from "react";
+import {Wrapper} from "@googlemaps/react-wrapper";
 
 const EditPage = () => {
     const {userId} = useParams();
     const [user, setUser] = useState(null);
     const [hashtag, setHashtag] = useState("");
+    const profileImage = useRef();
+    const backgroundImage= useRef();
+
     const navigate = useNavigate();
 
     const handleChangeRegion = (e) => {
@@ -64,6 +68,27 @@ const EditPage = () => {
             });
     };
 
+    const handleClickSubmit = () => {
+        if(!profileImage.current || !backgroundImage.current)
+            return;
+        // const formData = new FormData();
+        // formData.append('profileImage', profileImage);
+        // formData.append('backgroundImage', backgroundImage);
+        // fetch(`/api/user/${userId}/update-profile`, {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'multipart/form-data'
+        //     },
+        //     body: formData
+        // }).then((response) => {
+        //     console.log(response);
+        // })
+        //     .catch((err) => {
+        //     console.log(err);
+        //     alert('error: fetch fail');
+        // });
+    };
+
     useEffect(() => {
         (async () => {
             const result = fetch(`/api/user/${userId}`, {
@@ -82,7 +107,6 @@ const EditPage = () => {
                 })
                 .catch((err) => {
                     console.log(err);
-
                 });
         })();
     }, [userId]);
@@ -141,18 +165,26 @@ const EditPage = () => {
                                 onKeyDown={(e) => handleKeyDownHashtag(e)}
                                 onChange={handleChangeHashtag}
                             />
+                            <span>Profile image: </span>
+                            <input type='file' style={{display: "none"}} accept="image/png, image/jpeg" ref={profileImage}/>
+                            <span>Background image: </span>
+                            <input type='file' accept="image/png, image/jpeg" ref={backgroundImage}/>
+                            <button onClick={handleClickSubmit}>Image Upload</button>
+                        </div>
+                    </div>
+                    <div className="Map-section">
+                        <span>Map</span>
+                        <div className="Map-container">
+                            {/*<Wrapper apiKey={process.env.REACT_APP_API_KEY} render={render}/>*/}
                         </div>
                     </div>
                     <div className="SelfPR">
-                        <span>지도</span>
-                        <p>{user.region}</p>
-                    </div>
-                    <div className="SelfPR">
-                        <span>자기 소개</span>
+                        <span>SelfPR</span>
                         <textarea
                             className="Explain"
                             value={user.description}
                             onChange={handleChangeDescription}
+                            maxLength={100}
                         />
                     </div>
                 </div>

@@ -1,7 +1,8 @@
 import "./UserPage.css";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import {useRef, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {Status, Wrapper} from "@googlemaps/react-wrapper";
+import GoogleMap from "./util/GoogleMap";
 
 const UserPage = () => {
     const {userId} = useParams();
@@ -17,32 +18,15 @@ const UserPage = () => {
             case Status.FAILURE:
                 return <>에러 발생</>;
             case Status.SUCCESS:
-                return <GoogleMap/>;
-        }
-    };
-
-    const GoogleMap = () => {
-
-        const ref = useRef(null);
-        const [googleMap, setGoogleMap] = useState();
-
-        useEffect(() => {
-            if (ref.current) {
-                const initialMap = new window.google.maps.Map(ref.current, {
+                return <GoogleMap data={{
                     center: {
-                        lat: 37.5,
-                        lng: 127.0,
+                        lat: 37.2841,
+                        lng: 127.044445,
                     },
                     zoom: 16,
-                    mapId: '42ab71f8619ee4da'
-                });
-
-                setGoogleMap(initialMap);
-            }
-        }, []);
-
-        return <div ref={ref} id='map' style={{ minHeight: '100%' }} />
-    }
+                }}/>;
+        }
+    };
 
     const MoveButton = (props) => {
 
@@ -56,7 +40,7 @@ const UserPage = () => {
             navigate("/chatroom");
         };
         const handleClickChat = () => {
-            const result = fetch("/api/chat/request", {
+            fetch("/api/chat/request", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -99,14 +83,6 @@ const UserPage = () => {
             // )
         )
     };
-    const SelfPR = (props) => {
-        return (
-            <div className="SelfPR">
-                <span>{props.title}</span>
-                <p className="Explain">{props.text}</p>
-            </div>
-        );
-    }
 
     const QnaSection = (props) => {
         const [qnas, setQnas] = useState(null);
@@ -118,7 +94,7 @@ const UserPage = () => {
                 setContent(() => e.target.value);
             }
             const handleClickPost = async () => {
-                const result = fetch(`${props.url}`, {
+                fetch(`${props.url}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -242,26 +218,28 @@ const UserPage = () => {
     };
 
     useEffect(() => {
-        (async () => {
-            const result = fetch(`/api/user/${userId}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+        fetch(`/api/user/${userId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .catch((err) => {
+                console.log(err);
+                alert('error: fetch fail');
             })
-                .catch((err) => {
-                    console.log(err);
-                    alert('error: fetch fail');
-                })
-                .then(response => response.json())
-                .then((data) => {
-                    setUser(() => data);
-                    // console.log(data); // for debug
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        })();
+            .then(response => {
+                if (!response.ok)
+                    throw new Error('GET fail');
+                return response.json();
+            })
+            .then((data) => {
+                setUser(() => data);
+                //console.log(data); // for debug
+            })
+            .catch((err) => {
+                console.error(err);
+            });
     }, [userId, pathname]);
 
     return (
@@ -292,14 +270,19 @@ const UserPage = () => {
                             })}
                         </div>
                     </div>
-                    <div className="SelfPR">
-                        <span>지도</span>
-                        <Wrapper apiKey={process.env.REACT_APP_API_KEY} render={render}/>
+                    <div className="Map-section">
+                        <span>Map</span>
+                        <div className="Map-container">
+                            <Wrapper apiKey={process.env.REACT_APP_API_KEY} render={render}/>
+                        </div>
                     </div>
-                    <SelfPR title="자기소개" text={process.env.REACT_APP_TEST}></SelfPR>
+                    <div className="SelfPR">
+                        <span>SelfPR</span>
+                        <p className="Explain">{user.description}</p>
+                    </div>
                 </div>
                 <QnaSection userId={user.userId} commenterId={commenterId}/>
-            </div>) : null
+            </div>) : <>Page Loading is unaccepted</>
     );
 }
 
