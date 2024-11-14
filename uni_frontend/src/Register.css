@@ -10,15 +10,6 @@
     background-color: #FFFFFF;
 }
 
-/* 작은 로고 */
-.small-logo {
-    width: 100px;
-    height: 100px;
-    background-image: url('../public/UNI_Logo.png');
-    background-size: cover;
-    margin-top: 20px;
-}
-
 /* 메인 로고 */
 .main-logo {
     width: 150px;
@@ -64,6 +55,15 @@
     box-sizing: border-box;
 }
 
+/* react-select 스타일 */
+.select-field {
+    width: 100%;
+    max-width: 400px;
+    margin-top: 10px;
+    font-size: 16px;
+    color: #000000;
+}
+
 /* 인증 버튼 */
 .verify-button {
     background-color: #FFBA00;
@@ -93,28 +93,6 @@
     text-align: center;
 }
 
-/* 소셜 로그인 */
-.social-login {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 30px;
-}
-
-.social-button {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    color: white;
-    cursor: pointer;
-}
-
-
-
 /* 하단 링크 */
 .bottom-link {
     font-size: 14px;
@@ -131,7 +109,7 @@
     max-height: 150px;
     overflow-y: auto;
     width: 100%;
-    max-width: 400px; /* input-field의 너비와 일치시킴 */
+    max-width: 400px;
     z-index: 1000;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     margin-top: 5px;
@@ -146,32 +124,6 @@
 
 .dropdown-item:hover {
     background-color: #f0f0f0;
-}
-
-
-/* 태블릿 (화면 너비가 768px 이하일 때) */
-@media (max-width: 768px) {
-    .signup-page {
-        padding: 15px;
-        max-width: 500px;
-    }
-
-    .signup-title {
-        font-size: 26px;
-    }
-
-    .input-field, .signup-button {
-        max-width: 100%;
-    }
-
-    .social-login {
-        gap: 10px;
-    }
-
-    .social-button {
-        width: 45px;
-        height: 45px;
-    }
 }
 
 /* 모바일 (화면 너비가 480px 이하일 때) */
@@ -201,17 +153,6 @@
         align-self: center;
         width: 100%;
         max-width: 200px;
-    }
-
-    /* 소셜 로그인 버튼 크기 */
-    .social-login {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .social-button {
-        width: 40px;
-        height: 40px;
     }
 
     /* 하단 링크 정렬 */
