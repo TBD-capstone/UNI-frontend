@@ -1,13 +1,16 @@
-import {dummy_l} from '../Dummy';
 import "./EditPage.css";
-import {useLocation, useNavigate} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {useNavigate, useParams} from "react-router-dom";
+import {useRef, useEffect, useState} from "react";
+import {Wrapper} from "@googlemaps/react-wrapper";
 
 const EditPage = () => {
+    const {userId} = useParams();
     const [user, setUser] = useState(null);
-    const {pathname} = useLocation();
+    const [hashtag, setHashtag] = useState("");
+    const profileImage = useRef();
+    const backgroundImage= useRef();
+
     const navigate = useNavigate();
-    const main_id = 0;  //접속한 사용자 ID
 
     const handleChangeRegion = (e) => {
         setUser((prev) => ({
@@ -29,9 +32,26 @@ const EditPage = () => {
         }));
     };
 
+    const handleChangeHashtag = (e) => {
+        setHashtag((prev) => e.target.value);
+    }
+
+    const handleKeyDownHashtag = (e) => {
+        if (e.key === "Enter" && hashtag !== "") {
+            if (user.hashtags.includes(hashtag))
+                alert("이미 존재하는 해시태그입니다.");
+            else {
+                setUser((prev) => ({
+                    ...prev,
+                    hashtags: [...prev.hashtags, hashtag]
+                }));
+                setHashtag("");
+            }
+        }
+    }
+
     const handleClickComplete = () => {
-        const user_id = Number(pathname.split('/').at(2));
-        const result = fetch(`/api/user/${user_id}`, {
+        const result = fetch(`/api/user/${userId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -48,10 +68,30 @@ const EditPage = () => {
             });
     };
 
-    useEffect( () => {
-        const user_id = Number(pathname.split('/').at(2));
+    const handleClickSubmit = () => {
+        if(!profileImage.current || !backgroundImage.current)
+            return;
+        // const formData = new FormData();
+        // formData.append('profileImage', profileImage);
+        // formData.append('backgroundImage', backgroundImage);
+        // fetch(`/api/user/${userId}/update-profile`, {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'multipart/form-data'
+        //     },
+        //     body: formData
+        // }).then((response) => {
+        //     console.log(response);
+        // })
+        //     .catch((err) => {
+        //     console.log(err);
+        //     alert('error: fetch fail');
+        // });
+    };
+
+    useEffect(() => {
         (async () => {
-            const result = fetch(`/api/user/${user_id}`, {
+            const result = fetch(`/api/user/${userId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -60,7 +100,6 @@ const EditPage = () => {
                 .catch((err) => {
                     console.log(err);
                     alert('error: fetch fail');
-                    setUser(dummy_l[user_id]);
                 })
                 .then(response => response.json())
                 .then((data) => {
@@ -68,10 +107,9 @@ const EditPage = () => {
                 })
                 .catch((err) => {
                     console.log(err);
-
                 });
         })();
-    }, [pathname]);
+    }, [userId]);
 
     return (
         user ? (
@@ -83,7 +121,8 @@ const EditPage = () => {
                     <button
                         className="Complete"
                         onClick={handleClickComplete}
-                    >수정</button>
+                    >Edit
+                    </button>
                 </div>
                 <div className="Content-container">
                     <div className="Profile-container">
@@ -93,7 +132,6 @@ const EditPage = () => {
                         <div className="Profile-content">
                             <p>{user.star}</p>
                             <p>User: {user.userName}</p>
-                            <p>Region: {user.region}</p>
                             <span>Region: </span>
                             <input
                                 type="text"
@@ -108,18 +146,45 @@ const EditPage = () => {
                                 value={user.time}
                                 onChange={handleChangeTime}
                             />
+                            {user.hashtags && user.hashtags.map((hashtag, i) => {
+                                return (
+                                    <div className="Hashtag" key={`hashtag-${i}`}>
+                                        <span>#{hashtag}</span>
+                                        <button onClick={() => setUser((prev) => ({
+                                            ...prev,
+                                            hashtags: prev.hashtags.filter(word => word !== hashtag)
+                                        }))}>X
+                                        </button>
+                                    </div>
+                                )
+                            })}
+                            <input
+                                type="text"
+                                value={hashtag}
+                                placeholder="hashtag"
+                                onKeyDown={(e) => handleKeyDownHashtag(e)}
+                                onChange={handleChangeHashtag}
+                            />
+                            <span>Profile image: </span>
+                            <input type='file' style={{display: "none"}} accept="image/png, image/jpeg" ref={profileImage}/>
+                            <span>Background image: </span>
+                            <input type='file' accept="image/png, image/jpeg" ref={backgroundImage}/>
+                            <button onClick={handleClickSubmit}>Image Upload</button>
                         </div>
                     </div>
-                    <div className="Context">
-                        <span>지도</span>
-                        <p>{user.region}</p>
+                    <div className="Map-section">
+                        <span>Map</span>
+                        <div className="Map-container">
+                            {/*<Wrapper apiKey={process.env.REACT_APP_API_KEY} render={render}/>*/}
+                        </div>
                     </div>
-                    <div className="Context">
-                        <span>자기 소개</span>
+                    <div className="SelfPR">
+                        <span>SelfPR</span>
                         <textarea
                             className="Explain"
                             value={user.description}
                             onChange={handleChangeDescription}
+                            maxLength={100}
                         />
                     </div>
                 </div>

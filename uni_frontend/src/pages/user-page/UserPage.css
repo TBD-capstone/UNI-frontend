@@ -11,25 +11,28 @@
     border-radius: 20px;
     color: white;
     cursor: pointer;
+    background-color: #4CAF50;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-
-.Edit {
-    background-color: #a0886b;
+.Button-section button:hover {
+    background-color: #1C6F20;
 }
 
-.ChatRoom {
-    background-color: #a0986b;
-}
+/*.Edit {*/
+/*    background-color: #a0886b;*/
+/*}*/
 
-.Report {
-    background-color: indianred;
-}
+/*.ChatRoom {*/
+/*    background-color: #a0886b;*/
+/*}*/
 
-.Chatting {
-    background-color: #4CAF50;
-}
+/*.Report {*/
+/*    background-color: indianred;*/
+/*}*/
 
+/*.Chatting {*/
+/*    background-color: #4CAF50;*/
+/*}*/
 
 .Image-back-container {
     width: 100%;
@@ -64,7 +67,7 @@
 .Image-prof-container {
     height: 200px;
     width: 200px;
-    background-color: wheat;
+    background-color: white;
     border-radius: 20px;
 }
 
@@ -77,21 +80,35 @@
 .Profile-content {
     text-align: left;
 }
-
-.Region {
-    float: right;
+.Hashtag {
+    padding: 2px;
+    border-radius: 10px;
+    background-color: aquamarine;
 }
 
-.Context {
+.Map-section {
+    text-align: center;
+    width: 300px;
     margin-top: 40px;
-    width: 250px;
-    height: 250px;
-    background-color: #D0D0D0;
-    display: flex;
-    flex-direction: column;
+}
+
+.Map-container {
+    width: 100%;
+    height: 300px;
+}
+
+.SelfPR {
+    width: 300px;
+    margin-top: 40px;
+}
+
+.SelfPR span{
+    text-align: center;
 }
 
 .Explain {
+    width: 100%;
+    height: 300px;
     text-align: left;
 }
 

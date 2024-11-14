@@ -163,7 +163,7 @@ const ProfileGrid = () => {
                 {currentProfiles.map((user, index) => (
                     <Link to={`/user/${user.userId}`} key={index} className="profile-card">
                         <img src={user.imgProf || '/path/to/default-image.jpg'} alt="Profile" />
-                        <div className="profile-name">{user.username}</div>
+                        <div className="Profile-name">{user.username}</div>
                         <div className="profile-university">{user.univName}</div>
                         <div className="rating">
                             <span className="star">⭐</span>

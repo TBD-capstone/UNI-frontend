@@ -1,48 +1,32 @@
 import "./UserPage.css";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
+import {Status, Wrapper} from "@googlemaps/react-wrapper";
+import GoogleMap from "./util/GoogleMap";
 
-const dummy_qna = [
-    {
-        qnaId: 1,
-        userId: 2,
-        content: "이건 더미에요",
-        reply: [{
-            replyId: 1,
-            userId: 2,
-            content: "진짜요?"
-        }, {
-            replyId: 2,
-            userId: 2,
-            content: "시간 언제 괜찮으세요"
-        }, {
-            replyId: 3,
-            userId: 1,
-            content: "시간 언제 괜찮으세요"
-        }]
-    }, {
-        qnaId: 2,
-        userId: 1,
-        content: "시간 언제 괜찮으세요",
-        reply: []
-    }, {
-        qnaId: 3,
-        userId: 2,
-        content: "시간 언제 괜찮으세요",
-        reply: []
-    }, {
-        qnaId: 4,
-        userId: 1,
-        content: "시간 언제 괜찮으세요",
-        reply: []
-    }
-]
 const UserPage = () => {
     const {userId} = useParams();
     const [user, setUser] = useState(null);
-    const [replyInput, setReplyInput] = useState("");
     const {pathname} = useLocation();
     const navigate = useNavigate();
+    const commenterId = 1;  // 쿠키 적용 예정
+
+    const render = (status) => {
+        switch (status) {
+            case Status.LOADING:
+                return <>로딩중...</>;
+            case Status.FAILURE:
+                return <>에러 발생</>;
+            case Status.SUCCESS:
+                return <GoogleMap data={{
+                    center: {
+                        lat: 37.2841,
+                        lng: 127.044445,
+                    },
+                    zoom: 16,
+                }}/>;
+        }
+    };
 
     const MoveButton = (props) => {
 
@@ -56,7 +40,7 @@ const UserPage = () => {
             navigate("/chatroom");
         };
         const handleClickChat = () => {
-            const result = fetch("/api/chat/request", {
+            fetch("/api/chat/request", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -99,38 +83,62 @@ const UserPage = () => {
             // )
         )
     };
-    const Context = (props) => {
-        return (
-            <div className="Context">
-                <span>{props.title}</span>
-                <p className="Explain">{props.text}</p>
-            </div>
-        );
-    }
+
     const QnaSection = (props) => {
-        const Qna = (props) => {
-            const handleClickReply = () => {
-                const result = fetch(`/user/${userId}/qnas/${props.data.qnaId}/replies`, {
+        const [qnas, setQnas] = useState(null);
+
+        const InputBox = (props) => {
+            const [content, setContent] = useState("");
+
+            const handleChangeContent = (e) => {
+                setContent(() => e.target.value);
+            }
+            const handleClickPost = async () => {
+                fetch(`${props.url}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({"content": userId})
+                    body: JSON.stringify({"content": content})
                 })
                     .catch((err) => {
                         console.log(err);
                         alert('error: fetch fail - chat');
                     });
-                setReplyInput(() => "");
+                setContent(() => "");
+                await fetch(`/api/user/${props.userId}/qnas`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .catch((err) => {
+                        console.log(err);
+                        alert('error: fetch fail');
+                    })
+                    .then(response => response.json())
+                    .then((data) => {
+                        setQnas(() => data);
+                        console.log(data);
+                        // console.log(data); // for debug
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
             };
+            return (
+                <div className="Input-box">
+                    <input type="text" value={content} onChange={handleChangeContent} placeholder="댓글을 써보세요"/>
+                    <button onClick={handleClickPost}>Post</button>
+                </div>
+            )
+        }
+        const Qna = (props) => {
             return (
                 <div className="Reply">
                     <img src={props.data.imageUrl} alt="User Icon"/>
                     <div>
                         <div className="Reply-content">{props.data.content}</div>
-                        <div className="Qna-options">
-                            <button onClick={handleClickReply}>Reply</button>
-                        </div>
                     </div>
                 </div>
             );
@@ -153,41 +161,22 @@ const UserPage = () => {
                 })
             )
         }
-
-        return (
-            props.qnas.map((data, i) => {
-                return (
-                    <div key={`Qna-${data.qnaId}`}>
-                        <Qna data={data}/>
-                        <div className="Qna-box">
-                            <QnaBox data={data.reply} key={`QnaBox-${data.qnaId}`}/>
-                        </div>
+        const ReplyInput = (props) => {
+            const [replyShow, setReplyShow] = useState(false);
+            const handleClickReply = () => {
+                setReplyShow((p) => !p);
+            }
+            return (
+                <>
+                    {replyShow && <InputBox userId={props.userId} url={props.url}/>}
+                    <div className="Qna-options">
+                        <button onClick={handleClickReply}>Reply</button>
                     </div>
-                );
-            })
-        )
-    };
-    const handleChangeReplyInput = (e) => {
-        setReplyInput(() => e.target.value);
-    }
-    const handleClickPost = () => {
-        const result = fetch(`/user/${userId}/qnas`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({"content": userId})
-        })
-            .catch((err) => {
-                console.log(err);
-                alert('error: fetch fail - chat');
-            });
-        setReplyInput(() => "");
-    };
-
-    useEffect(() => {
-        (async () => {
-            const result = fetch(`/api/user/${userId}`, {
+                </>
+            )
+        }
+        useEffect(() => {
+            fetch(`/api/user/${props.userId}/qnas`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -199,20 +188,65 @@ const UserPage = () => {
                 })
                 .then(response => response.json())
                 .then((data) => {
-                    setUser(() => data);
+                    setQnas(() => data);
+                    // console.log(data); // for debug
                 })
                 .catch((err) => {
                     console.log(err);
-
                 });
-        })();
+        }, [props.userId]);
+
+        return (
+            <div className="Qna-container">
+                {Array.isArray(qnas) && qnas.map((data, i) => {
+                    return (
+                        <div key={`Qna-${i}`}>
+                            <Qna data={data}/>
+                            <div className="Qna-box">
+                                <QnaBox data={data.replies} key={`QnaBox-${i}`}/>
+                                <ReplyInput
+                                    userId={props.userId}
+                                    url={`/api/users/${props.userId}/qnas/${data.qnaId}/replies/${props.commenterId}`}
+                                />
+                            </div>
+                        </div>
+                    );
+                })}
+                <InputBox userId={props.userId} url={`/api/user/${props.userId}/qnas/${props.commenterId}`}/>
+            </div>
+        )
+    };
+
+    useEffect(() => {
+        fetch(`/api/user/${userId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .catch((err) => {
+                console.log(err);
+                alert('error: fetch fail');
+            })
+            .then(response => {
+                if (!response.ok)
+                    throw new Error('GET fail');
+                return response.json();
+            })
+            .then((data) => {
+                setUser(() => data);
+                //console.log(data); // for debug
+            })
+            .catch((err) => {
+                console.error(err);
+            });
     }, [userId, pathname]);
 
     return (
         user ? (
             <div>
                 <div className="Image-back-container">
-                    <img className="Image-back" src={user.img_back} alt="배경사진"/>
+                    <img className="Image-back" src={"/UNI_Background.png"} alt="배경사진"/>
                 </div>
                 <div className="Button-section">
                     <MoveButton owner={false}/>
@@ -220,7 +254,7 @@ const UserPage = () => {
                 <div className="Content-container">
                     <div className="Profile-container">
                         <div className="Image-prof-container">
-                            <img className="Image-prof" src={user.img_prof} alt="프로필사진"/>
+                            <img className="Image-prof" src={"/UNI_Logo.png"} alt="프로필사진"/>
                         </div>
                         <div className="Profile-content">
                             <p>{user.star}</p>
@@ -231,22 +265,24 @@ const UserPage = () => {
                             <p>Time: {user.time}</p>
                             {user.hashtags && user.hashtags.map((hashtag, i) => {
                                 return (
-                                    <span>#{hashtag} </span>
+                                    <span className="Hashtag" key={`hashtag-${i}`}>#{hashtag} </span>
                                 )
                             })}
                         </div>
                     </div>
-                    <Context title="지도" text={user.region}></Context>
-                    <Context title="자기소개" text={user.description}></Context>
-                </div>
-                <div className="Qna-container">
-                    <QnaSection qnas={user.qnas?user.qnas:dummy_qna}/>
-                    <div className="Input-box">
-                        <input type="text" value={replyInput} onChange={handleChangeReplyInput} placeholder="댓글을 써보세요"/>
-                        <button onClick={handleClickPost}>Post</button>
+                    <div className="Map-section">
+                        <span>Map</span>
+                        <div className="Map-container">
+                            <Wrapper apiKey={process.env.REACT_APP_API_KEY} render={render}/>
+                        </div>
+                    </div>
+                    <div className="SelfPR">
+                        <span>SelfPR</span>
+                        <p className="Explain">{user.description}</p>
                     </div>
                 </div>
-            </div>) : null
+                <QnaSection userId={user.userId} commenterId={commenterId}/>
+            </div>) : <>Page Loading is unaccepted</>
     );
 }
 

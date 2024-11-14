@@ -9,6 +9,10 @@
     background-color: #a0886b;
     margin-right: 50px;
     cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.Complete:hover {
+    background-color: #70583b;
 }
 
 .Image-back-container {
@@ -40,6 +44,10 @@
     width: 200px;
     margin-top: -150px;
 }
+.Profile-container input {
+    max-width: 100%;
+    font-size: 12pt;
+}
 
 .Image-prof-container {
     height: 200px;
@@ -55,24 +63,43 @@
 }
 
 .Profile-content {
-    text-align: left;
+    /*text-align: left;*/
 }
 
-.Region {
-    width: 50%;
-    float: right;
-    text-align: right;
+.Hashtag {
+    max-width: max-content;
+    margin: 2px;
+    padding: 2px;
+    border-radius: 10px;
+    background-color: aquamarine;
 }
 
-.Context {
+.Hashtag button {
+    border: none;
+    cursor: pointer;
+    background-color: inherit;
+}
+
+.Map-section {
+    text-align: center;
+    width: 300px;
     margin-top: 40px;
-    width: 250px;
-    height: 250px;
-    background-color: #D0D0D0;
-    display: flex;
-    flex-direction: column;
+}
+
+.Map-container {
+    width: 100%;
+    height: 300px;
+}
+
+.SelfPR {
+    text-align: center;
+    width: 300px;
+    margin-top: 40px;
 }
 
 .Explain {
+    width: 100%;
+    height: 300px;
+    text-align: left;
     flex : 1 0 auto;
 }

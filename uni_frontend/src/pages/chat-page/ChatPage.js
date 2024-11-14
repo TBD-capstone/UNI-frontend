@@ -8,7 +8,7 @@ import SockJS from 'sockjs-client';
 const ChatPage = () => {
     const {roomId} = useParams();
     const {state} = useLocation();
-    const [messages, setMessages] = useState(state.chatMessages);
+    const [messages, setMessages] = useState(state ? state.chatMessages : null);
     const [message, setMessage] = useState("");
     const [requestId, setRequestId] = useState(null);
     const [stompClient, setStompClient] = useState(null)
@@ -41,9 +41,8 @@ const ChatPage = () => {
                 JSON.stringify({requesterId: state.myId, receiverId: state.otherId})
             );
             console.log({requesterId: state.myId, receiverId: state.otherId})
-        }
-        else{
-            alert("매칭을 수락해주세요");
+        } else {
+            alert("매칭을 수락해주세요.");
         }
     };
     const handleClickAccept = () => {
@@ -53,8 +52,8 @@ const ChatPage = () => {
                 {},
                 JSON.stringify({requestId: requestId, accepted: true})
             );
-            console.log({requestId: requestId, accepted: true})
-            setRequestId(()=>null);
+            alert("Matching is accepted.");
+            setRequestId(() => null);
         }
     }
     const handleChangeMessage = (e) => {
@@ -120,7 +119,7 @@ const ChatPage = () => {
             });
             stompClientInstance.subscribe(`/sub/match-response/${state.myId}`, (msg) => {
                 console.log("Received message:", msg.body);
-                alert(msg.body);
+                alert("Matching is accepted.");
             });
         }, (error) => {
             console.error("WebSocket connection error:", error);
@@ -141,43 +140,34 @@ const ChatPage = () => {
     return (
         messages ? (
             <div className="Chat-page">
-                <div className="">
-                    <img src="https://via.placeholder.com/250" alt="프로필 사진"/>
-                    <div className="info">
-                        <div className="name">김현수</div>
-                        <div className="rating">
-                            <span>⭐⭐⭐⭐⭐</span>
-                            <span className="score">4.9</span>
-                        </div>
-                        <div className="details">
-                            서울시 강남구<br/>
-                            서울 교육대학교 3학년<br/>
-                            성사된 매칭횟수: 20<br/>
-                            연락 가능한 시간: 09시 ~ 18시
-                        </div>
+                <div className="Match-section">
+                    <div className="logo"/>
+                    <div className="Profile">
+                        <img src="/UNI_Logo.png" alt="Profile"/>
+                        <div className="Profile-name">김현수</div>
                     </div>
-                    <div className="map">
-                        <img src="https://via.placeholder.com/250x150" alt="활동영역 지도"/>
+                    <div className="Match-button">
+                        {requestId ? <>
+                                <button className="Activated-button" onClick={handleClickAccept}>Accept</button>
+                                <button className="Unactivated-button" >Match</button>
+                            </>
+                            : <>
+                                <button className="Unactivated-button">Accept</button>
+                                <button className="Activated-button" onClick={handleClickMatch}>Match</button>
+                            </>}
                     </div>
-                    {requestId && (<button className="apply-button" onClick={handleClickAccept}>매칭 수락</button>)}
                 </div>
                 <div className="Chat-section">
-                    <div className="Chat-room">
-                        <ChatBox chatList={messages} userId={state.myId}/>
-                    </div>
-                    <div className="Input-section">
-                        <button className="Match-button" onClick={handleClickMatch}>match</button>
-                        <input
-                            className="Input-box"
-                            value={message}
-                            onChange={handleChangeMessage}
-                            onKeyDown={(e) => handleKeyDownMessage(e)}
-                            placeholder={'메시지 입력'}/>
-                        <button
-                            className="Send-button"
-                            onClick={handleClickSend}>send
-                        </button>
-                    </div>
+                    <ChatBox chatList={messages} userId={state.myId}/>
+                </div>
+                <div className="Input-section">
+                    <input
+                        className="Input-box"
+                        value={message}
+                        onChange={handleChangeMessage}
+                        onKeyDown={(e) => handleKeyDownMessage(e)}
+                        placeholder={'Input message'}/>
+                    <button onClick={handleClickSend}>send</button>
                 </div>
 
             </div>) : null
