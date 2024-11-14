@@ -131,6 +131,15 @@
     border: 1px solid #ccc;
     border-radius: 5px;
 }
+.ad-status-dropdown {
+    margin-top: 10px;
+}
+
+.ad-status-dropdown select {
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
 
 
 /* 페이지네이션 스타일 */
