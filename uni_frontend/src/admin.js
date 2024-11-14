@@ -10,18 +10,11 @@ function AdminPage() {
     const [dailyVisitors, setDailyVisitors] = useState(0);
     const [monthlyVisitors, setMonthlyVisitors] = useState(0);
 
-    // 샘플 신고 데이터
-    const [reportData, setReportData] = useState([
-        { id: 1, reporter: '유저 A', content: '부적절한 내용', date: '2024-01-01' },
-        { id: 2, reporter: '유저 B', content: '스팸 광고', date: '2024-01-02' },
-        { id: 3, reporter: '유저 C', content: '허위 정보', date: '2024-01-03' },
-    ]);
-
     // 샘플 광고 데이터
     const [adData, setAdData] = useState([
-        { id: 1, advertiser: '회사 A', title: '여름 세일 광고', status: '개시중', startDate: '2024-01-01', endDate: '2024-01-31', imageUrl: 'https://via.placeholder.com/300x200' },
-        { id: 2, advertiser: '회사 B', title: '신제품 출시', status: '개시하기', startDate: '2024-02-01', endDate: '2024-02-28', imageUrl: 'https://via.placeholder.com/300x200' },
-        { id: 3, advertiser: '회사 C', title: '할인 이벤트', status: '개시중', startDate: '2024-03-01', endDate: '2024-03-31', imageUrl: 'https://via.placeholder.com/300x200' },
+        { id: 1, advertiser: '회사 A', title: '여름 세일 광고', status: '게시 전', startDate: '2024-01-01', endDate: '2024-01-31', imageUrl: 'https://via.placeholder.com/300x200' },
+        { id: 2, advertiser: '회사 B', title: '신제품 출시', status: '게시 중', startDate: '2024-02-01', endDate: '2024-02-28', imageUrl: 'https://via.placeholder.com/300x200' },
+        { id: 3, advertiser: '회사 C', title: '할인 이벤트', status: '게시 종료', startDate: '2024-03-01', endDate: '2024-03-31', imageUrl: 'https://via.placeholder.com/300x200' },
     ]);
 
     useEffect(() => {
@@ -39,22 +32,68 @@ function AdminPage() {
         setSelectedAdId(selectedAdId === adId ? null : adId);
     };
 
-    const toggleAdStatus = (adId) => {
+    const changeAdStatus = async (adId, newStatus) => {
+        // 상태를 로컬에서 변경
         setAdData((prevData) =>
             prevData.map((ad) =>
-                ad.id === adId
-                    ? { ...ad, status: ad.status === '개시중' ? '개시하기' : '개시중' }
-                    : ad
+                ad.id === adId ? { ...ad, status: newStatus } : ad
             )
         );
+
+        // 변경된 상태를 백엔드에 전송
+        try {
+            const response = await fetch('/api/admin/ad', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ adId: adId, status: newStatus }),
+            });
+
+            const result = await response.json();
+            if (result.status !== 'success') {
+                console.error('광고 상태 업데이트 실패:', result.message);
+            } else {
+                console.log('광고 상태가 성공적으로 업데이트되었습니다.');
+            }
+        } catch (error) {
+            console.error('광고 상태 업데이트 중 오류가 발생했습니다:', error);
+        }
     };
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
 
+    const handleNewAdSubmit = async (e) => {
+        e.preventDefault();
+        const newAd = {
+            advertiser: e.target.advertiser.value,
+            title: e.target.title.value,
+            adStatus: '게시 전', // 기본 상태를 "게시 전"으로 설정
+            startDate: e.target.startDate.value,
+            endDate: e.target.endDate.value,
+            imageUrl: e.target.imageUrl.value,
+        };
+
+        try {
+            const response = await fetch('/api/admin/ad/new', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newAd),
+            });
+            const result = await response.json();
+            if (result.status === 'success') {
+                setAdData([...adData, { ...newAd, id: result.adId }]);
+                alert("광고가 성공적으로 등록되었습니다.");
+            } else {
+                console.error('광고 등록 실패:', result.message);
+            }
+        } catch (error) {
+            console.error('광고 등록 중 오류가 발생했습니다:', error);
+        }
+    };
+
     // 현재 탭에 따라 데이터를 선택
-    const data = activeTab === '신고확인' ? reportData : adData;
+    const data = activeTab === '신고확인' ? [] : adData; // 샘플 데이터가 없는 경우 대체
     const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
@@ -77,37 +116,15 @@ function AdminPage() {
                 <div className={`tab ${activeTab === '신고확인' ? 'active' : ''}`} onClick={() => handleTabClick('신고확인')}>
                     신고확인
                 </div>
-                <div className={`tab ${activeTab === '광고관리' ? 'active' : ''}`} onClick={() => handleTabClick('광고관리')}>
-                    광고관리
+                <div className={`tab ${activeTab === '광고게시' ? 'active' : ''}`} onClick={() => handleTabClick('광고게시')}>
+                    광고게시
+                </div>
+                <div className={`tab ${activeTab === '광고등록' ? 'active' : ''}`} onClick={() => handleTabClick('광고등록')}>
+                    광고등록
                 </div>
             </div>
 
-            {activeTab === '신고확인' && (
-                <div className="table-container">
-                    <table className="table">
-                        <thead>
-                        <tr>
-                            <th>신고자</th>
-                            <th>내용</th>
-                            <th>날짜</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {currentData.map((report) => (
-                            <React.Fragment key={report.id}>
-                                <tr onClick={() => setSelectedAdId(report.id)}>
-                                    <td>{report.reporter}</td>
-                                    <td>{report.content}</td>
-                                    <td>{report.date}</td>
-                                </tr>
-                            </React.Fragment>
-                        ))}
-                        </tbody>
-                    </table>
-                </div>
-            )}
-
-            {activeTab === '광고관리' && (
+            {activeTab === '광고게시' && (
                 <div className="table-container">
                     <table className="table">
                         <thead>
@@ -125,16 +142,29 @@ function AdminPage() {
                                     <td>{ad.advertiser}</td>
                                     <td>{ad.title}</td>
                                     <td>{ad.startDate} ~ {ad.endDate}</td>
-                                    <td className="status" onClick={(e) => { e.stopPropagation(); toggleAdStatus(ad.id); }}>
-                                        {ad.status}
-                                    </td>
+                                    <td className="status">{ad.status}</td>
                                 </tr>
                                 {selectedAdId === ad.id && (
                                     <tr className="ad-details">
                                         <td colSpan="4">
                                             <div className="ad-image-content">
                                                 <h4>광고 이미지</h4>
-                                                <img src={ad.imageUrl} alt="광고 이미지" className="image-placeholder" />
+                                                <img
+                                                    src={ad.imageUrl}
+                                                    alt="광고 이미지"
+                                                    className="selected-ad-image"
+                                                />
+                                                <div className="ad-status-dropdown">
+                                                    <label>상태 변경:</label>
+                                                    <select
+                                                        value={ad.status}
+                                                        onChange={(e) => changeAdStatus(ad.id, e.target.value)}
+                                                    >
+                                                        <option value="게시 전">게시 전</option>
+                                                        <option value="게시 중">게시 중</option>
+                                                        <option value="게시 종료">게시 종료</option>
+                                                    </select>
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>
@@ -146,17 +176,56 @@ function AdminPage() {
                 </div>
             )}
 
-            <div className="pagination">
-                {[...Array(totalPages)].map((_, index) => (
-                    <button
-                        key={index}
-                        onClick={() => handlePageChange(index + 1)}
-                        className={currentPage === index + 1 ? 'active' : ''}
-                    >
-                        {index + 1}
-                    </button>
-                ))}
-            </div>
+            {activeTab === '광고등록' && (
+                <div className="ad-registration">
+                    <h3>새 광고 등록</h3>
+                    <form onSubmit={handleNewAdSubmit}>
+                        <label>
+                            광고주:
+                            <input type="text" name="advertiser" required />
+                        </label>
+                        <label>
+                            광고 제목:
+                            <input type="text" name="title" required />
+                        </label>
+                        <label>
+                            광고 상태:
+                            <select name="adStatus" defaultValue="게시 전" required>
+                                <option value="게시 전">게시 전</option>
+                                <option value="게시 중">게시 중</option>
+                                <option value="게시 종료">게시 종료</option>
+                            </select>
+                        </label>
+                        <label>
+                            시작 날짜:
+                            <input type="date" name="startDate" required />
+                        </label>
+                        <label>
+                            종료 날짜:
+                            <input type="date" name="endDate" required />
+                        </label>
+                        <label>
+                            이미지 URL:
+                            <input type="text" name="imageUrl" required />
+                        </label>
+                        <button type="submit">등록</button>
+                    </form>
+                </div>
+            )}
+
+            {activeTab !== '광고등록' && (
+                <div className="pagination">
+                    {[...Array(totalPages)].map((_, index) => (
+                        <button
+                            key={index}
+                            onClick={() => handlePageChange(index + 1)}
+                            className={currentPage === index + 1 ? 'active' : ''}
+                        >
+                            {index + 1}
+                        </button>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }
