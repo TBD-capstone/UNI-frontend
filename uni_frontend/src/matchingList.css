@@ -1,0 +1,46 @@
+.matching-status-page {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+.matching-status-page h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #4caf50;
+}
+
+.matching-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.matching-item {
+    background-color: #ffffff;
+    margin: 10px 0;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.matching-item p {
+    margin: 5px 0;
+}
+
+.review-button {
+    padding: 10px 15px;
+    background-color: #4caf50;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.review-button:hover {
+    background-color: #45a049;
+}

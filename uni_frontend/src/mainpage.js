@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import './mainpage.css';
 
 const categories = [
-    { icon: './icons/travel-guide.png', label: '여행가이드' },
-    { icon: './icons/property.png', label: '부동산행정업무' },
-    { icon: './icons/language-exchange.png', label: '언어교환' },
-    { icon: './icons/find-room.png', label: '자취방 구하기' },
+    { icon: './icons/travel-guide.png', label: '여행' },
+    { icon: './icons/property.png', label: '행정' },
+    { icon: './icons/language-exchange.png', label: '언어' },
+    { icon: './icons/find-room.png', label: '대학생활' },
     { icon: './icons/category5.png', label: '맛집 탐방' },
 ];
 
