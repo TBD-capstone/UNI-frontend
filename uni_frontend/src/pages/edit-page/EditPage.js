@@ -7,9 +7,8 @@ const EditPage = () => {
     const {userId} = useParams();
     const [user, setUser] = useState(null);
     const [hashtag, setHashtag] = useState("");
-    const profileImage = useRef();
-    const backgroundImage= useRef();
-
+    const [profileImage, setProfileImage] = useState(null);
+    const [backgroundImage, setBackgroundImage] = useState(null);
     const navigate = useNavigate();
 
     const handleChangeRegion = (e) => {
@@ -68,25 +67,41 @@ const EditPage = () => {
             });
     };
 
-    const handleClickSubmit = () => {
-        if(!profileImage.current || !backgroundImage.current)
+
+    const handleChangeProfileImage = (e) => {
+        setProfileImage(e.target.files[0]);
+    }
+    const handleChangeBackgroundImage = (e) => {
+        setBackgroundImage(e.target.files[0]);
+    }
+
+    const handleClickSubmit = (e) => {
+        e.preventDefault();
+
+        if (!profileImage && !backgroundImage)
             return;
-        // const formData = new FormData();
-        // formData.append('profileImage', profileImage);
-        // formData.append('backgroundImage', backgroundImage);
-        // fetch(`/api/user/${userId}/update-profile`, {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'multipart/form-data'
-        //     },
-        //     body: formData
-        // }).then((response) => {
-        //     console.log(response);
-        // })
-        //     .catch((err) => {
-        //     console.log(err);
-        //     alert('error: fetch fail');
-        // });
+
+        const formData = new FormData();
+        if (profileImage)
+            formData.append('profileImage', profileImage);
+        if (backgroundImage)
+            formData.append('backgroundImage', backgroundImage);
+
+        fetch(`/api/user/${userId}/update-profile`, {
+            method: 'POST',
+            // headers: {
+            //     'Content-Type': 'multipart/form-data'
+            // },
+            body: formData
+        }).then(response => response.json())
+            .then((data) => {
+                setUser((prev) => ({...prev, imgBack: data.imgBack, imgProf: data.imgProf}));
+                alert('Upload Success!');
+            })
+            .catch((err) => {
+                console.log(err);
+                alert('error: fetch fail');
+            });
     };
 
     useEffect(() => {
@@ -115,7 +130,7 @@ const EditPage = () => {
         user ? (
             <div>
                 <div className="Image-back-container">
-                    <img className="Image-back" src={user.img_back} alt="배경사진"/>
+                    <img className="Image-back" src={user.imgBack} alt="배경사진"/>
                 </div>
                 <div>
                     <button
@@ -127,7 +142,7 @@ const EditPage = () => {
                 <div className="Content-container">
                     <div className="Profile-container">
                         <div className="Image-prof-container">
-                            <img className="Image-prof" src={user.img_prof} alt="프로필사진"/>
+                            <img className="Image-prof" src={user.imgProf} alt="프로필사진"/>
                         </div>
                         <div className="Profile-content">
                             <p>{user.star}</p>
@@ -166,9 +181,9 @@ const EditPage = () => {
                                 onChange={handleChangeHashtag}
                             />
                             <span>Profile image: </span>
-                            <input type='file' style={{display: "none"}} accept="image/png, image/jpeg" ref={profileImage}/>
+                            <input type='file' accept="image/png, image/jpeg" onChange={handleChangeProfileImage}/>
                             <span>Background image: </span>
-                            <input type='file' accept="image/png, image/jpeg" ref={backgroundImage}/>
+                            <input type='file' accept="image/png, image/jpeg" onChange={handleChangeBackgroundImage}/>
                             <button onClick={handleClickSubmit}>Image Upload</button>
                         </div>
                     </div>

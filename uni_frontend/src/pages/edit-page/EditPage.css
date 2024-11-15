@@ -52,8 +52,9 @@
 .Image-prof-container {
     height: 200px;
     width: 200px;
-    background-color: wheat;
+    background-color: white;
     border-radius: 20px;
+    overflow: hidden;
 }
 
 .Image-prof {
