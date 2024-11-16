@@ -16,6 +16,7 @@
 
 .uni-logo {
     height: 40px;
+    object-fit: contain; /* 이미지가 비율에 맞게 조정되도록 설정 */
 }
 
 .menu-icons {
@@ -101,3 +102,4 @@
 .logout-button:hover {
     background-color: #ffe5e5;
 }
+
