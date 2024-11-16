@@ -10,14 +10,19 @@ const ChatPage = () => {
     const {state} = useLocation();
     const [messages, setMessages] = useState(state ? state.chatMessages : null);
     const [message, setMessage] = useState("");
-    const [requestId, setRequestId] = useState(null);
+    const [matchingId, setMatchingId] = useState(null);
     const [stompClient, setStompClient] = useState(null)
 
     const ChatBox = (props) => {
         const Chat = (props) => {
+            const [isTranslate, setIsTranslate] = useState(false);
             return (
                 <div className="Chat">
-                    <span className={props.owner ? "Mine" : "Them"}>{props.text}</span>
+                    <div className={props.owner ? "Mine" : "Them"}>
+                        <span>{props.text}</span>
+                        {isTranslate && <><br/><span>{props.translate}</span></>}
+                    </div>
+                    <button className={props.owner ? "Right" : "Left"} onClick={() => {setIsTranslate(prev => !prev)}}>T</button>
                 </div>
             )
         };
@@ -34,7 +39,7 @@ const ChatPage = () => {
         )
     }
     const handleClickMatch = () => {
-        if (stompClient && !requestId) {
+        if (stompClient && !matchingId) {
             stompClient.send(
                 `/pub/match/request`,
                 {},
@@ -46,14 +51,14 @@ const ChatPage = () => {
         }
     };
     const handleClickAccept = () => {
-        if (stompClient && requestId) {
+        if (stompClient && matchingId) {
             stompClient.send(
                 `/pub/match/respond`,
                 {},
-                JSON.stringify({requestId: requestId, accepted: true})
+                JSON.stringify({matchingId: matchingId, accepted: true})  // requestId -> matchingId로 수정 예정
             );
             alert("Matching is accepted.");
-            setRequestId(() => null);
+            setMatchingId(() => null);
         }
     }
     const handleChangeMessage = (e) => {
@@ -76,6 +81,11 @@ const ChatPage = () => {
             setMessage(() => "");
         }
     }
+    const translateChat = (text) => {
+        const fetchTranslate = (text) => {
+            console.log(`번역할 문장: ${text}`);
+        };
+    };
 
     useEffect(() => {
         // (async () => {
@@ -115,7 +125,8 @@ const ChatPage = () => {
             stompClientInstance.subscribe(`/sub/match-request/${state.myId}`, (msg) => {
                 console.log("Received message:", msg.body);
                 const newMessage = JSON.parse(msg.body);
-                setRequestId(() => newMessage.requestId)
+                if(newMessage.requesterId === state.otherId)
+                    setMatchingId(() => newMessage.matchingId);   //requestId -> matchingId로 수정 예정
             });
             stompClientInstance.subscribe(`/sub/match-response/${state.myId}`, (msg) => {
                 console.log("Received message:", msg.body);
@@ -147,7 +158,7 @@ const ChatPage = () => {
                         <div className="Profile-name">김현수</div>
                     </div>
                     <div className="Match-button">
-                        {requestId ? <>
+                        {matchingId ? <>
                                 <button className="Activated-button" onClick={handleClickAccept}>Accept</button>
                                 <button className="Unactivated-button" >Match</button>
                             </>

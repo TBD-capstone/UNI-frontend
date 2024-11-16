@@ -1,7 +1,7 @@
 import "./EditPage.css";
 import {useNavigate, useParams} from "react-router-dom";
-import {useRef, useEffect, useState} from "react";
-import {Wrapper} from "@googlemaps/react-wrapper";
+import {useEffect, useState} from "react";
+import GoogleMap from "../user-page/util/GoogleMap";
 
 const EditPage = () => {
     const {userId} = useParams();
@@ -9,6 +9,25 @@ const EditPage = () => {
     const [hashtag, setHashtag] = useState("");
     const [profileImage, setProfileImage] = useState(null);
     const [backgroundImage, setBackgroundImage] = useState(null);
+    const [position, setPosition] = useState(null);
+    const [markerName, setMarkerName] = useState("");
+    const [markerDescription, setMarkerDescription] = useState("");
+    const [markerAdd, setMarkerAdd] = useState(false);
+    const [markerDelete, setMarkerDelete] = useState(false);
+    const [markerUpdate, setMarkerUpdate] = useState(false);
+    const [markers, setMarkers] = useState([{
+        id: 1,
+        latitude: 37.282,
+        longitude: 127.043,
+        name: "first",
+        description: "this is first"
+    }, {
+        id: 2,
+        latitude: 37.283,
+        longitude: 127.044,
+        name: "second",
+        description: "this is second"
+    }])
     const navigate = useNavigate();
 
     const handleChangeRegion = (e) => {
@@ -32,7 +51,7 @@ const EditPage = () => {
     };
 
     const handleChangeHashtag = (e) => {
-        setHashtag((prev) => e.target.value);
+        setHashtag(() => e.target.value);
     }
 
     const handleKeyDownHashtag = (e) => {
@@ -104,9 +123,86 @@ const EditPage = () => {
             });
     };
 
+    const setting = (latLng) => {
+        setPosition(() => ({
+            latitude: latLng.lat,
+            longitude: latLng.lng
+        }));
+    }
+
+    const handleChangeMarkerName = (e) => {
+        setMarkerName(() => e.target.value);
+    }
+    const handleChangeMarkerDescription = (e) => {
+        setMarkerDescription(() => e.target.value);
+    }
+
+    const handleClickAdd = () => {
+        if (!position || markerName.trim() === "" || markerDescription.trim() === "") {
+            alert("There is no marker, or some text is empty.");
+            return;
+        }
+        if (markers.some((e) => e.name === markerName)) {
+            alert("duplicated title existed");
+            return;
+        }
+        const result = fetch(`/api/markers/add/${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                latitude: position.latitude,
+                longitude: position.longitude,
+                name: markerName,
+                description: markerDescription
+            })
+        })
+            .then((response) => {
+                console.log(response.json());
+                alert("Marker add Success!");
+            })
+            .catch((err) => {
+                console.log(err);
+                alert('error: fetch fail');
+            });
+    }
+    const handleClickDelete = () => {
+        if (markerName.trim() === "") {
+            alert("Title text is empty.");
+            return;
+        }
+        const i = markers.findIndex((e) => e.name === markerName);
+        if (i < 0) {
+            alert("duplicated title not existed");
+            return;
+        }
+        const result = fetch(`/api/markers/delete/${markers[i].id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then((response) => {
+                console.log(response.json());
+                alert("Marker delete Success!");
+            })
+            .catch((err) => {
+                console.log(err);
+                alert('error: fetch fail');
+            });
+    }
+    const handleClickUpdate = () => {
+        if (!position || markerName.trim() === "" || markerDescription.trim() === "") {
+            alert("There is no marker, or some text is empty.");
+            return;
+        }
+        alert("미구현");
+    };
+
     useEffect(() => {
         (async () => {
-            const result = fetch(`/api/user/${userId}`, {
+            await fetch(`/api/user/${userId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -123,8 +219,42 @@ const EditPage = () => {
                 .catch((err) => {
                     console.log(err);
                 });
+            await fetch(`/api/markers/user/${userId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .catch((err) => {
+                    console.log(err);
+                    alert('error: fetch fail');
+                })
+                .then(response => response.json())
+                .then((data) => {
+                    setMarkers(() => data);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
         })();
+
     }, [userId]);
+
+    const handleClickMarkerAdd = () => {
+        setMarkerAdd(prev => !prev);
+        setMarkerDelete(() => false);
+        setMarkerUpdate(() => false);
+    };
+    const handleClickMarkerDelete = () => {
+        setMarkerAdd(() => false);
+        setMarkerDelete(prev => !prev);
+        setMarkerUpdate(() => false);
+    };
+    const handleClickMarkerUpdate = () => {
+        setMarkerAdd(() => false);
+        setMarkerDelete(() => false);
+        setMarkerUpdate(prev => !prev);
+    };
 
     return (
         user ? (
@@ -190,8 +320,28 @@ const EditPage = () => {
                     <div className="Map-section">
                         <span>Map</span>
                         <div className="Map-container">
-                            {/*<Wrapper apiKey={process.env.REACT_APP_API_KEY} render={render}/>*/}
+                            <GoogleMap markers={markers} setting={setting}/>
                         </div>
+                        <button onClick={handleClickMarkerAdd}>Marker add</button>
+                        <button onClick={handleClickMarkerDelete}>Marker Delete</button>
+                        <button onClick={handleClickMarkerUpdate}>Marker Update</button>
+                        {(markerAdd || markerDelete) &&
+                            <input
+                                type="text"
+                                placeholder="Marker title"
+                                value={markerName}
+                                onChange={handleChangeMarkerName}
+                            />}
+                        {(markerAdd || markerUpdate) && <input
+                            type="text"
+                            placeholder="Marker explain"
+                            value={markerDescription}
+                            onChange={handleChangeMarkerDescription}
+                        />
+                        }
+                        {markerAdd && <button onClick={handleClickAdd}>Add</button>}
+                        {markerDelete && <button onClick={handleClickDelete}>Delete</button>}
+                        {markerUpdate && <button onClick={handleClickUpdate}>Update</button>}
                     </div>
                     <div className="SelfPR">
                         <span>SelfPR</span>

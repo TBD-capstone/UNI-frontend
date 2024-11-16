@@ -1,7 +1,6 @@
 import "./UserPage.css";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {Status, Wrapper} from "@googlemaps/react-wrapper";
 import GoogleMap from "./util/GoogleMap";
 
 const UserPage = () => {
@@ -9,24 +8,8 @@ const UserPage = () => {
     const [user, setUser] = useState(null);
     const {pathname} = useLocation();
     const navigate = useNavigate();
+    const [markers, setMarkers] = useState(null);
     const commenterId = 1;  // 쿠키 적용 예정
-
-    const render = (status) => {
-        switch (status) {
-            case Status.LOADING:
-                return <>로딩중...</>;
-            case Status.FAILURE:
-                return <>에러 발생</>;
-            case Status.SUCCESS:
-                return <GoogleMap data={{
-                    center: {
-                        lat: 37.2841,
-                        lng: 127.044445,
-                    },
-                    zoom: 16,
-                }}/>;
-        }
-    };
 
     const MoveButton = (props) => {
 
@@ -224,28 +207,47 @@ const UserPage = () => {
     };
 
     useEffect(() => {
-        fetch(`/api/user/${userId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .catch((err) => {
-                console.log(err);
-                alert('error: fetch fail');
+        (async () => {
+            await fetch(`/api/user/${userId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             })
-            .then(response => {
-                if (!response.ok)
-                    throw new Error('GET fail');
-                return response.json();
+                .catch((err) => {
+                    console.log(err);
+                    alert('error: fetch fail');
+                })
+                .then(response => {
+                    if (!response.ok)
+                        throw new Error('GET fail');
+                    return response.json();
+                })
+                .then((data) => {
+                    setUser(() => data);
+                    //console.log(data); // for debug
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+            await fetch(`/api/markers/user/${userId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             })
-            .then((data) => {
-                setUser(() => data);
-                //console.log(data); // for debug
-            })
-            .catch((err) => {
-                console.error(err);
-            });
+                .catch((err) => {
+                    console.log(err);
+                    alert('error: fetch fail');
+                })
+                .then(response => response.json())
+                .then((data) => {
+                    setMarkers(() => data);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        })();
     }, [userId, pathname]);
 
     return (
@@ -279,7 +281,7 @@ const UserPage = () => {
                     <div className="Map-section">
                         <span>Map</span>
                         <div className="Map-container">
-                            <Wrapper apiKey={process.env.REACT_APP_API_KEY} render={render}/>
+                            <GoogleMap markers={markers}/>
                         </div>
                     </div>
                     <div className="SelfPR">
