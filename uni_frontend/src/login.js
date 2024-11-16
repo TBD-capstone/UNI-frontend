@@ -33,7 +33,12 @@ function Login() {
             console.log('로그인 응답 데이터:', data); // 응답 데이터 확인
 
             if (data.status === 'success') {
-                // 쿠키에 로그인 정보 저장
+                // 이전에 저장된 쿠키 제거
+                Cookies.remove('userName', { path: '/' });
+                Cookies.remove('userId', { path: '/' });
+                Cookies.remove('isKorean', { path: '/' });
+
+                // 새 로그인 정보 저장
                 Cookies.set('userName', data.userName, { expires: 1, path: '/' });
                 Cookies.set('userId', data.userId, { expires: 1, path: '/' });
                 Cookies.set('isKorean', data.isKorean, { expires: 1, path: '/' });
@@ -43,7 +48,7 @@ function Login() {
                 console.log('한국인 여부:', Cookies.get('isKorean'));
 
                 setStatusMessage(data.message || '로그인 성공!');
-                navigate('/'); // 메인 페이지로 이동
+                navigate('/main'); // 메인 페이지로 이동
             } else {
                 setStatusMessage(data.message || '로그인 실패: 정보가 올바르지 않습니다.');
             }
@@ -52,7 +57,6 @@ function Login() {
             console.error('로그인 요청 중 오류:', error);
         }
     };
-
 
     return (
         <div className="login-page">
