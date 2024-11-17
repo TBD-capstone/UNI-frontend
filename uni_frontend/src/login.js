@@ -61,13 +61,13 @@ function Login() {
     return (
         <div className="login-page">
             <div className="logo"></div>
-            <h1 className="login-title">로그인</h1>
+            <h1 className="login-title">Login</h1>
 
             <div className="input-container">
                 <input
                     type="email"
                     className="input-field"
-                    placeholder="이메일"
+                    placeholder="E-mail"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
@@ -77,7 +77,7 @@ function Login() {
                 <input
                     type={showPassword ? "text" : "password"}
                     className="input-field"
-                    placeholder="비밀번호"
+                    placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
@@ -86,14 +86,14 @@ function Login() {
                 </span>
             </div>
 
-            <button className="login-button" onClick={handleLogin}>로그인</button>
+            <button className="login-button" onClick={handleLogin}>Login</button>
 
             <div className="status-message">{statusMessage}</div>
 
             <div className="bottom-link">
-                <a href="/forgot-password">비밀번호 분실</a>
+                <a href="/forgot-password">Forget password</a>
                 <br />
-                <Link to="/register">회원가입</Link>
+                <Link to="/register">Sign up</Link>
             </div>
         </div>
     );

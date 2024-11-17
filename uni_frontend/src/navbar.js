@@ -69,7 +69,7 @@ function Navbar() {
 
     return (
         <div className="navbar">
-            <div className="logo">
+            <div className="logo" onClick={() => navigate('/main')}>
                 <img src="/UNI_Logo.png" alt="UNI Logo" className="uni-logo" />
             </div>
 

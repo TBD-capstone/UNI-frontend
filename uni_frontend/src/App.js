@@ -10,6 +10,9 @@ import ChatPage from "./pages/chat-page/ChatPage";
 import Admin from "./admin";
 import ChatRoomPage from "./pages/chatroom-page/ChatRoomPage";
 import Cookies from "js-cookie";
+import MatchingStatus from './matchingList';
+import ChatList from './chatList';
+import Review from './review'; // Review 페이지 추가
 
 function App() {
     return (
@@ -30,6 +33,9 @@ function App() {
                     <Route path="/chat/:roomId" element={<ChatPage />} />
                     <Route path="/admin" element={<Admin />} />
                     <Route path="/chatroom" element={<ChatRoomPage />} />
+                    <Route path="/matching-list" element={<MatchingStatus />} />
+                    <Route path="/chat-list" element={<ChatList />} />
+                    <Route path="/review/:matchingId" element={<Review />} /> {/* 후기 작성 경로 추가 */}
                 </Route>
             </Routes>
         </Router>

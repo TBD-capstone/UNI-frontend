@@ -146,14 +146,14 @@ function Register() {
     return (
         <div className="signup-page">
             <div className="main-logo"></div>
-            <h1 className="signup-title">회원가입</h1>
+            <h1 className="signup-title">Sign Up</h1>
 
             <div className="user-type">
                 <label>
                     <input type="radio" name="userType" value="korean" checked={isKorean} onChange={handleUserTypeChange} /> 한국인 대학생
                 </label>
                 <label>
-                    <input type="radio" name="userType" value="foreigner" checked={!isKorean} onChange={handleUserTypeChange} /> 외국인
+                    <input type="radio" name="userType" value="foreigner" checked={!isKorean} onChange={handleUserTypeChange} /> Foreign
                 </label>
             </div>
 
@@ -164,28 +164,28 @@ function Register() {
                     setUnivName(selectedOption.value);
                     handleUnivVerification();
                 }}
-                placeholder="대학교 선택"
+                placeholder="University"
                 isSearchable
             />
 
-            <input type="email" className="input-field" placeholder="이메일" value={email} onChange={(e) => setEmail(e.target.value)} />
-            <button className="verify-button" onClick={handleEmailVerification} disabled={!univVerified}>이메일 인증하기</button>
+            <input type="email" className="input-field" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <button className="verify-button" onClick={handleEmailVerification} disabled={!univVerified}>Verify E-mail</button>
 
-            <input type="text" className="input-field" placeholder="인증 코드" value={verificationCode} onChange={(e) => setVerificationCode(e.target.value)} />
-            <button className="verify-button" onClick={handleCodeVerification} disabled={!emailVerified}>인증 코드 확인</button>
+            <input type="text" className="input-field" placeholder="Verification code" value={verificationCode} onChange={(e) => setVerificationCode(e.target.value)} />
+            <button className="verify-button" onClick={handleCodeVerification} disabled={!emailVerified}>Verify Code</button>
 
-            <input type="text" className="input-field" placeholder="이름" value={nickname} onChange={(e) => setNickname(e.target.value)} />
+            <input type="text" className="input-field" placeholder="name" value={nickname} onChange={(e) => setNickname(e.target.value)} />
 
-            <input type="password" className="input-field" placeholder="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <input type="password" className="input-field" placeholder="password" value={password} onChange={(e) => setPassword(e.target.value)} />
 
-            <input type="password" className="input-field" placeholder="비밀번호 확인" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+            <input type="password" className="input-field" placeholder="confirm password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
 
-            <button className="signup-button" onClick={handleSubmit}>회원가입</button>
+            <button className="signup-button" onClick={handleSubmit}>Sign Up</button>
 
             <div className="status-message">{statusMessage}</div>
 
             <div className="bottom-link">
-                <Link to="/login">회원이신가요? 로그인하세요</Link>
+                <Link to="/login">Already member? Login</Link>
             </div>
         </div>
     );

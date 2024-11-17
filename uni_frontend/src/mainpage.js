@@ -11,6 +11,14 @@ const categories = [
     { icon: './icons/category5.png', label: '맛집 탐방' },
 ];
 
+// 영어 키워드와 한글 해시태그 매핑
+const keywordMapping = {
+    "trip": "여행",
+    "language": "언어",
+    "college life": "대학생활",
+    "game": "게임",
+};
+
 const ITEMS_PER_PAGE = 8;
 
 const ProfileGrid = () => {
@@ -63,8 +71,9 @@ const ProfileGrid = () => {
             }
 
             if (searchQuery) {
+                const translatedQuery = keywordMapping[searchQuery.toLowerCase()] || searchQuery;
                 filtered = filtered.filter(profile =>
-                    profile.hashtags && profile.hashtags.includes(searchQuery)
+                    profile.hashtags && profile.hashtags.includes(translatedQuery)
                 );
             }
 
