@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './review.css';
 
 function Review() {
-    const { userId, commenterId } = useParams(); // URL에서 userId와 commenterId 가져오기
+    const { userId, commenterId, matchingId } = useParams(); // URL에서 userId, commenterId, matchingId 가져오기
     const [rating, setRating] = useState(0); // 별점
     const [reviewText, setReviewText] = useState(''); // 후기 내용
     const [responseText, setResponseText] = useState(''); // 답변 내용
@@ -11,10 +11,6 @@ function Review() {
     const [responseStatusMessage, setResponseStatusMessage] = useState(''); // 답변 상태 메시지
     const [reviewSubmitted, setReviewSubmitted] = useState(false); // 후기 제출 여부
     const navigate = useNavigate();
-
-    useEffect(() => {
-        // 만약 후기 데이터를 초기화하거나 불러오는 기능이 있다면 여기에 추가
-    }, []);
 
     const handleSubmitReview = async (e) => {
         e.preventDefault();
@@ -25,7 +21,7 @@ function Review() {
         }
 
         try {
-            const response = await fetch(`/api/user/${userId}/review/${commenterId}`, {
+            const response = await fetch(`/api/user/${userId}/review/${commenterId}/matching/${matchingId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -59,13 +55,14 @@ function Review() {
         }
 
         try {
-            const response = await fetch(`/api/user/${userId}/response/${commenterId}`, {
+            const reviewId = matchingId; // Assuming reviewId corresponds to matchingId in this context
+            const response = await fetch(`/api/review/${reviewId}/reply/${commenterId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    response: responseText,
+                    content: responseText,
                 }),
             });
 

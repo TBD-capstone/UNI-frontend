@@ -9,6 +9,8 @@ import EditPage from "./pages/edit-page/EditPage";
 import ChatPage from "./pages/chat-page/ChatPage";
 import Admin from "./admin";
 import ChatRoomPage from "./pages/chatroom-page/ChatRoomPage";
+import MatchingStatus from './matchingList';
+import ChatList from './chatList';
 
 function App() {
     return (
@@ -29,6 +31,8 @@ function App() {
                     <Route path="/chat/:roomId" element={<ChatPage />} />
                     <Route path="/admin" element={<Admin />} />
                     <Route path="/chatroom" element={<ChatRoomPage />} />
+                    <Route path="/matching-list" element={<MatchingStatus />} />
+                    <Route path="/chat-list" element={<ChatList />} />
                 </Route>
             </Routes>
         </Router>
