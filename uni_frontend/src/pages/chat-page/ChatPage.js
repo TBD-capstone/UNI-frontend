@@ -3,6 +3,7 @@ import "./ChatPage.css";
 import {useLocation, useParams} from "react-router-dom";
 import {Stomp} from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
+import Cookies from "js-cookie";
 
 
 const ChatPage = () => {
@@ -11,7 +12,8 @@ const ChatPage = () => {
     const [messages, setMessages] = useState(state ? state.chatMessages : null);
     const [message, setMessage] = useState("");
     const [matchingId, setMatchingId] = useState(null);
-    const [stompClient, setStompClient] = useState(null)
+    const [stompClient, setStompClient] = useState(null);
+    const isKorean = Cookies.get('isKorean') === 'true';
 
     const ChatBox = (props) => {
         const Chat = (props) => {
@@ -162,6 +164,7 @@ const ChatPage = () => {
         });
 
         setStompClient(stompClientInstance);
+        console.log(isKorean);
 
         return () => {
             if (stompClientInstance) {
@@ -183,14 +186,15 @@ const ChatPage = () => {
                         <div className="Profile-name">김현수</div>
                     </div>
                     <div className="Match-button">
-                        {matchingId ? <>
+                        {isKorean?
+                            (matchingId ?
                                 <button className="Activated-button" onClick={handleClickAccept}>Accept</button>
-                                <button className="Unactivated-button">Match</button>
-                            </>
-                            : <>
-                                <button className="Unactivated-button">Accept</button>
+                                :
+                                <button className="Unactivated-button">Accept</button>)
+                            :
                                 <button className="Activated-button" onClick={handleClickMatch}>Match</button>
-                            </>}
+                        }
+
                     </div>
                 </div>
                 <div className="Chat-section">

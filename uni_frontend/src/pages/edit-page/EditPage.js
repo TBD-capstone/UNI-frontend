@@ -365,7 +365,7 @@ const EditPage = () => {
                         </div>
                         <button onClick={handleClickMarkerAdd}>Marker add</button>
                         <button onClick={handleClickMarkerDelete}>Marker Delete</button>
-                        <button onClick={handleClickMarkerUpdate}>Marker Update</button>
+                        {/*<button onClick={handleClickMarkerUpdate}>Marker Update</button>*/}
                         {(markerAdd || markerDelete) &&
                             <input
                                 type="text"
@@ -382,7 +382,7 @@ const EditPage = () => {
                         }
                         {markerAdd && <button onClick={handleClickAdd}>Add</button>}
                         {markerDelete && <button onClick={handleClickDelete}>Delete</button>}
-                        {markerUpdate && <button onClick={handleClickUpdate}>Update</button>}
+                        {/*{markerUpdate && <button onClick={handleClickUpdate}>Update</button>}*/}
                     </div>
                     <div className="SelfPR">
                         <span>SelfPR</span>
