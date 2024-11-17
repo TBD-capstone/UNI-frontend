@@ -7,11 +7,10 @@ import './mainpage.css';
 const categories = [
     { icon: './icons/travel-guide.png', label: 'trip' },
     { icon: './icons/property.png', label: 'administration' },
-
     { icon: './icons/language-exchange.png', label: 'language' },
     { icon: './icons/find-room.png', label: 'college_life' },
     { icon: './icons/category5.png', label: 'gastroventure' },
-    { icon: './icons/game.png', label: 'game' },
+
 ];
 
 // 다국어 번역 텍스트
@@ -80,7 +79,7 @@ const ProfileGrid = () => {
     const [currentAd, setCurrentAd] = useState(null);
     const [language, setLanguage] = useState(Cookies.get('language') || 'en');
 
-    const t = translations[language]; // 번역 텍스트 가져오기
+    /*const t = translations[language]; // 번역 텍스트 가져오기*/
 
     const fetchWithLanguage = async (url, options = {}) => {
         const headers = {

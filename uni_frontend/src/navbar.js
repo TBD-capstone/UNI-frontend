@@ -6,6 +6,7 @@ import './navbar.css';
 import profileImage from './profile-image.png'; // 프로필 이미지 경로 설정
 import languageIcon from './language-icon.png'; // 언어 아이콘 이미지 경로
 import { useTranslation } from "react-i18next";
+import i18n from "i18next";
 
 
     
@@ -41,8 +42,10 @@ function Navbar({ selectedLanguage, fetchWithLanguage }) {
         setLanguageMenuOpen(!languageMenuOpen);
     };
 
+
     const handleLanguageChange = (newLanguage) => {
         Cookies.set('language', newLanguage, { path: '/' });
+        i18n.changeLanguage(newLanguage); // 언어 변경 API 호출
         window.location.reload(); // 변경 후 전체 새로고침으로 언어 반영
     };
 

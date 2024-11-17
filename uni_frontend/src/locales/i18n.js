@@ -22,7 +22,7 @@ i18n
             escapeValue: false, // React의 XSS 보호
         },
         detection: {
-            order: ['navigator', 'querystring', 'cookie', 'localStorage', 'htmlTag', 'path', 'subdomain'], // 감지 순서
+            order: ['cookie', 'navigator', 'querystring', 'localStorage', 'htmlTag', 'path', 'subdomain'], // 감지 순서
             caches: ['cookie'], // 감지된 언어를 쿠키에 저장
         },
         debug: true, // 디버깅 활성화
