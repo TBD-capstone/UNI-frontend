@@ -67,14 +67,23 @@
     /*text-align: left;*/
 }
 
+.Hashtag-section {
+    display: flex; /* 아이템을 가로로 정렬 */
+    flex-wrap: wrap;
+}
 .Hashtag {
+    display: inline-block;
     max-width: max-content;
     margin: 2px;
     padding: 2px;
     border-radius: 10px;
     background-color: aquamarine;
+    word-break:break-all;
 }
-
+.Basic {
+    background-color: #4CCF90;
+    cursor: pointer;
+}
 .Hashtag button {
     border: none;
     cursor: pointer;
