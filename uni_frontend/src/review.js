@@ -1,23 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie'; // 쿠키에서 로그인 사용자 정보 가져오기
+import Cookies from 'js-cookie';
 import './review.css';
 
 function Review() {
-    const { matchingId, userId } = useParams(); // URL에서 매칭 ID와 대상 유저 ID 가져오기
-    const commenterId = Cookies.get('userId'); // 로그인한 사용자 ID를 쿠키에서 가져오기
+    const { matchingId } = useParams(); // 매칭 ID 가져오기
+    const commenterId = Cookies.get('userId'); // 로그인한 사용자 ID
+    const [profileOwnerId, setProfileOwnerId] = useState(null); // 리뷰 대상자 ID
     const [rating, setRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
     const [reviewText, setReviewText] = useState('');
     const [statusMessage, setStatusMessage] = useState('');
     const navigate = useNavigate();
 
-    // 컴포넌트가 렌더링될 때 매칭 ID와 관련된 정보를 콘솔에 출력
+    // 매칭 ID를 기반으로 GET 요청하여 profileOwnerId 가져오기
     useEffect(() => {
-        console.log(`Matching ID: ${matchingId}`);
-        console.log(`User ID (Target): ${userId}`);
-        console.log(`Commenter ID (Logged-in User): ${commenterId}`);
-    }, [matchingId, userId, commenterId]);
+        const fetchProfileOwner = async () => {
+            try {
+                console.log(`Fetching data for Matching ID: ${matchingId}`);
+                const response = await fetch(`/api/match/${matchingId}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch matching details');
+                }
+                const data = await response.json();
+                console.log('Matching Details:', data);
+                setProfileOwnerId(data.profileOwnerId);
+            } catch (error) {
+                console.error('Error fetching matching details:', error);
+                setStatusMessage('매칭 정보를 가져오는 중 오류가 발생했습니다.');
+            }
+        };
+
+        fetchProfileOwner();
+    }, [matchingId]);
 
     const handleSubmitReview = async (e) => {
         e.preventDefault();
@@ -27,8 +42,18 @@ function Review() {
             return;
         }
 
+        if (!profileOwnerId) {
+            setStatusMessage('리뷰 대상자를 확인할 수 없습니다.');
+            return;
+        }
+
         try {
-            const response = await fetch(`/api/user/${userId}/review/${commenterId}/matching/${matchingId}`, {
+            console.log('Submitting Review...');
+            console.log(`Rating: ${rating}`);
+            console.log(`Review Text: ${reviewText.trim()}`);
+            console.log(`API Endpoint: /api/user/${profileOwnerId}/review/${commenterId}/matching/${matchingId}`);
+
+            const response = await fetch(`/api/user/${profileOwnerId}/review/${commenterId}/matching/${matchingId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -40,6 +65,8 @@ function Review() {
             });
 
             const data = await response.json();
+
+            console.log('API Response:', data);
 
             if (response.ok) {
                 setStatusMessage('후기 작성이 완료되었습니다!');
