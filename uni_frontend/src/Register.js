@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Select from 'react-select';
 import './Register.css';
+import { useTranslation } from "react-i18next";
 
 function Register() {
+    const { t } = useTranslation();
     const [isKorean, setIsKorean] = useState(true);
     const [email, setEmail] = useState('');
     const [univName, setUnivName] = useState('');
@@ -33,10 +35,10 @@ function Register() {
                         label: university.univName
                     })));
                 } else {
-                    setStatusMessage("대학 목록을 불러오는 데 실패했습니다.");
+                    setStatusMessage(t("registerPage.status_messages.fetch_university_list_fail"));
                 }
             } catch (error) {
-                setStatusMessage("대학 목록을 불러오는 중 오류가 발생했습니다.");
+                setStatusMessage(t("registerPage.status_messages.fetch_university_list_error"));
                 console.error("Error fetching university list:", error);
             }
         };
@@ -67,16 +69,16 @@ function Register() {
                 console.log("Email verification response:", data);
                 if (data.status === 'success') {
                     setEmailVerified(true);
-                    setStatusMessage("이메일 인증 요청 성공!");
+                    setStatusMessage(t("registerPage.status_messages.email_verification_success"));
                 } else {
-                    setStatusMessage(data.message || "이메일 인증 요청 실패");
+                    setStatusMessage(data.message ||  t("registerPage.status_messages.email_verification_fail"));
                 }
             } catch (error) {
-                setStatusMessage("이메일 인증 중 오류가 발생했습니다.");
+                setStatusMessage(t("registerPage.status_messages.email_verification_error"));
                 console.error("Email verification error:", error);
             }
         } else {
-            setStatusMessage("먼저 대학 인증을 완료해주세요.");
+            setStatusMessage(t("registerPage.status_messages.univ_verification_first"));
         }
     };
 
@@ -95,26 +97,26 @@ function Register() {
                 const data = await response.json();
                 if (data.status === 'success') {
                     setCodeVerified(true);
-                    setStatusMessage("인증 코드 확인 성공!");
+                    setStatusMessage(t("registerPage.status_messages.code_verification_success"));
                 } else {
-                    setStatusMessage(data.message || "인증 코드 검증 실패");
+                    setStatusMessage(data.message ||  t("registerPage.status_messages.code_verification_fail"));
                 }
             } catch (error) {
-                setStatusMessage("인증 코드 확인 중 오류가 발생했습니다.");
+                setStatusMessage(t("registerPage.status_messages.code_verification_error"));
                 console.error(error);
             }
         } else {
-            setStatusMessage("먼저 이메일 인증을 완료해주세요.");
+            setStatusMessage(t("registerPage.status_messages.email_verification_required"));
         }
     };
 
     const handleSubmit = async () => {
         if (!codeVerified) {
-            setStatusMessage("모든 인증 단계를 완료해주세요.");
+            setStatusMessage(t("registerPage.status_messages.all_verifications_required"));
             return;
         }
         if (password !== confirmPassword) {
-            setStatusMessage("비밀번호가 일치하지 않습니다.");
+            setStatusMessage(t("registerPage.status_messages.password_mismatch"));
             return;
         }
 
@@ -133,12 +135,12 @@ function Register() {
 
             const data = await response.json();
             if (data.status === 'success') {
-                setStatusMessage("회원가입 성공!");
+                setStatusMessage(t("registerPage.status_messages.signup_success"));
             } else {
-                setStatusMessage("회원가입 실패");
+                setStatusMessage(t("registerPage.status_messages.signup_fail"));
             }
         } catch (error) {
-            setStatusMessage("회원가입 중 오류가 발생했습니다.");
+            setStatusMessage(t("registerPage.status_messages.general_error"));
             console.error(error);
         }
     };
@@ -146,14 +148,28 @@ function Register() {
     return (
         <div className="signup-page">
             <div className="main-logo"></div>
-            <h1 className="signup-title">Sign Up</h1>
+            <h1 className="signup-title">{t("registerPage.title")}</h1>
 
             <div className="user-type">
                 <label>
-                    <input type="radio" name="userType" value="korean" checked={isKorean} onChange={handleUserTypeChange} /> 한국인 대학생
+                    <input
+                        type="radio"
+                        name="userType"
+                        value="korean"
+                        checked={isKorean}
+                        onChange={handleUserTypeChange}
+                    />
+                    {t("registerPage.user_type.korean")}
                 </label>
                 <label>
-                    <input type="radio" name="userType" value="foreigner" checked={!isKorean} onChange={handleUserTypeChange} /> Foreign
+                    <input
+                        type="radio"
+                        name="userType"
+                        value="foreigner"
+                        checked={!isKorean}
+                        onChange={handleUserTypeChange}
+                    />
+                    {t("registerPage.user_type.foreigner")}
                 </label>
             </div>
 
@@ -164,28 +180,72 @@ function Register() {
                     setUnivName(selectedOption.value);
                     handleUnivVerification();
                 }}
-                placeholder="University"
+                placeholder={t("registerPage.university_placeholder")}
                 isSearchable
             />
 
-            <input type="email" className="input-field" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} />
-            <button className="verify-button" onClick={handleEmailVerification} disabled={!univVerified}>Verify E-mail</button>
+            <input
+                type="email"
+                className="input-field"
+                placeholder={t("registerPage.email_placeholder")}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+            />
+            <button
+                className="verify-button"
+                onClick={handleEmailVerification}
+                disabled={!univVerified}
+            >
+                {t("registerPage.verify_email_button")}
+            </button>
 
-            <input type="text" className="input-field" placeholder="Verification code" value={verificationCode} onChange={(e) => setVerificationCode(e.target.value)} />
-            <button className="verify-button" onClick={handleCodeVerification} disabled={!emailVerified}>Verify Code</button>
+            <input
+                type="text"
+                className="input-field"
+                placeholder={t("registerPage.verification_code_placeholder")}
+                value={verificationCode}
+                onChange={(e) => setVerificationCode(e.target.value)}
+            />
+            <button
+                className="verify-button"
+                onClick={handleCodeVerification}
+                disabled={!emailVerified}
+            >
+                {t("registerPage.verify_code_button")}
+            </button>
 
-            <input type="text" className="input-field" placeholder="name" value={nickname} onChange={(e) => setNickname(e.target.value)} />
+            <input
+                type="text"
+                className="input-field"
+                placeholder={t("registerPage.name_placeholder")}
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+            />
 
-            <input type="password" className="input-field" placeholder="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <input
+                type="password"
+                className="input-field"
+                placeholder={t("registerPage.password_placeholder")}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+            />
 
-            <input type="password" className="input-field" placeholder="confirm password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+            <input
+                type="password"
+                className="input-field"
+                placeholder={t("registerPage.confirm_password_placeholder")}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+            />
 
-            <button className="signup-button" onClick={handleSubmit}>Sign Up</button>
+            <button className="signup-button" onClick={handleSubmit}>
+                {t("registerPage.signup_button")}
+            </button>
 
             <div className="status-message">{statusMessage}</div>
 
             <div className="bottom-link">
-                <Link to="/login">Already member? Login</Link>
+                <Link to="/login">{t("registerPage.already_member")}</Link>
             </div>
         </div>
     );
