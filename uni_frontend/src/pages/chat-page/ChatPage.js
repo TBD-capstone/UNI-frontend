@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import "./ChatPage.css";
 import {useLocation, useParams} from "react-router-dom";
 import {Stomp} from '@stomp/stompjs';
@@ -16,6 +16,7 @@ const ChatPage = () => {
     const isKorean = Cookies.get('isKorean') === 'true';
 
     const ChatBox = (props) => {
+        const scrollRef = useRef();
         const Chat = (props) => {
             const [showTranslate, setShowTranslate] = useState(false);
             const [translatedChat, setTranslatedChat] = useState(null);
@@ -51,23 +52,29 @@ const ChatPage = () => {
                 <div className="Chat">
                     <div className={props.owner ? "Mine" : "Them"}>
                         <span>{props.text}</span>
-                        {showTranslate && <><br/><span>{translatedChat}</span></>}
+                        {showTranslate && <><br/><span className="Translate">{translatedChat}</span></>}
                     </div>
                     <button className={props.owner ? "Right" : "Left"} onClick={handleClickTranslate}>&#127760;</button>
                 </div>
             )
         };
+        useEffect(() => {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        }, [props.chatList]);
         return (
-            (props.chatList) && (props.chatList).map((d, i) => {
-                return (
-                    <Chat
-                        owner={d.senderId === props.userId}
-                        text={d.content}
-                        key={`chat-${i}`}
-                        messageId={d.messageId} // messageId를 전달 못받는다...?!
-                    />
-                )
-            })
+            <div className="Chat-section" ref={scrollRef}>
+                {(props.chatList) && (props.chatList).map((d, i) => {
+                    return (
+                        <Chat
+                            owner={d.senderId === props.userId}
+                            text={d.content}
+                            key={`chat-${i}`}
+                            messageId={d.messageId} // messageId를 전달 못받는다...?!
+                        />
+                    )
+                })}
+            </div>
+
         )
     }
     const handleClickMatch = () => {
@@ -164,7 +171,6 @@ const ChatPage = () => {
         });
 
         setStompClient(stompClientInstance);
-        console.log(isKorean);
 
         return () => {
             if (stompClientInstance) {
@@ -182,8 +188,8 @@ const ChatPage = () => {
                 <div className="Match-section">
                     <div className="logo"/>
                     <div className="Profile">
-                        <img src="/UNI_Logo.png" alt="Profile"/>
-                        <div className="Profile-name">김현수</div>
+                        {/*<img src="/UNI_Logo.png" alt="Profile"/>*/}
+                        {/*<div className="Profile-name">김현수</div>*/}
                     </div>
                     <div className="Match-button">
                         {isKorean?
@@ -197,9 +203,7 @@ const ChatPage = () => {
 
                     </div>
                 </div>
-                <div className="Chat-section">
-                    <ChatBox chatList={messages} userId={state.myId}/>
-                </div>
+                <ChatBox chatList={messages} userId={state.myId}/>
                 <div className="Input-section">
                     <input
                         className="Input-box"
