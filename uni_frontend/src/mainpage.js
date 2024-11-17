@@ -4,19 +4,64 @@ import Cookies from 'js-cookie';
 import './mainpage.css';
 
 const categories = [
-    { icon: './icons/travel-guide.png', label: '여행' },
-    { icon: './icons/property.png', label: '행정' },
-    { icon: './icons/language-exchange.png', label: '언어' },
-    { icon: './icons/find-room.png', label: '대학생활' },
-    { icon: './icons/category5.png', label: '맛집 탐방' },
+    { icon: './icons/travel-guide.png', label: 'trip' },
+    { icon: './icons/property.png', label: 'administration' },
+    { icon: './icons/language-exchange.png', label: 'language exchange' },
+    { icon: './icons/college-life.png', label: 'college life' },
+    { icon: './icons/food.png', label: 'gastroventure' },
+    { icon: './icons/game.png', label: 'game' },
 ];
 
-// 영어 키워드와 한글 해시태그 매핑
-const keywordMapping = {
-    "trip": "여행",
-    "language": "언어",
-    "college life": "대학생활",
-    "game": "게임",
+// 다국어 번역 텍스트
+const translations = {
+    en: {
+        trip: 'Trip',
+        administration: 'Administration',
+        realty: 'Realty',
+        banking: 'Banking',
+        mobile: 'Mobile',
+        'language exchange': 'Language Exchange',
+        'college life': 'College Life',
+        gastroventure: 'Gastroventure',
+        game: 'Game',
+        shopping: 'Shopping',
+        searchPlaceholder: 'Search by hashtag',
+        searchButton: 'Search',
+        bannerAlt: 'Advertisement Banner',
+        noProfiles: 'No profiles available.',
+    },
+    ko: {
+        trip: '여행',
+        administration: '행정',
+        realty: '부동산',
+        banking: '은행',
+        mobile: '휴대폰',
+        'language exchange': '언어교환',
+        'college life': '대학생활',
+        gastroventure: '맛집 탐방',
+        game: '게임',
+        shopping: '쇼핑',
+        searchPlaceholder: '해시태그로 검색',
+        searchButton: '검색',
+        bannerAlt: '광고 배너',
+        noProfiles: '등록된 프로필이 없습니다.',
+    },
+    zh: {
+        trip: '旅行',
+        administration: '行政',
+        realty: '房地产',
+        banking: '银行',
+        mobile: '通讯',
+        'language exchange': '语言交换',
+        'college life': '大学生活',
+        gastroventure: '美食游',
+        game: '游戏',
+        shopping: '购物',
+        searchPlaceholder: '通过标签搜索',
+        searchButton: '搜索',
+        bannerAlt: '广告横幅',
+        noProfiles: '暂无可用个人资料。',
+    }
 };
 
 const ITEMS_PER_PAGE = 8;
@@ -29,14 +74,25 @@ const ProfileGrid = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [ads, setAds] = useState([]);
     const [currentAd, setCurrentAd] = useState(null);
+    const [language, setLanguage] = useState(Cookies.get('language') || 'en');
+
+    const t = translations[language]; // 번역 텍스트 가져오기
+
+    const fetchWithLanguage = async (url, options = {}) => {
+        const headers = {
+            ...options.headers,
+            'Accept-Language': language,
+        };
+        const response = await fetch(url, { ...options, headers });
+        return response.json();
+    };
 
     useEffect(() => {
         const fetchProfiles = async () => {
             try {
-                const response = await fetch('http://localhost:8080/api/home');
-                const data = await response.json();
-                setProfiles(data.data);
-                setFilteredProfiles(data.data);
+                const data = await fetchWithLanguage('http://localhost:8080/api/home');
+                setProfiles(data.data || []);
+                setFilteredProfiles(data.data || []);
             } catch (error) {
                 console.error('프로필 데이터를 불러오는 중 오류가 발생했습니다:', error);
             }
@@ -44,8 +100,7 @@ const ProfileGrid = () => {
 
         const fetchAds = async () => {
             try {
-                const response = await fetch('http://localhost:8080/api/ads');
-                const adData = await response.json();
+                const adData = await fetchWithLanguage('http://localhost:8080/api/ads');
                 const activeAds = adData.filter(ad => ad.status === '개시중');
                 setAds(activeAds);
                 if (activeAds.length > 0) {
@@ -58,7 +113,7 @@ const ProfileGrid = () => {
 
         fetchProfiles();
         fetchAds();
-    }, []);
+    }, [language]);
 
     useEffect(() => {
         const filterProfiles = () => {
@@ -71,7 +126,7 @@ const ProfileGrid = () => {
             }
 
             if (searchQuery) {
-                const translatedQuery = keywordMapping[searchQuery.toLowerCase()] || searchQuery;
+                const translatedQuery = searchQuery;
                 filtered = filtered.filter(profile =>
                     profile.hashtags && profile.hashtags.includes(translatedQuery)
                 );
@@ -105,7 +160,7 @@ const ProfileGrid = () => {
         <div className="container">
             {currentAd && (
                 <div className="ad-banner">
-                    <img src={currentAd.imageUrl} alt="광고 배너" />
+                    <img src={currentAd.imageUrl} alt={t.bannerAlt} />
                 </div>
             )}
 
@@ -115,11 +170,11 @@ const ProfileGrid = () => {
                 <div className="search-bar">
                     <input
                         type="text"
-                        placeholder="해시태그로 검색"
+                        placeholder={t.searchPlaceholder}
                         value={searchQuery}
                         onChange={handleSearchChange}
                     />
-                    <button>검색</button>
+                    <button>{t.searchButton}</button>
                 </div>
             </div>
 
@@ -131,28 +186,32 @@ const ProfileGrid = () => {
                         onClick={() => handleCategoryClick(category.label)}
                     >
                         <img src={category.icon} alt="" />
-                        <span>{category.label}</span>
+                        <span>{t[category.label]}</span>
                     </div>
                 ))}
             </div>
 
             <div className="profile-grid">
-                {currentProfiles.map((user, index) => (
-                    <Link to={`/user/${user.userId}`} key={index} className="profile-card">
-                        <img src={user.imgProf || '/path/to/default-image.jpg'} alt="Profile" />
-                        <div className="Profile-name">{user.username}</div>
-                        <div className="profile-university">{user.univName}</div>
-                        <div className="rating">
-                            <span className="star">⭐</span>
-                            <span>{user.star}</span>
-                        </div>
-                        <div className="profile-hashtags">
-                            {user.hashtags && user.hashtags.map((tag, i) => (
-                                <span key={i} className="hashtag">#{tag}</span>
-                            ))}
-                        </div>
-                    </Link>
-                ))}
+                {currentProfiles.length > 0 ? (
+                    currentProfiles.map((user, index) => (
+                        <Link to={`/user/${user.userId}`} key={index} className="profile-card">
+                            <img src={user.imgProf || '/path/to/default-image.jpg'} alt="Profile" />
+                            <div className="Profile-name">{user.username}</div>
+                            <div className="profile-university">{user.univName}</div>
+                            <div className="rating">
+                                <span className="star">⭐</span>
+                                <span>{user.star}</span>
+                            </div>
+                            <div className="profile-hashtags">
+                                {user.hashtags && user.hashtags.map((tag, i) => (
+                                    <span key={i} className="hashtag">#{tag}</span>
+                                ))}
+                            </div>
+                        </Link>
+                    ))
+                ) : (
+                    <div className="no-profiles">{t.noProfiles}</div>
+                )}
             </div>
 
             <div className="pagination">
