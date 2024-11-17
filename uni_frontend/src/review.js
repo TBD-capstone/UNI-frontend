@@ -1,21 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie'; // 쿠키에서 로그인 사용자 정보 가져오기
 import './review.css';
 
 function Review() {
-    const { userId, commenterId, matchingId } = useParams(); // URL에서 userId, commenterId, matchingId 가져오기
-    const [rating, setRating] = useState(0); // 별점
-    const [reviewText, setReviewText] = useState(''); // 후기 내용
-    const [responseText, setResponseText] = useState(''); // 답변 내용
-    const [statusMessage, setStatusMessage] = useState(''); // 상태 메시지
-    const [responseStatusMessage, setResponseStatusMessage] = useState(''); // 답변 상태 메시지
-    const [reviewSubmitted, setReviewSubmitted] = useState(false); // 후기 제출 여부
+    const { matchingId, userId } = useParams(); // URL에서 매칭 ID와 대상 유저 ID 가져오기
+    const commenterId = Cookies.get('userId'); // 로그인한 사용자 ID를 쿠키에서 가져오기
+    const [rating, setRating] = useState(0);
+    const [hoverRating, setHoverRating] = useState(0);
+    const [reviewText, setReviewText] = useState('');
+    const [statusMessage, setStatusMessage] = useState('');
     const navigate = useNavigate();
+
+    // 컴포넌트가 렌더링될 때 매칭 ID와 관련된 정보를 콘솔에 출력
+    useEffect(() => {
+        console.log(`Matching ID: ${matchingId}`);
+        console.log(`User ID (Target): ${userId}`);
+        console.log(`Commenter ID (Logged-in User): ${commenterId}`);
+    }, [matchingId, userId, commenterId]);
 
     const handleSubmitReview = async (e) => {
         e.preventDefault();
 
-        if (!rating || !reviewText) {
+        if (!rating || !reviewText.trim()) {
             setStatusMessage('모든 필드를 입력해주세요.');
             return;
         }
@@ -27,56 +34,22 @@ function Review() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    content: reviewText,
+                    content: reviewText.trim(),
                     star: rating,
                 }),
             });
 
             const data = await response.json();
 
-            if (data.status === 'success') {
+            if (response.ok) {
                 setStatusMessage('후기 작성이 완료되었습니다!');
-                setReviewSubmitted(true);
+                navigate('/matching-list');
             } else {
                 setStatusMessage(data.message || '후기 작성에 실패하였습니다.');
             }
         } catch (error) {
             setStatusMessage('후기 작성 중 오류가 발생했습니다.');
             console.error('Error submitting review:', error);
-        }
-    };
-
-    const handleSubmitResponse = async (e) => {
-        e.preventDefault();
-
-        if (!responseText) {
-            setResponseStatusMessage('답변 내용을 입력해주세요.');
-            return;
-        }
-
-        try {
-            const reviewId = matchingId; // Assuming reviewId corresponds to matchingId in this context
-            const response = await fetch(`/api/review/${reviewId}/reply/${commenterId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    content: responseText,
-                }),
-            });
-
-            const data = await response.json();
-
-            if (data.status === 'success') {
-                setResponseStatusMessage('답변 작성이 완료되었습니다!');
-                navigate('/matching-status'); // 매칭 상태 페이지로 이동
-            } else {
-                setResponseStatusMessage(data.message || '답변 작성에 실패하였습니다.');
-            }
-        } catch (error) {
-            setResponseStatusMessage('답변 작성 중 오류가 발생했습니다.');
-            console.error('Error submitting response:', error);
         }
     };
 
@@ -91,13 +64,18 @@ function Review() {
                         {[1, 2, 3, 4, 5].map((star) => (
                             <span
                                 key={star}
-                                className={`star ${rating >= star ? 'filled' : ''}`}
+                                className={`star ${hoverRating >= star || rating >= star ? 'filled' : ''}`}
                                 onClick={() => setRating(star)}
+                                onMouseEnter={() => setHoverRating(star)}
+                                onMouseLeave={() => setHoverRating(0)}
                             >
                                 ⭐
                             </span>
                         ))}
                     </div>
+                    <p className="rating-text">
+                        {rating > 0 ? `선택한 별점: ${rating}점` : '별점을 선택해주세요.'}
+                    </p>
                 </div>
 
                 <div className="form-group">
@@ -118,34 +96,6 @@ function Review() {
             </form>
 
             {statusMessage && <div className="status-message">{statusMessage}</div>}
-
-            {reviewSubmitted && (
-                <div className="response-section">
-                    <h2>후기에 대한 답변 작성</h2>
-
-                    <form className="response-form" onSubmit={handleSubmitResponse}>
-                        <div className="form-group">
-                            <label htmlFor="responseText">답변 내용:</label>
-                            <textarea
-                                id="responseText"
-                                value={responseText}
-                                onChange={(e) => setResponseText(e.target.value)}
-                                placeholder="답변 내용을 입력해주세요."
-                                rows="5"
-                                required
-                            />
-                        </div>
-
-                        <button type="submit" className="submit-button">
-                            답변 제출
-                        </button>
-                    </form>
-
-                    {responseStatusMessage && (
-                        <div className="status-message">{responseStatusMessage}</div>
-                    )}
-                </div>
-            )}
         </div>
     );
 }

@@ -33,16 +33,51 @@
 .rating-stars {
     display: flex;
     gap: 5px;
+    font-size: 2rem;
+    cursor: pointer;
+}
+.rating-text {
+    margin-top: 10px;
+    font-size: 1rem;
+    color: #555;
 }
 
+
 .star {
-    font-size: 24px;
-    cursor: pointer;
+    color: #ccc; /* 기본 별 색상 (회색) */
+    transition: color 0.2s ease-in-out, transform 0.2s ease; /* 색상 및 크기 전환 */
+}
+
+.star:hover {
+    color: #ff9800; /* 마우스 올렸을 때 색상 */
+    transform: scale(1.2); /* 살짝 확대 효과 */
 }
 
 .star.filled {
-    color: #ff9800;
+    color: #ffc107; /* 선택된 별 색상 (노란색) */
 }
+
+
+.submit-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.submit-button:hover {
+    background-color: #218838;
+}
+
+.status-message {
+    color: red;
+    margin-top: 10px;
+}
+
+
 
 textarea {
     width: 100%;
@@ -51,26 +86,4 @@ textarea {
     border-radius: 5px;
     font-size: 14px;
     resize: none;
-}
-
-.submit-button {
-    padding: 10px 15px;
-    background-color: #4caf50;
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    text-align: center;
-}
-
-.submit-button:hover {
-    background-color: #45a049;
-}
-
-.status-message {
-    margin-top: 15px;
-    text-align: center;
-    font-size: 14px;
-    color: #d32f2f;
 }

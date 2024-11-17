@@ -11,6 +11,7 @@ import Admin from "./admin";
 import ChatRoomPage from "./pages/chatroom-page/ChatRoomPage";
 import MatchingStatus from './matchingList';
 import ChatList from './chatList';
+import Review from './review'; // Review 페이지 추가
 
 function App() {
     return (
@@ -33,6 +34,7 @@ function App() {
                     <Route path="/chatroom" element={<ChatRoomPage />} />
                     <Route path="/matching-list" element={<MatchingStatus />} />
                     <Route path="/chat-list" element={<ChatList />} />
+                    <Route path="/review/:matchingId" element={<Review />} /> {/* 후기 작성 경로 추가 */}
                 </Route>
             </Routes>
         </Router>
