@@ -4,8 +4,10 @@ import Cookies from 'js-cookie';
 import './navbar.css';
 import profileImage from './profile-image.png'; // 프로필 이미지 경로 설정
 import languageIcon from './language-icon.png'; // 언어 아이콘 이미지 경로
+import { useTranslation } from "react-i18next";
 
 function Navbar() {
+    const { t } = useTranslation();
     const [menuOpen, setMenuOpen] = useState(false);
     const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
     const [username, setUsername] = useState('');
@@ -110,13 +112,13 @@ function Navbar() {
                 <div className="dropdown-menu">
                     <ul>
                         <li>
-                            <Link to="/matching-list">매칭 목록</Link>
+                            <Link to="/matching-list">{t("navbar.menu.matching_list")}</Link>
                         </li>
                         <li>
-                            <Link to="/chat-list">채팅 목록</Link>
+                            <Link to="/chat-list">{t("navbar.menu.chat_list")}</Link>
                         </li>
                         <li onClick={handleLogout} className="logout-button">
-                            로그아웃
+                            {t("navbar.menu.logout")}
                         </li>
                     </ul>
                 </div>
