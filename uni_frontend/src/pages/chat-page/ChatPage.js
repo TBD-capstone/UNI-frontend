@@ -15,14 +15,43 @@ const ChatPage = () => {
 
     const ChatBox = (props) => {
         const Chat = (props) => {
-            const [isTranslate, setIsTranslate] = useState(false);
+            const [showTranslate, setShowTranslate] = useState(false);
+            const [translatedChat, setTranslatedChat] = useState(null);
+
+            const handleClickTranslate = () => {
+                setShowTranslate(prev => !prev);
+                if (!translatedChat) {
+                    (async () => {
+                        fetch(`/api/chat/translate/${props.messageId}`, {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept-Language': 'en'
+                            }
+                        })
+                            .catch((err) => {
+                                console.log(err);
+                                alert('error: fetch fail');
+                            })
+                            .then((response) => response.text())
+                            .then((data) => {
+                                console.log(data);
+                                setTranslatedChat(() => data);
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                            });
+                    })();
+                }
+            }
+
             return (
                 <div className="Chat">
                     <div className={props.owner ? "Mine" : "Them"}>
                         <span>{props.text}</span>
-                        {isTranslate && <><br/><span>{props.translate}</span></>}
+                        {showTranslate && <><br/><span>{translatedChat}</span></>}
                     </div>
-                    <button className={props.owner ? "Right" : "Left"} onClick={() => {setIsTranslate(prev => !prev)}}>T</button>
+                    <button className={props.owner ? "Right" : "Left"} onClick={handleClickTranslate}>&#127760;</button>
                 </div>
             )
         };
@@ -33,6 +62,7 @@ const ChatPage = () => {
                         owner={d.senderId === props.userId}
                         text={d.content}
                         key={`chat-${i}`}
+                        messageId={d.messageId} // messageId를 전달 못받는다...?!
                     />
                 )
             })
@@ -81,11 +111,6 @@ const ChatPage = () => {
             setMessage(() => "");
         }
     }
-    const translateChat = (text) => {
-        const fetchTranslate = (text) => {
-            console.log(`번역할 문장: ${text}`);
-        };
-    };
 
     useEffect(() => {
         // (async () => {
@@ -125,7 +150,7 @@ const ChatPage = () => {
             stompClientInstance.subscribe(`/sub/match-request/${state.myId}`, (msg) => {
                 console.log("Received message:", msg.body);
                 const newMessage = JSON.parse(msg.body);
-                if(newMessage.requesterId === state.otherId)
+                if (newMessage.requesterId === state.otherId)
                     setMatchingId(() => newMessage.matchingId);   //requestId -> matchingId로 수정 예정
             });
             stompClientInstance.subscribe(`/sub/match-response/${state.myId}`, (msg) => {
@@ -160,7 +185,7 @@ const ChatPage = () => {
                     <div className="Match-button">
                         {matchingId ? <>
                                 <button className="Activated-button" onClick={handleClickAccept}>Accept</button>
-                                <button className="Unactivated-button" >Match</button>
+                                <button className="Unactivated-button">Match</button>
                             </>
                             : <>
                                 <button className="Unactivated-button">Accept</button>

@@ -27,7 +27,17 @@ const EditPage = () => {
         longitude: 127.044,
         name: "second",
         description: "this is second"
-    }])
+    }]);
+    const basicHashtags = ["Trip",
+        "Administration",
+        "Realty",
+        "Banking",
+        "Mobile",
+        "Language Exchange",
+        "College Life",
+        "Gastroventure",
+        "Game",
+        "Shopping"];
     const navigate = useNavigate();
 
     const handleChangeRegion = (e) => {
@@ -56,16 +66,25 @@ const EditPage = () => {
 
     const handleKeyDownHashtag = (e) => {
         if (e.key === "Enter" && hashtag !== "") {
-            if (user.hashtags.includes(hashtag))
-                alert("이미 존재하는 해시태그입니다.");
-            else {
-                setUser((prev) => ({
-                    ...prev,
-                    hashtags: [...prev.hashtags, hashtag]
-                }));
-                setHashtag("");
-            }
+            appendHashtag(hashtag);
         }
+    };
+    const appendHashtag = (hashtag) => {
+        if (user.hashtags.includes(hashtag))
+            alert("이미 존재하는 해시태그입니다.");
+        else {
+            setUser((prev) => ({
+                ...prev,
+                hashtags: [...prev.hashtags, hashtag]
+            }));
+            setHashtag("");
+        }
+    };
+    const deleteHashtag = (hashtag) => {
+        setUser((prev) => ({
+            ...prev,
+            hashtags: prev.hashtags.filter(word => word !== hashtag)
+        }));
     }
 
     const handleClickComplete = () => {
@@ -200,6 +219,22 @@ const EditPage = () => {
         alert("미구현");
     };
 
+    const BasicHashtag = (props) => {
+        const handleClickBasicHashtag = () => {
+            if(user.hashtags.includes(props.basicHashtag)) {
+                deleteHashtag(props.basicHashtag);
+            }
+            else {
+                appendHashtag(props.basicHashtag);
+            }
+        }
+        return (
+            <div className="Hashtag Basic"  onClick={handleClickBasicHashtag}>
+                <span>#{props.basicHashtag}</span>
+            </div>
+        );
+    }
+
     useEffect(() => {
         (async () => {
             await fetch(`/api/user/${userId}`, {
@@ -275,7 +310,7 @@ const EditPage = () => {
                             <img className="Image-prof" src={user.imgProf} alt="프로필사진"/>
                         </div>
                         <div className="Profile-content">
-                            <p>{user.star}</p>
+                            <p>⭐ {user.star}</p>
                             <p>User: {user.userName}</p>
                             <span>Region: </span>
                             <input
@@ -291,18 +326,24 @@ const EditPage = () => {
                                 value={user.time}
                                 onChange={handleChangeTime}
                             />
-                            {user.hashtags && user.hashtags.map((hashtag, i) => {
-                                return (
-                                    <div className="Hashtag" key={`hashtag-${i}`}>
-                                        <span>#{hashtag}</span>
-                                        <button onClick={() => setUser((prev) => ({
-                                            ...prev,
-                                            hashtags: prev.hashtags.filter(word => word !== hashtag)
-                                        }))}>X
-                                        </button>
-                                    </div>
-                                )
-                            })}
+                            <span>Basic Hashtag</span>
+                            <div className="Hashtag-section">
+                                {basicHashtags.map((basicHashtag, i) => {
+                                    return (
+                                        <BasicHashtag basicHashtag={basicHashtag} key={`basicHashtag-${i}`}/>
+                                    );
+                                })}
+                            </div>
+                            <div className="Hashtag-section">
+                                {user.hashtags && user.hashtags.map((hashtag, i) => {
+                                    return (
+                                        <div className="Hashtag" key={`hashtag-${i}`}>
+                                            <span>#{hashtag}</span>
+                                            <button onClick={() => deleteHashtag(hashtag)}>X</button>
+                                        </div>
+                                    )
+                                })}
+                            </div>
                             <input
                                 type="text"
                                 value={hashtag}

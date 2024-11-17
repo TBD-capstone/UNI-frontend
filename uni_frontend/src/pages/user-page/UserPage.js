@@ -265,17 +265,21 @@ const UserPage = () => {
                             <img className="Image-prof" src={"/UNI_Logo.png"} alt="프로필사진"/>
                         </div>
                         <div className="Profile-content">
-                            <p>{user.star}</p>
+                            <p>⭐ {user.star}</p>
                             <p>User: {user.userName}</p>
                             <p>Region: {user.region}</p>
                             <p>Univ: {user.univ}</p>
                             <p>Employ count: {user.numEmployment}</p>
                             <p>Time: {user.time}</p>
-                            {user.hashtags && user.hashtags.map((hashtag, i) => {
-                                return (
-                                    <span className="Hashtag" key={`hashtag-${i}`}>#{hashtag} </span>
-                                )
-                            })}
+                            <div className="Hashtag-section">
+                                {user.hashtags && user.hashtags.map((hashtag, i) => {
+                                    return (
+                                        <div className="Hashtag" key={`hashtag-${i}`}>
+                                            <span>#{hashtag}</span>
+                                        </div>
+                                    )
+                                })}
+                            </div>
                         </div>
                     </div>
                     <div className="Map-section">
