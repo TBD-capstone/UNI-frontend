@@ -25,10 +25,42 @@
     gap: 15px;
 }
 
-.language-icon {
-    width: 24px;
-    height: 24px;
+.language-icon-container {
+    position: relative;
     cursor: pointer;
+}
+
+.language-icon {
+    width: 32px; /* 프로필 이미지와 동일한 크기로 설정 */
+    height: 32px;
+    object-fit: cover; /* 이미지 비율 유지 */
+    border-radius: 50%; /* 원형으로 설정 (필요 시) */
+}
+
+.language-dropdown {
+    position: absolute;
+    top: 40px; /* 아이콘 아래에 표시 */
+    right: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+}
+
+.language-dropdown ul {
+    list-style: none;
+    margin: 0;
+    padding: 10px;
+}
+
+.language-dropdown li {
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.language-dropdown li:hover {
+    background-color: #f0f0f0;
 }
 
 .profile {
