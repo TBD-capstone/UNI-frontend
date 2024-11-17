@@ -80,7 +80,7 @@ const ProfileGrid = () => {
     const [currentAd, setCurrentAd] = useState(null);
     const [language, setLanguage] = useState(Cookies.get('language') || 'en');
 
-    const t = translations[language]; // 번역 텍스트 가져오기
+//    const t = translations[language]; // 번역 텍스트 가져오기
 
     const fetchWithLanguage = async (url, options = {}) => {
         const headers = {
