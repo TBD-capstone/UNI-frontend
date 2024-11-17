@@ -79,9 +79,14 @@ function MatchingStatus() {
                                     <Link
                                         to={`/review/${match.matchingId}`}
                                         className="review-button"
+                                        state={{
+                                            matchPartnerId: matchPartnerId,
+                                            matchingId: match.matchingId,
+                                        }}
                                     >
                                         후기 작성
                                     </Link>
+
                                 )}
                             </li>
                         );
