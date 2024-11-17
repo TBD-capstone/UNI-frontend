@@ -1,8 +1,7 @@
-// 상단바
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './navbar.css';
-import profileImage from './profile-image.jpg'; // 프로필 이미지 경로 설정
+import profileImage from './profile-image.png'; // 프로필 이미지 경로 설정
 
 function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -24,7 +23,7 @@ function Navbar() {
     return (
         <div className="navbar">
             <div className="logo">
-                <img src="../public/UNI_Logo.png" alt="UNI Logo" className="uni-logo" />
+                <img src="/UNI_Logo.png" alt="UNI Logo" className="uni-logo" />
             </div>
 
             <div className="menu-icons">

@@ -21,9 +21,6 @@ const ProfileGrid = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [ads, setAds] = useState([]);
     const [currentAd, setCurrentAd] = useState(null);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userName, setUserName] = useState('');
-    const [userId, setUserId] = useState('');
 
     useEffect(() => {
         const fetchProfiles = async () => {
@@ -51,21 +48,8 @@ const ProfileGrid = () => {
             }
         };
 
-        // 쿠키에서 로그인 상태 확인
-        const checkLoginStatus = () => {
-            const cookieUsername = Cookies.get('username'); // 쿠키에서 userName 가져오기
-            const cookieUserId = Cookies.get('userId'); // 쿠키에서 userId 가져오기
-
-            if (cookieUsername && cookieUserId) {
-                setIsLoggedIn(true);
-                setUserName(cookieUsername);
-                setUserId(cookieUserId);
-            }
-        };
-
         fetchProfiles();
         fetchAds();
-        checkLoginStatus();
     }, []);
 
     useEffect(() => {
@@ -117,7 +101,7 @@ const ProfileGrid = () => {
             )}
 
             <div className="header">
-                <img src="./UNI_Logo.png" alt="Logo" />
+                <img src="UNI_Logo.png" alt="Logo" />
 
                 <div className="search-bar">
                     <input
@@ -127,22 +111,6 @@ const ProfileGrid = () => {
                         onChange={handleSearchChange}
                     />
                     <button>검색</button>
-                </div>
-
-                <div className="dropdown">
-                    {isLoggedIn ? (
-                        <Link to={`/user/${userId}`} className="user-link">
-                            {userName}님
-                        </Link>
-                    ) : (
-                        <>
-                            <button>로그인</button>
-                            <div className="dropdown-content">
-                                <Link to="/register">회원가입</Link>
-                                <Link to="/login">로그인</Link>
-                            </div>
-                        </>
-                    )}
                 </div>
             </div>
 

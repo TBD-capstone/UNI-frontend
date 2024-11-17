@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './review.css';
 
 function Review() {
-    const { matchingId } = useParams(); // 매칭 ID 가져오기
+    const { userId, commenterId } = useParams(); // URL에서 userId와 commenterId 가져오기
     const [rating, setRating] = useState(0); // 별점
     const [reviewText, setReviewText] = useState(''); // 후기 내용
     const [statusMessage, setStatusMessage] = useState(''); // 상태 메시지
@@ -18,15 +18,14 @@ function Review() {
         }
 
         try {
-            const response = await fetch(`/api/user/${matchingId}/review`, {
+            const response = await fetch(`/api/user/${userId}/review/${commenterId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
+                    content: reviewText,
                     star: rating,
-                    review: reviewText,
-                    date: new Date().toISOString(),
                 }),
             });
 
