@@ -1,6 +1,6 @@
 import "./UserPage.css";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import GoogleMap from "./util/GoogleMap";
 import Cookies from "js-cookie";
 
@@ -10,6 +10,7 @@ const UserPage = () => {
     const {pathname} = useLocation();
     const navigate = useNavigate();
     const [markers, setMarkers] = useState(null);
+    const [activeTab, setActiveTab] = useState('Qna');
     const commenterId = Cookies.get('userId');  // 쿠키 적용 예정
 
     const MoveButton = (props) => {
@@ -55,6 +56,9 @@ const UserPage = () => {
                     </div>
             )
         )
+    };
+    const handleTabClick = (tab) => {
+        setActiveTab(tab);
     };
 
     const QnaSection = (props) => {
@@ -195,6 +199,48 @@ const UserPage = () => {
             </div>
         )
     };
+    const ReviewSection = (props) => {
+        const [reviews, setReviews] = useState([]);
+
+        const Review = (props) => {
+
+            return (
+                <div className="Review">
+                    <span>Reviewer: {props.data.commenterName}</span>
+                    <span className="Star">⭐ {props.data.star}</span>
+                    <p>{props.data.content}</p>
+                </div>
+            );
+        }
+
+        useEffect(() => {
+            fetch(`/api/review/${props.userId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .catch((err) => {
+                    console.log(err);
+                    alert('error: fetch fail');
+                })
+                .then(response => response.json())
+                .then((data) => {
+                    setReviews(() => data);
+                    console.log(data); // for debug
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }, [props.userId]);
+        return (
+            <div className="Review-section">
+                {Array.isArray(reviews) && reviews.map((data, i) => {
+                    return (<Review data={data} key={`reviews-${i}`}/>);
+                })}
+            </div>
+        )
+    }
 
     useEffect(() => {
         (async () => {
@@ -283,7 +329,16 @@ const UserPage = () => {
                         <p className="Explain">{user.description}</p>
                     </div>
                 </div>
-                <QnaSection userId={user.userId} commenterId={commenterId}/>
+                <div className="tabs">
+                    <div className={`tab ${activeTab === 'Qna' ? 'active' : ''}`} onClick={() => handleTabClick('Qna')}>
+                        Qna
+                    </div>
+                    <div className={`tab ${activeTab === 'Review' ? 'active' : ''}`} onClick={() => handleTabClick('Review')}>
+                        Review
+                    </div>
+                </div>
+                {activeTab === 'Qna' && <QnaSection userId={user.userId} commenterId={commenterId}/>}
+                {activeTab === 'Review' && <ReviewSection userId={user.userId}/>}
             </div>) : null
     );
 }

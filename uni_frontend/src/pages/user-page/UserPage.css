@@ -205,3 +205,15 @@
 .Qna-options button:hover {
     text-decoration: underline;
 }
+
+.Review-section {
+}
+.Review {
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+.Star {
+    float: right;
+}
