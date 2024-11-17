@@ -9,6 +9,7 @@ import EditPage from "./pages/edit-page/EditPage";
 import ChatPage from "./pages/chat-page/ChatPage";
 import Admin from "./admin";
 import ChatRoomPage from "./pages/chatroom-page/ChatRoomPage";
+import Cookies from "js-cookie";
 import MatchingStatus from './matchingList';
 import ChatList from './chatList';
 import Review from './review'; // Review 페이지 추가
@@ -18,7 +19,7 @@ function App() {
         <Router>
             <Routes>
                 {/* 기본 경로를 로그인 페이지로 리다이렉트 */}
-                <Route path="/" element={<Navigate to="/login" replace />} />
+                <Route path="/" element={Cookies.get('userName')?<Navigate to="/main" replace />:<Navigate to="/login" replace />} />
 
                 {/* 로그인과 회원가입 페이지는 상단바 없이 렌더링 */}
                 <Route path="/register" element={<Register />} />
