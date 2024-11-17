@@ -30,16 +30,16 @@ const EditPage = () => {
         name: "second",
         description: "this is second"
     }]);
-    const basicHashtags = ["Trip",
-        "Administration",
-        "Realty",
-        "Banking",
-        "Mobile",
-        "Language Exchange",
-        "College Life",
-        "Gastroventure",
-        "Game",
-        "Shopping"];
+    const basicHashtags = ["여행",
+        "행정",
+        "부동산",
+        "은행",
+        "휴대폰",
+        "언어교환",
+        "대학 생활",
+        "맛집",
+        "게임",
+        "쇼핑"];
     const navigate = useNavigate();
 
     const handleChangeRegion = (e) => {
