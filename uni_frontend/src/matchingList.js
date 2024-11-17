@@ -66,11 +66,12 @@ function MatchingStatus() {
                         // 콘솔에 매칭 ID와 매칭 상대 ID 출력
                         console.log(`Matching ID: ${match.matchingId}`);
                         console.log(`Match Partner ID: ${matchPartnerId}`);
+                        console.log(`userName: ${match.userName}`);
 
                         return (
                             <li key={match.matchingId} className="matching-item">
                                 <div>
-                                    <p>매칭 상대: {matchPartnerId}</p>
+                                    <p>매칭 상대: {match.userName}</p>
                                     <p>상태: {match.status}</p>
                                     <p>생성 날짜: {new Date(match.createdAt).toLocaleDateString()}</p>
                                 </div>
