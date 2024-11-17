@@ -1,0 +1,130 @@
+{
+  "chatPage": {
+    "accept": "수락",
+    "match": "매칭하기",
+    "input_message_placeholder": "메시지를 입력하세요",
+    "send": "전송",
+    "translation_error": "오류: 번역을 가져오는 데 실패했습니다.",
+    "message_send_log": "메시지 보내는 중:",
+    "match_request_error": "매칭을 수락해주세요.",
+    "match_accepted": "매칭이 수락되었습니다."
+  },
+  "mainpage": {
+    "fetch_profiles_error": "프로필 데이터를 불러오는 중 오류가 발생했습니다:",
+    "fetch_ads_error": "광고 데이터를 불러오는 중 오류가 발생했습니다:",
+    "active_ad_status": "개시중",
+    "ad_banner_alt": "광고 배너",
+    "logo_alt": "로고",
+    "search_placeholder": "해시태그로 검색",
+    "search_button": "검색",
+    "categories": {
+      "trip": "여행",
+      "administration": "행정",
+      "language": "언어",
+      "college_life": "대학생활",
+      "gastroventure": "맛집 탐방"
+    },
+    "profile_alt": "프로필"
+  },
+  "userPage": {
+    "report": "신고",
+    "edit": "수정",
+    "chat": "채팅",
+    "easter": "이스터",
+    "post": "게시",
+    "qna_placeholder": "질문을 입력하세요...",
+    "user_icon_alt": "사용자 아이콘",
+    "profile_alt": "프로필 사진",
+    "background_alt": "배경 사진",
+    "map": "지도",
+    "username": "사용자",
+    "region": "지역",
+    "university": "대학교",
+    "fetch_error": "사용자 데이터를 가져오는 중 오류가 발생했습니다.",
+    "marker_error": "마커 데이터를 가져오는 중 오류가 발생했습니다.",
+    "qna_error": "Q&A 데이터를 가져오는 중 오류가 발생했습니다.",
+    "reply": "답글",
+    "chat_error": "채팅을 시작하지 못했습니다. 다시 시도해주세요.",
+    "self_pr": "자기소개",
+    "user": "사용자",
+    "employ_count": "고용 수",
+    "time": "시간"
+  },
+  "editPage": {
+    "user": "이름",
+    "edit": "수정",
+    "region": "지역",
+    "university": "대학명",
+    "employ_count": "고용 수",
+    "time": "시간",
+    "basic_hashtag": "기본 해시태그",
+    "hashtag_placeholder": "해시태그",
+    "profile_image": "프로필 이미지",
+    "background_image": "배경 이미지",
+    "image_upload": "이미지 업로드",
+    "map": "지도",
+    "marker_add": "마커 추가",
+    "marker_delete": "마커 삭제",
+    "marker_title_placeholder": "마커 이름",
+    "marker_description_placeholder": "마커 설명",
+    "add": "추가",
+    "delete": "삭제",
+    "self_pr": "자기소개"
+  },
+  "loginPage": {
+    "title": "로그인",
+    "email_placeholder": "이메일",
+    "password_placeholder": "비밀번호",
+    "login_button": "로그인",
+    "forgot_password": "비밀번호를 잊으셨나요?",
+    "sign_up": "회원가입",
+    "status_success": "로그인 성공!",
+    "status_fail": "로그인 실패: 정보가 올바르지 않습니다.",
+    "status_error": "로그인 중 오류가 발생했습니다."
+  },
+  "navbar": {
+    "language_change_request": "언어 변경 요청",
+    "language_changed_to": {
+      "en": "언어가 영어로 변경되었습니다.",
+      "ko": "언어가 한국어로 변경되었습니다.",
+      "zh": "언어가 중국어로 변경되었습니다."
+    },
+    "guest": "게스트",
+    "menu": {
+      "matching_list": "매칭 목록",
+      "chat_list": "채팅 목록",
+      "logout": "로그아웃"
+    }
+  },
+  "registerPage": {
+    "title": "회원가입",
+    "user_type": {
+      "korean": "한국인 대학생",
+      "foreigner": "유학생/교환학생"
+    },
+    "university_placeholder": "대학교",
+    "email_placeholder": "이메일",
+    "verify_email_button": "이메일 인증",
+    "verification_code_placeholder": "인증 코드",
+    "verify_code_button": "인증 확인",
+    "name_placeholder": "이름",
+    "password_placeholder": "비밀번호",
+    "confirm_password_placeholder": "비밀번호 확인",
+    "signup_button": "회원가입",
+    "status_messages": {
+      "fetch_university_list_error": "대학 목록을 불러오는 중 오류가 발생했습니다.",
+      "email_verification_success": "이메일 인증 요청 성공!",
+      "email_verification_fail": "이메일 인증 요청 실패.",
+      "univ_verification_first": "먼저 대학 인증을 완료해주세요.",
+      "code_verification_success": "인증 코드 확인 성공!",
+      "code_verification_fail": "인증 코드 검증 실패.",
+      "email_verification_required": "먼저 이메일 인증을 완료해주세요.",
+      "all_verifications_required": "모든 인증 단계를 완료해주세요.",
+      "password_mismatch": "비밀번호가 일치하지 않습니다.",
+      "signup_success": "회원가입 성공!",
+      "signup_fail": "회원가입 실패.",
+      "general_error": "오류가 발생했습니다."
+    },
+    "already_member": "이미 회원이신가요? 로그인"
+  }
+}

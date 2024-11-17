@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import './login.css';
+import { useTranslation } from "react-i18next";
 
 function Login() {
+    const { t } = useTranslation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -47,13 +49,13 @@ function Login() {
                 console.log('유저 ID:', Cookies.get('userId'));
                 console.log('한국인 여부:', Cookies.get('isKorean'));
 
-                setStatusMessage(data.message || '로그인 성공!');
+                setStatusMessage(data.message || t("loginPage.status_messages.success"));
                 navigate('/main'); // 메인 페이지로 이동
             } else {
-                setStatusMessage(data.message || '로그인 실패: 정보가 올바르지 않습니다.');
+                setStatusMessage(data.message ||  t("loginPage.status_messages.fail"));
             }
         } catch (error) {
-            setStatusMessage('로그인 중 오류가 발생했습니다.');
+            setStatusMessage(t("loginPage.status_messages.error"));
             console.error('로그인 요청 중 오류:', error);
         }
     };
@@ -61,13 +63,13 @@ function Login() {
     return (
         <div className="login-page">
             <div className="logo"></div>
-            <h1 className="login-title">Login</h1>
+            <h1 className="login-title">{t("loginPage.title")}</h1>
 
             <div className="input-container">
                 <input
                     type="email"
                     className="input-field"
-                    placeholder="E-mail"
+                    placeholder={t("loginPage.email_placeholder")}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
@@ -77,7 +79,7 @@ function Login() {
                 <input
                     type={showPassword ? "text" : "password"}
                     className="input-field"
-                    placeholder="Password"
+                    placeholder={t("loginPage.password_placeholder")}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
@@ -86,14 +88,14 @@ function Login() {
                 </span>
             </div>
 
-            <button className="login-button" onClick={handleLogin}>Login</button>
+            <button className="login-button" onClick={handleLogin}> {t("loginPage.login_button")}</button>
 
             <div className="status-message">{statusMessage}</div>
 
             <div className="bottom-link">
-                <a href="/forgot-password">Forget password</a>
-                <br />
-                <Link to="/register">Sign up</Link>
+                <a href="/forgot-password">{t("loginPage.forgot_password")}</a>
+                <br/>
+                <Link to="/register">{t("loginPage.sign_up")}</Link>
             </div>
         </div>
     );

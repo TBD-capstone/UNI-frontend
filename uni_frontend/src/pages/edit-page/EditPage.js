@@ -2,8 +2,10 @@ import "./EditPage.css";
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import GoogleMap from "../user-page/util/GoogleMap";
+import { useTranslation } from "react-i18next";
 
 const EditPage = () => {
+    const { t } = useTranslation();
     const {userId} = useParams();
     const [user, setUser] = useState(null);
     const [hashtag, setHashtag] = useState("");
@@ -301,7 +303,7 @@ const EditPage = () => {
                     <button
                         className="Complete"
                         onClick={handleClickComplete}
-                    >Edit
+                    >{t("editPage.edit")}
                     </button>
                 </div>
                 <div className="Content-container">
@@ -311,22 +313,22 @@ const EditPage = () => {
                         </div>
                         <div className="Profile-content">
                             <p>⭐ {user.star}</p>
-                            <p>User: {user.userName}</p>
-                            <span>Region: </span>
+                            <p>{t("editPage.user")}: {user.userName}</p>
+                            <span>{t("editPage.region")}: </span>
                             <input
                                 type="text"
                                 value={user.region}
                                 onChange={handleChangeRegion}
                             />
-                            <p>Univ: {user.univ}</p>
-                            <p>Employ count: {user.numEmployment}</p>
-                            <span>Time: </span>
+                            <p>{t("editPage.university")}: {user.univ}</p>
+                            <p>{t("editPage.employ_count")}: {user.numEmployment}</p>
+                            <span>{t("editPage.time")}: </span>
                             <input
                                 type="text"
                                 value={user.time}
                                 onChange={handleChangeTime}
                             />
-                            <span>Basic Hashtag</span>
+                            <span>{t("editPage.basic_hashtag")}</span>
                             <div className="Hashtag-section">
                                 {basicHashtags.map((basicHashtag, i) => {
                                     return (
@@ -351,41 +353,41 @@ const EditPage = () => {
                                 onKeyDown={(e) => handleKeyDownHashtag(e)}
                                 onChange={handleChangeHashtag}
                             />
-                            <span>Profile image: </span>
+                            <span>{t("editPage.profile_image")}: </span>
                             <input type='file' accept="image/png, image/jpeg" onChange={handleChangeProfileImage}/>
-                            <span>Background image: </span>
+                            <span>{t("editPage.background_image")}: </span>
                             <input type='file' accept="image/png, image/jpeg" onChange={handleChangeBackgroundImage}/>
-                            <button onClick={handleClickSubmit}>Image Upload</button>
+                            <button onClick={handleClickSubmit}>{t("editPage.image_upload")}</button>
                         </div>
                     </div>
                     <div className="Map-section">
-                        <span>Map</span>
+                        <span>{t("editPage.map")}: </span>
                         <div className="Map-container">
                             <GoogleMap markers={markers} setting={setting}/>
                         </div>
-                        <button onClick={handleClickMarkerAdd}>Marker add</button>
-                        <button onClick={handleClickMarkerDelete}>Marker Delete</button>
+                        <button onClick={handleClickMarkerAdd}>{t("editPage.marker_add")}</button>
+                        <button onClick={handleClickMarkerDelete}>{t("editPage.marker_delete")}</button>
                         {/*<button onClick={handleClickMarkerUpdate}>Marker Update</button>*/}
                         {(markerAdd || markerDelete) &&
                             <input
                                 type="text"
-                                placeholder="Marker title"
+                                placeholder={t("editPage.marker_title_placeholder")}
                                 value={markerName}
                                 onChange={handleChangeMarkerName}
                             />}
                         {(markerAdd || markerUpdate) && <input
                             type="text"
-                            placeholder="Marker explain"
+                            placeholder={t("editPage.marker_description_placeholder")}
                             value={markerDescription}
                             onChange={handleChangeMarkerDescription}
                         />
                         }
-                        {markerAdd && <button onClick={handleClickAdd}>Add</button>}
-                        {markerDelete && <button onClick={handleClickDelete}>Delete</button>}
+                        {markerAdd && <button onClick={handleClickAdd}>{t("editPage.add")}</button>}
+                        {markerDelete && <button onClick={handleClickDelete}>{t("editPage.delete")}</button>}
                         {/*{markerUpdate && <button onClick={handleClickUpdate}>Update</button>}*/}
                     </div>
                     <div className="SelfPR">
-                        <span>SelfPR</span>
+                        <span>{t("editPage.self_pr")}</span>
                         <textarea
                             className="Explain"
                             value={user.description}

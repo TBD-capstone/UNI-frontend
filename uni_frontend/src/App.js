@@ -14,6 +14,8 @@ import MatchingStatus from './matchingList';
 import ChatList from './chatList';
 import Review from './review'; // Review 페이지 추가
 
+
+
 // fetchWithLanguage 함수 정의
 const fetchWithLanguage = async (url, options = {}) => {
     const selectedLanguage = Cookies.get('language') || 'en'; // 쿠키에서 언어 가져오기
@@ -24,6 +26,7 @@ const fetchWithLanguage = async (url, options = {}) => {
     console.log(`Request to: ${url} with Accept-Language: ${selectedLanguage}`);
     return fetch(url, { ...options, headers });
 };
+
 
 function App() {
     return (

@@ -4,9 +4,11 @@ import {useLocation, useParams} from "react-router-dom";
 import {Stomp} from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import Cookies from "js-cookie";
+import { useTranslation } from "react-i18next";
 
 
 const ChatPage = () => {
+    const { t } = useTranslation();
     const {roomId} = useParams();
     const {state} = useLocation();
     const [messages, setMessages] = useState(state ? state.chatMessages : null);
@@ -86,7 +88,7 @@ const ChatPage = () => {
             );
             console.log({requesterId: state.myId, receiverId: state.otherId})
         } else {
-            alert("매칭을 수락해주세요.");
+            alert(t("chatPage.match_request_error"));
         }
     };
     const handleClickAccept = () => {
@@ -96,7 +98,7 @@ const ChatPage = () => {
                 {},
                 JSON.stringify({matchingId: matchingId, accepted: true})  // requestId -> matchingId로 수정 예정
             );
-            alert("Matching is accepted.");
+            alert(t("chatPage.match_accepted"));
             setMatchingId(() => null);
         }
     }
@@ -194,11 +196,11 @@ const ChatPage = () => {
                     <div className="Match-button">
                         {isKorean?
                             (matchingId ?
-                                <button className="Activated-button" onClick={handleClickAccept}>Accept</button>
+                                <button className="Activated-button" onClick={handleClickAccept}>{t("chatPage.accept")}</button>
                                 :
-                                <button className="Unactivated-button">Accept</button>)
+                                <button className="Unactivated-button">{t("chatPage.accept")}</button>)
                             :
-                                <button className="Activated-button" onClick={handleClickMatch}>Match</button>
+                            <button className="Activated-button" onClick={handleClickMatch}>{t("chatPage.match")}</button>
                         }
 
                     </div>
@@ -210,8 +212,8 @@ const ChatPage = () => {
                         value={message}
                         onChange={handleChangeMessage}
                         onKeyDown={(e) => handleKeyDownMessage(e)}
-                        placeholder={'Input message'}/>
-                    <button onClick={handleClickSend}>send</button>
+                        placeholder={t("chatPage.input_message_placeholder")}/>
+                    <button onClick={handleClickSend}>{t("chatPage.send")}</button>
                 </div>
 
             </div>) : null
