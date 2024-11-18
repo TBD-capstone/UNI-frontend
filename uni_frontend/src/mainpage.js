@@ -179,7 +179,7 @@ const ProfileGrid = () => {
             )}
 
             <div className="header">
-                <img src="UNI_Logo.png" alt={t('mainpage.logo_alt')} />
+                {/*<img src="UNI_Logo.png" alt={t('mainpage.logo_alt')} />*/}
 
                 <div className="search-bar">
                     <input
