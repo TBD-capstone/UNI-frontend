@@ -200,8 +200,6 @@ const ProfileGrid = () => {
                         key={index}
                         onClick={() => handleCategoryClick(category.label)}
                     >
-                        <img src={category.icon} alt="" />
-
                         <span>{t(`mainpage.categories.${category.label}`)}</span>                     
 
                     </div>
