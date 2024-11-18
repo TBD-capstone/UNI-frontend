@@ -1,6 +1,6 @@
 import "./EditPage.css";
 import {useNavigate, useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import GoogleMap from "../user-page/util/GoogleMap";
 import { useTranslation } from "react-i18next";
 
@@ -213,13 +213,13 @@ const EditPage = () => {
                 alert('error: fetch fail');
             });
     }
-    const handleClickUpdate = () => {
-        if (!position || markerName.trim() === "" || markerDescription.trim() === "") {
-            alert("There is no marker, or some text is empty.");
-            return;
-        }
-        alert("미구현");
-    };
+    // const handleClickUpdate = () => {
+    //     if (!position || markerName.trim() === "" || markerDescription.trim() === "") {
+    //         alert("There is no marker, or some text is empty.");
+    //         return;
+    //     }
+    //     alert("미구현");
+    // };
 
     const BasicHashtag = (props) => {
         const handleClickBasicHashtag = () => {
@@ -287,17 +287,17 @@ const EditPage = () => {
         setMarkerDelete(prev => !prev);
         setMarkerUpdate(() => false);
     };
-    const handleClickMarkerUpdate = () => {
-        setMarkerAdd(() => false);
-        setMarkerDelete(() => false);
-        setMarkerUpdate(prev => !prev);
-    };
+    // const handleClickMarkerUpdate = () => {
+    //     setMarkerAdd(() => false);
+    //     setMarkerDelete(() => false);
+    //     setMarkerUpdate(prev => !prev);
+    // };
 
     return (
         user ? (
             <div>
                 <div className="Image-back-container">
-                    <img className="Image-back" src={user.imgBack} alt="배경사진"/>
+                    <img className="Image-back" src={user.imgBack?user.imgBack:'/UNI_Background.png'} alt="배경사진"/>
                 </div>
                 <div>
                     <button
@@ -309,7 +309,7 @@ const EditPage = () => {
                 <div className="Content-container">
                     <div className="Profile-container">
                         <div className="Image-prof-container">
-                            <img className="Image-prof" src={user.imgProf} alt="프로필사진"/>
+                            <img className="Image-prof" src={user.imgProf?user.imgProf:'/UNI_Logo.png'} alt="프로필사진"/>
                         </div>
                         <div className="Profile-content">
                             <p>⭐ {user.star}</p>

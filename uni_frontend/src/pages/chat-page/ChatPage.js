@@ -188,7 +188,7 @@ const ChatPage = () => {
         messages ? (
             <div className="Chat-page">
                 <div className="Match-section">
-                    <div className="logo"/>
+                    {/*<div className="logo"/>*/}
                     <div className="Profile">
                         {/*<img src="/UNI_Logo.png" alt="Profile"/>*/}
                         {/*<div className="Profile-name">김현수</div>*/}
