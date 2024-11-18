@@ -13,13 +13,14 @@ const UserPage = () => {
     const navigate = useNavigate();
     const [markers, setMarkers] = useState(null);
     const [activeTab, setActiveTab] = useState('Qna');
-    const commenterId = Cookies.get('userId');  // 쿠키 적용 예정
+    const commenterId = Cookies.get('userId');
 
     const MoveButton = (props) => {
 
-        const handleClickReport = () => {
-            alert(t("userPage.report"));
-        };
+
+        // const handleClickReport = () => {
+        //     alert("신고");
+        // };
         const handleClickEdit = () => {
             navigate(`${pathname}/edit`);
         };
@@ -49,12 +50,11 @@ const UserPage = () => {
         return (
             (props.owner ?
                     <div>
-                        <button className="Edit" onClick={handleClickEdit}>{t("userPage.edit")}</button>
-                        <button className="ChatRoom">{t("userPage.easter")}</button>
+                        <button className="Edit" onClick={handleClickEdit}>Edit</button>
                     </div> :
                     <div>
-                        <button className="Chatting" onClick={handleClickChat}>{t("userPage.chat")}</button>
-                        <button className="Report" onClick={handleClickReport}> {t("userPage.report")}</button>
+                        <button className="Chatting" onClick={handleClickChat}>Chat</button>
+                        {/*<button className="Report" onClick={handleClickReport}>Report</button>*/}
                     </div>
             )
         )
@@ -141,7 +141,7 @@ const UserPage = () => {
 
         const QnaBox = (props) => {
             return (
-                props.data && props.data.map((data, i) => {
+                props.data && props.data.map((data) => {
                     return <Reply data={data} key={`Reply-${data.qnaId}-${data.replyId}`}/>;
                 })
             )
@@ -292,7 +292,7 @@ const UserPage = () => {
         user ? (
             <div>
                 <div className="Image-back-container">
-                    <img className="Image-back" src={user.imgBack} alt="배경사진"/>
+                    <img className="Image-back" src={user.imgBack?user.imgBack:'/UNI_Background.png'} alt="배경사진"/>
                 </div>
                 <div className="Button-section">
                     <MoveButton owner={commenterId === userId}/>
@@ -300,7 +300,7 @@ const UserPage = () => {
                 <div className="Content-container">
                     <div className="Profile-container">
                         <div className="Image-prof-container">
-                            <img className="Image-prof" src={user.imgProf} alt="프로필사진"/>
+                            <img className="Image-prof" src={user.imgProf?user.imgProf:'/UNI_Logo.png'} alt="프로필사진"/>
                         </div>
                         <div className="Profile-content">
                             <p>⭐ {user.star}</p>
