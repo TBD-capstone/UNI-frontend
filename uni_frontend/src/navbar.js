@@ -50,7 +50,7 @@ function Navbar({ selectedLanguage, fetchWithLanguage }) {
 
     return (
         <div className="navbar">
-            <div className="logo" onClick={() => navigate('/main')}>
+            <div className="logo-section" onClick={() => navigate('/main')}>
                 <img src="/UNI_Logo.png" alt="UNI Logo" className="uni-logo" />
             </div>
             <div className="menu-icons">

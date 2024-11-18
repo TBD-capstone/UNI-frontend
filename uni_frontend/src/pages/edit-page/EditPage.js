@@ -321,7 +321,7 @@ const EditPage = () => {
                                 onChange={handleChangeRegion}
                             />
                             <p>{t("editPage.university")}: {user.univ}</p>
-                            <p>{t("editPage.employ_count")}: {user.numEmployment}</p>
+                            {/*<p>{t("editPage.employ_count")}: {user.numEmployment}</p>*/}
                             <span>{t("editPage.time")}: </span>
                             <input
                                 type="text"

@@ -307,7 +307,7 @@ const UserPage = () => {
                             <p>{t("userPage.user")}: {user.userName}</p>
                             <p>{t("userPage.region")}: {user.region}</p>
                             <p>{t("userPage.university")}: {user.univ}</p>
-                            <p>{t("userPage.employ_count")}: {user.numEmployment}</p>
+                            {/*<p>{t("userPage.employ_count")}: {user.numEmployment}</p>*/}
                             <p>{t("userPage.time")}: {user.time}</p>
                             <div className="Hashtag-section">
                                 {user.hashtags && user.hashtags.map((hashtag, i) => {
