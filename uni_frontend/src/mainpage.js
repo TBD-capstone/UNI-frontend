@@ -179,7 +179,7 @@ const ProfileGrid = () => {
             )}
 
             <div className="header">
-                <img src="UNI_Logo.png" alt={t('mainpage.logo_alt')} />
+                {/*<img src="UNI_Logo.png" alt={t('mainpage.logo_alt')} />*/}
 
                 <div className="search-bar">
                     <input
@@ -200,8 +200,6 @@ const ProfileGrid = () => {
                         key={index}
                         onClick={() => handleCategoryClick(category.label)}
                     >
-                        <img src={category.icon} alt="" />
-
                         <span>{t(`mainpage.categories.${category.label}`)}</span>                     
 
                     </div>

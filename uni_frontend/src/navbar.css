@@ -9,9 +9,10 @@
     z-index: 100;
 }
 
-.logo {
+.logo-section {
     display: flex;
     align-items: center;
+
 }
 
 .uni-logo {
