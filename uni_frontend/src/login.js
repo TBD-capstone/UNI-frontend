@@ -1,180 +1,95 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, {useState} from 'react';
+import {Link, useNavigate} from 'react-router-dom';
 import Cookies from 'js-cookie';
-import { useTranslation } from 'react-i18next'; // i18n 추가
-import './mainpage.css';
+import './login.css';
+import {useTranslation} from "react-i18next";
 
-const categories = [
-    { icon: './icons/travel-guide.png', label: 'trip' },
-    { icon: './icons/property.png', label: 'administration' },
-    { icon: './icons/language-exchange.png', label: 'language_exchange' },
-    { icon: './icons/find-room.png', label: 'college_life' },
-    { icon: './icons/category5.png', label: 'gastroventure' },
-    { icon: './icons/game.png', label: 'game' },
-];
+function Login() {
+    const {t} = useTranslation();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [statusMessage, setStatusMessage] = useState('');
+    const navigate = useNavigate();
 
-const ITEMS_PER_PAGE = 8;
-
-const ProfileGrid = () => {
-    const { t, i18n } = useTranslation(); // i18n 훅 사용
-    const [profiles, setProfiles] = useState([]);
-    const [filteredProfiles, setFilteredProfiles] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [selectedCategory, setSelectedCategory] = useState(null);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [ads, setAds] = useState([]);
-    const [currentAd, setCurrentAd] = useState(null);
-
-    const fetchWithLanguage = async (url, options = {}) => {
-        const headers = {
-            ...options.headers,
-            'Accept-Language': i18n.language, // i18n의 현재 언어 사용
-        };
-        const response = await fetch(url, { ...options, headers });
-        return response.json();
+    const handleTogglePassword = () => {
+        setShowPassword(!showPassword);
     };
 
-    // 프로필 및 광고 데이터 가져오기
-    useEffect(() => {
-        const fetchProfiles = async () => {
-            try {
-                const data = await fetchWithLanguage('http://localhost:8080/api/home');
-                setProfiles(data.data || []);
-                setFilteredProfiles(data.data || []);
-            } catch (error) {
-                console.error(t('mainpage.fetch_profiles_error'), error);
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                }),
+            });
+            const data = await response.json();
+            console.log('로그인 응답 데이터:', data); // 응답 데이터 확인
+            if (data.status === 'success') {
+                // 이전에 저장된 쿠키 제거
+                Cookies.remove('userName', {path: '/'});
+                Cookies.remove('userId', {path: '/'});
+                Cookies.remove('isKorean', {path: '/'});
+                // 새 로그인 정보 저장
+                Cookies.set('userName', data.userName, {expires: 1, path: '/'});
+                Cookies.set('userId', data.userId, {expires: 1, path: '/'});
+                Cookies.set('isKorean', data.isKorean, {expires: 1, path: '/'});
+                console.log('유저 이름:', Cookies.get('userName'));
+                console.log('유저 ID:', Cookies.get('userId'));
+                console.log('한국인 여부:', Cookies.get('isKorean'));
+                setStatusMessage(data.message || t("loginPage.status_messages.success"));
+                navigate('/main'); // 메인 페이지로 이동
+            } else {
+                setStatusMessage(data.message || t("loginPage.status_messages.fail"));
             }
-        };
-
-        const fetchAds = async () => {
-            try {
-                const data = await fetchWithLanguage('http://localhost:8080/api/ads');
-                const activeAds = data.filter(ad => ad.status === t('mainpage.active_ad_status'));
-                setAds(activeAds);
-                if (activeAds.length > 0) {
-                    setCurrentAd(activeAds[0]);
-                }
-            } catch (error) {
-                console.error(t('mainpage.fetch_ads_error'), error);
-            }
-        };
-
-        fetchProfiles();
-        fetchAds();
-    }, [t, i18n.language]); // 언어가 변경될 때마다 데이터 다시 가져오기
-
-    // 프로필 필터링 처리
-    useEffect(() => {
-        const filterProfiles = () => {
-            let filtered = profiles;
-
-            if (selectedCategory) {
-                filtered = filtered.filter(profile =>
-                    profile.hashtags && profile.hashtags.includes(t(`mainpage.categories.${selectedCategory}`))
-                );
-            }
-
-            if (searchQuery) {
-                filtered = filtered.filter(profile =>
-                    profile.hashtags && profile.hashtags.some(tag => tag.includes(searchQuery))
-                );
-            }
-
-            setFilteredProfiles(filtered);
-            setCurrentPage(1);
-        };
-
-        filterProfiles();
-    }, [selectedCategory, searchQuery, profiles, t]);
-
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
-    const currentProfiles = filteredProfiles.slice(startIndex, endIndex);
-    const totalPages = Math.ceil(filteredProfiles.length / ITEMS_PER_PAGE);
-
-    const handlePageChange = (page) => {
-        setCurrentPage(page);
-    };
-
-    const handleCategoryClick = (label) => {
-        setSelectedCategory(label === selectedCategory ? null : label);
-    };
-
-    const handleSearchChange = (e) => {
-        setSearchQuery(e.target.value);
+        } catch (error) {
+            setStatusMessage(t("loginPage.status_messages.error"));
+            console.error('로그인 요청 중 오류:', error);
+        }
     };
 
     return (
-        <div className="container">
-            {currentAd && (
-                <div className="ad-banner">
-                    <img src={currentAd.imageUrl} alt={t('mainpage.bannerAlt')} />
-                </div>
-            )}
-
-            <div className="header">
-                <img src="UNI_Logo.png" alt={t('mainpage.logoAlt')} />
-
-                <div className="search-bar">
-                    <input
-                        type="text"
-                        placeholder={t('mainpage.searchPlaceholder')}
-                        value={searchQuery}
-                        onChange={handleSearchChange}
-                    />
-                    <button>{t('mainpage.searchButton')}</button>
-                </div>
+        <div className="login-page">
+            <div className="logo"></div>
+            <h1 className="login-title">{t("loginPage.title")}</h1>
+            <div className="input-container">
+                <input
+                    type="email"
+                    className="input-field"
+                    placeholder={t("loginPage.email_placeholder")}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
             </div>
 
-            <div className="category">
-                {categories.map((category, index) => (
-                    <div
-                        className={`category-item ${selectedCategory === category.label ? 'active' : ''}`}
-                        key={index}
-                        onClick={() => handleCategoryClick(category.label)}
-                    >
-                        <img src={category.icon} alt="" />
-                        <span>{t(`mainpage.categories.${category.label}`)}</span>
-                    </div>
-                ))}
+            <div className="input-container">
+                <input
+                    type={showPassword ? "text" : "password"}
+                    className="input-field"
+                    placeholder={t("loginPage.password_placeholder")}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+                <span className="input-field-icon" onClick={handleTogglePassword}>
+                    {showPassword ? "🙈" : "👁️"}
+                </span>
             </div>
 
-            <div className="profile-grid">
-                {currentProfiles.length > 0 ? (
-                    currentProfiles.map((user, index) => (
-                        <Link to={`/user/${user.userId}`} key={index} className="profile-card">
-                            <img src={user.imgProf || '/path/to/default-image.jpg'} alt={t('mainpage.profileAlt')} />
-                            <div className="Profile-name">{user.username}</div>
-                            <div className="profile-university">{user.univName}</div>
-                            <div className="rating">
-                                <span className="star">⭐</span>
-                                <span>{user.star}</span>
-                            </div>
-                            <div className="profile-hashtags">
-                                {user.hashtags && user.hashtags.map((tag, i) => (
-                                    <span key={i} className="hashtag">#{tag}</span>
-                                ))}
-                            </div>
-                        </Link>
-                    ))
-                ) : (
-                    <div className="no-profiles">{t('mainpage.noProfiles')}</div>
-                )}
-            </div>
-
-            <div className="pagination">
-                {[...Array(totalPages)].map((_, index) => (
-                    <button
-                        key={index}
-                        onClick={() => handlePageChange(index + 1)}
-                        className={currentPage === index + 1 ? 'active' : ''}
-                    >
-                        {index + 1}
-                    </button>
-                ))}
+            <button className="login-button" onClick={handleLogin}> {t("loginPage.login_button")}</button>
+            <div className="status-message">{statusMessage}</div>
+            <div className="bottom-link">
+                <a href="/forgot-password">{t("loginPage.forgot_password")}</a>
+                <br/>
+                <Link to="/register">{t("loginPage.sign_up")}</Link>
             </div>
         </div>
     );
-};
+}
 
-export default ProfileGrid;
+export default Login;
