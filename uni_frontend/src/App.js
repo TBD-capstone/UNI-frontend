@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import React, {useEffect} from 'react';
+import {BrowserRouter as Router, Route, Routes, Navigate} from 'react-router-dom';
 import Layout from './layout';
 import Mainpage from './mainpage';
 import Register from './Register';
@@ -13,7 +13,9 @@ import Cookies from "js-cookie";
 import MatchingStatus from './matchingList';
 import ChatList from './chatList';
 import Review from './review'; // Review 페이지 추가
-
+import usePushNotification from "./Alarm";
+import SockJS from "sockjs-client";
+import {Stomp} from "@stomp/stompjs";
 
 
 // fetchWithLanguage 함수 정의
@@ -29,6 +31,36 @@ const fetchWithLanguage = async (url, options = {}) => {
 
 
 function App() {
+    const notification = usePushNotification();
+    const userId = Cookies.get('userId');
+    useEffect(() => {
+
+        if (userId) {
+            const socketChat = new SockJS('http://localhost:8080/ws/chat');
+            const stompClientInstance = Stomp.over(socketChat);
+
+            stompClientInstance.debug = (str) => console.log(str);
+
+            stompClientInstance.connect({}, () => {
+                console.log("Connected to WebSocket");
+
+                stompClientInstance.subscribe(`/sub/user/${userId}`, (msg) => {
+                    const newMessage = JSON.parse(msg.body);
+                    console.log("Received message:", newMessage);
+                    notification.fireNotification('new message', newMessage.content);
+                });
+            }, (error) => {
+                console.error("WebSocket connection error:", error);
+            });
+
+            return () => {
+                if (stompClientInstance) {
+                    stompClientInstance.disconnect();
+                    console.log("Disconnected from WebSocket: Alarm");
+                }
+            }
+        }
+    }, [userId]);
     return (
         <Router>
             <Routes>
