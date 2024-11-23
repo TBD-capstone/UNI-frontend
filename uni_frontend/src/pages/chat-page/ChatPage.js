@@ -7,7 +7,7 @@ import Cookies from "js-cookie";
 import { useTranslation } from "react-i18next";
 
 
-const ChatPage = () => {
+const ChatPage = (props) => {
     const { t } = useTranslation();
     const {roomId} = useParams();
     const {state} = useLocation();
@@ -56,7 +56,7 @@ const ChatPage = () => {
                         <span>{props.text}</span>
                         {showTranslate && <><br/><span className="Translate">{translatedChat}</span></>}
                     </div>
-                    <button className={props.owner ? "Right" : "Left"} onClick={handleClickTranslate}>&#127760;</button>
+                    <button className={props.owner ? "Right" : "Left"} onClick={handleClickTranslate}>Translate</button>
                 </div>
             )
         };
@@ -145,6 +145,7 @@ const ChatPage = () => {
         //
         //         });
         // })();
+        props.changeAlarm(false);
         const socketChat = new SockJS('http://localhost:8080/ws/chat');
         const stompClientInstance = Stomp.over(socketChat);
 
@@ -179,10 +180,11 @@ const ChatPage = () => {
                 stompClientInstance.disconnect();
                 console.log("Disconnected from WebSocket: Chat");
             }
+            props.changeAlarm(true);
         };
 
 
-    }, [roomId, state]);
+    }, [roomId, state, props]);
 
     return (
         messages ? (
