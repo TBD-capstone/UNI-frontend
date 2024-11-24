@@ -4,6 +4,7 @@ import React, {useEffect, useState} from "react";
 import GoogleMap from "./util/GoogleMap";
 import Cookies from "js-cookie";
 import { useTranslation } from "react-i18next";
+import ReportModal from "../../components/ReportModal";
 
 const UserPage = () => {
     const { t } = useTranslation();
@@ -13,14 +14,15 @@ const UserPage = () => {
     const navigate = useNavigate();
     const [markers, setMarkers] = useState(null);
     const [activeTab, setActiveTab] = useState('Qna');
+    const [report, setReport] = useState(false);
     const commenterId = Cookies.get('userId');
 
     const MoveButton = (props) => {
 
 
-        // const handleClickReport = () => {
-        //     alert("신고");
-        // };
+        const handleClickReport = () => {
+            setReport(()=>true);
+        };
         const handleClickEdit = () => {
             navigate(`${pathname}/edit`);
         };
@@ -51,6 +53,7 @@ const UserPage = () => {
             (props.owner ?
                     <div>
                         <button className="Edit" onClick={handleClickEdit}>Edit</button>
+                        <button className="Report" onClick={handleClickReport}>Report</button>
                     </div> :
                     <div>
                         <button className="Chatting" onClick={handleClickChat}>Chat</button>
@@ -291,6 +294,7 @@ const UserPage = () => {
     return (
         user ? (
             <div>
+                <ReportModal isOpen={report} handleClose={()=>setReport(false)}/>
                 <div className="Image-back-container">
                     <img className="Image-back" src={user.imgBack?user.imgBack:'/UNI_Background.png'} alt="배경사진"/>
                 </div>

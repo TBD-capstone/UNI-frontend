@@ -1,0 +1,25 @@
+.report-modal {
+    display: flex;
+    flex-direction: column;
+}
+
+.report-modal textarea {
+    font-size: 14pt;
+    box-sizing: border-box; /* 패딩과 테두리를 포함한 크기 계산 */
+}
+
+.report-purpose {
+    display: flex;
+    justify-content: flex-start; /* 왼쪽 정렬 */
+    align-items: center; /* 세로 가운데 정렬 */
+}
+
+.report-radio {
+    /*display: flex;*/
+    /*flex-direction: column;*/
+    width: 49%;
+}
+
+.after {
+    margin-left: auto;
+}
