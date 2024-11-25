@@ -13,59 +13,6 @@ const categories = [
     { icon: './icons/game.png', label: 'game' },
 ];
 
-// 다국어 번역 텍스트
-const translations = {
-    en: {
-        trip: 'Trip',
-        administration: 'Administration',
-        realty: 'Realty',
-        banking: 'Banking',
-        mobile: 'Mobile',
-        'language exchange': 'Language Exchange',
-        'college life': 'College Life',
-        gastroventure: 'Gastroventure',
-        game: 'Game',
-        shopping: 'Shopping',
-        searchPlaceholder: 'Search by hashtag',
-        searchButton: 'Search',
-        bannerAlt: 'Advertisement Banner',
-        noProfiles: 'No profiles available.',
-    },
-    ko: {
-        trip: '여행',
-        administration: '행정',
-        realty: '부동산',
-        banking: '은행',
-        mobile: '휴대폰',
-        'language exchange': '언어교환',
-        'college life': '대학생활',
-        gastroventure: '맛집 탐방',
-        game: '게임',
-        shopping: '쇼핑',
-        searchPlaceholder: '해시태그로 검색',
-        searchButton: '검색',
-        bannerAlt: '광고 배너',
-        noProfiles: '등록된 프로필이 없습니다.',
-    },
-    zh: {
-        trip: '旅行',
-        administration: '行政',
-        realty: '房地产',
-        banking: '银行',
-        mobile: '通讯',
-        'language exchange': '语言交换',
-        'college life': '大学生活',
-        gastroventure: '美食游',
-        game: '游戏',
-        shopping: '购物',
-        searchPlaceholder: '通过标签搜索',
-        searchButton: '搜索',
-        bannerAlt: '广告横幅',
-        noProfiles: '暂无可用个人资料。',
-    }
-};
-
-
 const ITEMS_PER_PAGE = 8;
 
 const ProfileGrid = () => {
@@ -78,8 +25,6 @@ const ProfileGrid = () => {
     const [ads, setAds] = useState([]);
     const [currentAd, setCurrentAd] = useState(null);
     const [language, setLanguage] = useState(Cookies.get('language') || 'en');
-
-    /*const t = translations[language]; // 번역 텍스트 가져오기*/
 
     const fetchWithLanguage = async (url, options = {}) => {
         const headers = {
@@ -103,13 +48,9 @@ const ProfileGrid = () => {
 
         const fetchAds = async () => {
             try {
-
                 const response = await fetch('http://localhost:8080/api/ads');
                 const adData = await response.json();
                 const activeAds = adData.filter(ad => ad.status === t('mainpage.active_ad_status'));
-
-                
-             
 
                 setAds(activeAds);
                 if (activeAds.length > 0) {
@@ -130,15 +71,11 @@ const ProfileGrid = () => {
 
             if (selectedCategory) {
                 filtered = filtered.filter(profile =>
-                    profile.hashtags && profile.hashtags.includes(t(`mainpage.categories.${selectedCategory}`))
+                    profile.hashtags && profile.hashtags.includes(`#${selectedCategory}`)
                 );
             }
 
             if (searchQuery) {
-
-
-                const translatedQuery = searchQuery;
-
                 filtered = filtered.filter(profile =>
                     profile.hashtags && profile.hashtags.some(tag => tag.includes(searchQuery))
                 );
@@ -161,26 +98,34 @@ const ProfileGrid = () => {
     };
 
     const handleCategoryClick = (label) => {
-        setSelectedCategory(label === selectedCategory ? null : label);
+        if (selectedCategory === label) {
+            setSelectedCategory(null);
+            setSearchQuery('');
+        } else {
+            setSelectedCategory(label);
+            setSearchQuery(`#${t(`mainpage.categories.${label}`)}`);
+        }
     };
 
     const handleSearchChange = (e) => {
-        setSearchQuery(e.target.value);
+        const query = e.target.value;
+        setSearchQuery(query);
+
+        // 검색창에서 입력이 지워지면 카테고리 선택 해제
+        if (query === '') {
+            setSelectedCategory(null);
+        }
     };
 
     return (
         <div className="container">
             {currentAd && (
                 <div className="ad-banner">
-
-                    <img src={currentAd.imageUrl} alt={t('mainpage.ad_banner_alt')} />                    
-
+                    <img src={currentAd.imageUrl} alt={t('mainpage.ad_banner_alt')} />
                 </div>
             )}
 
             <div className="header">
-                {/*<img src="UNI_Logo.png" alt={t('mainpage.logo_alt')} />*/}
-
                 <div className="search-bar">
                     <input
                         type="text"
@@ -188,8 +133,7 @@ const ProfileGrid = () => {
                         value={searchQuery}
                         onChange={handleSearchChange}
                     />
-                    <button>{t('mainpage.search_button')}</button>                    
-
+                    <button>{t('mainpage.search_button')}</button>
                 </div>
             </div>
 
@@ -200,14 +144,12 @@ const ProfileGrid = () => {
                         key={index}
                         onClick={() => handleCategoryClick(category.label)}
                     >
-                        <span>{t(`mainpage.categories.${category.label}`)}</span>                     
-
+                        <span>{t(`mainpage.categories.${category.label}`)}</span>
                     </div>
                 ))}
             </div>
 
-            <div className="profile-grid">               
-
+            <div className="profile-grid">
                 {currentProfiles.length > 0 ? (
                     currentProfiles.map((user, index) => (
                         <Link to={`/user/${user.userId}`} key={index} className="profile-card">
@@ -228,7 +170,6 @@ const ProfileGrid = () => {
                 ) : (
                     <div className="no-profiles">{t.noProfiles}</div>
                 )}
-
             </div>
 
             <div className="pagination">

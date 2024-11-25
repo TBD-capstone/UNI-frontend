@@ -89,15 +89,15 @@ function Review() {
                     <label>별점:</label>
                     <div className="rating-stars">
                         {[1, 2, 3, 4, 5].map((star) => (
-                            <span
+                            <img
                                 key={star}
-                                className={`star ${hoverRating >= star || rating >= star ? 'filled' : ''}`}
+                                src={hoverRating >= star || rating >= star ? './star-filled.png' : './star-empty.png'}
+                                alt={`${star} star`}
+                                className="star"
                                 onClick={() => setRating(star)}
                                 onMouseEnter={() => setHoverRating(star)}
                                 onMouseLeave={() => setHoverRating(0)}
-                            >
-                                ⭐
-                            </span>
+                            />
                         ))}
                     </div>
                     <p className="rating-text">

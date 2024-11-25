@@ -23,11 +23,7 @@ function ChatList() {
                 const data = await response.json();
 
                 if (response.ok) {
-                    // 로그인한 유저와 다른 상대방만 표시
-                    const filteredRooms = data.filter(
-                        (room) => room.otherId !== parseInt(userId)
-                    );
-                    setChatRooms(filteredRooms);
+                    setChatRooms(data);
                 } else {
                     setError(data.message || '채팅 목록을 불러오는 데 실패했습니다.');
                 }
@@ -42,31 +38,21 @@ function ChatList() {
         fetchChatRooms();
     }, []);
 
-    // 채팅방 클릭 시 실행
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const now = new Date();
+        const isToday =
+            date.getDate() === now.getDate() &&
+            date.getMonth() === now.getMonth() &&
+            date.getFullYear() === now.getFullYear();
+
+        return isToday
+            ? date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            : date.toLocaleDateString();
+    };
+
     const handleChatClick = (room) => {
-        const myId = Cookies.get('userId'); // 현재 로그인한 유저 ID
-        const chatRoomId = room.chatRoomId;
-        const otherId = room.otherId;
-        const chatMessages = room.chatMessages;
-
-        if (!myId || !chatRoomId || !otherId || !chatMessages) {
-            console.error('필수 데이터가 누락되었습니다.');
-            console.log('myId:', myId, 'chatRoomId:', chatRoomId, 'otherId:', otherId , 'chatMessages:', chatMessages);
-            alert('채팅방 정보를 불러오는 데 실패했습니다.');
-            return;
-        }
-
-        // 디버깅용 로그 추가
-        console.log('Navigating to ChatPage with:', {
-            myId,
-            chatRoomId,
-            otherId,
-            chatMessages
-        });
-
-        navigate(`/chat/${chatRoomId}`, {
-            state: room
-        });
+        navigate(`/chat/${room.chatRoomId}`, { state: room });
     };
 
     if (isLoading) {
@@ -86,19 +72,31 @@ function ChatList() {
                         <li
                             key={room.chatRoomId}
                             className="chat-item"
-                            onClick={() => handleChatClick(room)} // 채팅방 클릭 시 실행
+                            onClick={() => handleChatClick(room)}
                         >
-                            <p>상대방 ID: {room.otherId}</p>
-                            <p>
-                                마지막 메시지: {room.chatMessages.length > 0
-                                ? room.chatMessages[room.chatMessages.length - 1].content
-                                : '메시지가 없습니다.'}
-                            </p>
-                            <p>
-                                보낸 시간: {room.chatMessages.length > 0
-                                ? new Date(room.chatMessages[room.chatMessages.length - 1].sendAt).toLocaleString()
-                                : '-'}
-                            </p>
+                            <img
+                                src={room.profilePicture || '/default-profile.png'}
+                                alt="프로필"
+                                className="profile-pic"
+                            />
+                            <div className="chat-content">
+                                <p className="chat-name">{room.otherName || '알 수 없는 사용자'}</p>
+                                <p className="last-message">
+                                    {room.chatMessages.length > 0
+                                        ? room.chatMessages[room.chatMessages.length - 1].content
+                                        : '메시지가 없습니다.'}
+                                </p>
+                            </div>
+                            <div className="chat-right">
+                                <p className="chat-date">
+                                    {room.chatMessages.length > 0
+                                        ? formatDate(room.chatMessages[room.chatMessages.length - 1].sendAt)
+                                        : '-'}
+                                </p>
+                                {room.unreadCount > 0 && (
+                                    <span className="unread-count">{room.unreadCount}</span>
+                                )}
+                            </div>
                         </li>
                     ))}
                 </ul>

@@ -1,11 +1,11 @@
-import React, {useState} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import './login.css';
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 function Login() {
-    const {t} = useTranslation();
+    const { t } = useTranslation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -18,6 +18,7 @@ function Login() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
+
         try {
             const response = await fetch('/api/auth/login', {
                 method: 'POST',
@@ -29,20 +30,25 @@ function Login() {
                     password: password,
                 }),
             });
+
             const data = await response.json();
             console.log('로그인 응답 데이터:', data); // 응답 데이터 확인
+
             if (data.status === 'success') {
                 // 이전에 저장된 쿠키 제거
-                Cookies.remove('userName', {path: '/'});
-                Cookies.remove('userId', {path: '/'});
-                Cookies.remove('isKorean', {path: '/'});
+                Cookies.remove('userName', { path: '/' });
+                Cookies.remove('userId', { path: '/' });
+                Cookies.remove('isKorean', { path: '/' });
+
                 // 새 로그인 정보 저장
-                Cookies.set('userName', data.userName, {expires: 1, path: '/'});
-                Cookies.set('userId', data.userId, {expires: 1, path: '/'});
-                Cookies.set('isKorean', data.isKorean, {expires: 1, path: '/'});
+                Cookies.set('userName', data.userName, { expires: 1, path: '/' });
+                Cookies.set('userId', data.userId, { expires: 1, path: '/' });
+                Cookies.set('isKorean', data.isKorean, { expires: 1, path: '/' });
+
                 console.log('유저 이름:', Cookies.get('userName'));
                 console.log('유저 ID:', Cookies.get('userId'));
                 console.log('한국인 여부:', Cookies.get('isKorean'));
+
                 setStatusMessage(data.message || t("loginPage.status_messages.success"));
                 navigate('/main'); // 메인 페이지로 이동
             } else {
@@ -54,10 +60,17 @@ function Login() {
         }
     };
 
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            handleLogin(e);
+        }
+    };
+
     return (
-        <div className="login-page">
-            <div className="logo"></div>
+        <div className="login-page" onKeyDown={handleKeyDown}>
+            <div className="main-logo"></div>
             <h1 className="login-title">{t("loginPage.title")}</h1>
+
             <div className="input-container">
                 <input
                     type="email"
@@ -81,11 +94,13 @@ function Login() {
                 </span>
             </div>
 
-            <button className="login-button" onClick={handleLogin}> {t("loginPage.login_button")}</button>
+            <button className="login-button" onClick={handleLogin}>{t("loginPage.login_button")}</button>
+
             <div className="status-message">{statusMessage}</div>
+
             <div className="bottom-link">
                 <a href="/forgot-password">{t("loginPage.forgot_password")}</a>
-                <br/>
+                <br />
                 <Link to="/register">{t("loginPage.sign_up")}</Link>
             </div>
         </div>
