@@ -1,0 +1,56 @@
+name: Frontend CI/CD
+
+on:
+  push:
+    branches:
+      - main # main 브랜치에 푸시될 때 실행
+
+jobs:
+  frontend-CICD:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 체크아웃 
+      uses: actions/checkout@v3
+
+    - name: Node.JS 설치
+      uses: actions/setup-node@v3
+      with:
+        node-version: 23
+
+    - name: 종속 모듈들 캐싱
+      uses: actions/cache@v2
+      with:
+        path: ${{ github.workspace }}/uni_frontend/node_modules
+        key: npm-packages-${{ hashFiles('/uni_frontend/package-lock.json') }}
+        restore-keys: |
+          npm-packages-
+      id: cache
+    
+    - name: 종속 모듈들 설치
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: npm install --prefix uni_frontend
+
+    - name: react 빌드
+      run: npm run build --prefix uni_frontend
+
+    - name: S3에 Deploy
+      uses: jakejarvis/s3-sync-action@v0.5.1
+      with:
+        args: --acl public-read --delete
+      env:
+        AWS_S3_BUCKET: uni-frontend
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ap-northeast-2
+        SOURCE_DIR: uni_frontend/build
+
+    - name: CloudFront 캐시 무효화
+      uses: awact/cloudfront-action@v1.2
+      with:
+        distribution-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+        paths: "/*"
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
