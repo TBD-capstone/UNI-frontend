@@ -1,7 +1,7 @@
 .modal-background {
     position: fixed;
     z-index: 1;
-    padding-top: 200px;
+    padding-top: 15vh;
     left: 0;
     top: 0;
     width: 100%;
@@ -13,7 +13,8 @@
 }
 .modal {
     position: relative;
-    /*overflow-y: scroll;*/
+    max-height: 70vh;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     background-color: white;
@@ -28,9 +29,9 @@
 }
 .modal-top span {
     width: auto;
+    font-size: 14pt;
 }
-.modal-top button {
-    background: none;
-    border: none;
+.modal-close{
     float: right;
+    cursor: pointer;
 }

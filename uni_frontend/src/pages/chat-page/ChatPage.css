@@ -1,37 +1,30 @@
-.Chat-page {
+.chat-page {
+    flex: 1;
     --match-height: 100px;
-    --button-color: #00aaff;
-    --hover-coler: #007acf;
-    background-color: #E7E7E7;
-    height: 100vh;
+    --button-color: #4CAF50;
+    --hover-coler: #1C6F20;
+    --border-color: #dddddd;
+    /*background-color: #E7E7E7;*/
 }
 
-.Match-section {
+.match-section {
     padding: 1px;
     display: flex;
+    justify-content: space-between;
     background-color: white;
     height: 100px;
+    border-bottom: 1px solid var(--border-color);
 }
 
-.logo {
-    flex: 1;
+.chat-profile {
+    padding: 10px;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 90%;
 }
 
-.Profile {
-    margin: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.Profile img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
+.chat-profile img {
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
     object-fit: cover;
     margin-bottom: 2px;
 }
@@ -67,20 +60,21 @@
     background-color: #D0D0D0;
 }
 
-.Chat-section {
+.chat-section {
     min-width: 400px;
     display: flex;
+    flex: 1;
     flex-direction: column;
-    width: 100%;
-    height: calc(100vh - 180px);
-    overflow: hidden scroll;
+    height: calc(100vh - 247px);
+    overflow: auto;
 }
 
-.Chat {
+.chat {
     margin: 10px;
     font-weight: bold;
+    align-content: center;
 }
-.Chat button {
+.chat button {
     background: none;
     border: none;
     color: #007bff;
@@ -88,7 +82,7 @@
     font-size: 12px;
 }
 
-.Chat div {
+.chat div {
     max-width: 80%;
     margin-bottom: 10px;
     padding: 10px 15px;
@@ -97,45 +91,50 @@
 }
 
 .Mine {
-    background-color: #ffd3b6;
+    background-color: #FFCA00;
     color: #333;
-    float: right;
-}
-.Right {
     float: right;
 }
 
 .Them {
-    background-color: #a8e6cf;
+    background-color: #5CBF60;
     color: #333;
     float: left;
 }
-.Left {
-    float: left;
-}
-.Translate {
+
+.translate-text {
     color: blue;
 }
 
-.Input-section {
-    background-color: #D0D0D0;
-    display: flex;
-    width: auto;
-    bottom: 0;
-    border-radius: 20px;
-    margin: auto 5px 5px 5px;
-    padding: 5px;
+.translate-open {
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 20px;
+    height: 20px;
+    color: #777777;
 }
 
-.Input-box {
-    background-color: #D0D0D0;
+.input-section {
+    flex: 1;
+    border-top: 1px solid var(--border-color);
+}
+.input-content {
+    border: 1px solid var(--border-color);
+    /*background-color: #D0D0D0;*/
+    display: flex;
+    bottom: 0;
+    border-radius: 20px;
+    margin: 5px 5px 5px 5px;
+    padding: 5px;
+}
+.input-box {
     flex : 1 0 auto;
     border: none;
     outline: none;
     font-size: 18px;
 }
 
-.Input-section button {
+.input-section button {
     background-color: var(--button-color);
     color: #fff;
     border: none;
@@ -147,6 +146,6 @@
     margin: 5px;
 }
 
-.Input-section button:hover {
+.input-section button:hover {
     background-color: var(--hover-coler);
 }
