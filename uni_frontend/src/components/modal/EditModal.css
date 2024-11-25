@@ -1,0 +1,34 @@
+.edit-box {
+    width: 100%;
+    height: 50px;
+    padding: 10px;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.edit-modal input {
+    width: 100%;
+    padding: 5px;
+    font-size: 12pt;
+    margin-top: 10px;
+    box-sizing: border-box;
+}
+.edit-modal input:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+.edit-modal textarea {
+    border-color: #505050;
+    font: inherit;
+    font-size: 12pt;
+    box-sizing: border-box; /* 패딩과 테두리를 포함한 크기 계산 */
+}
+.edit-modal textarea:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+.edit-arrow {
+    float: right;
+    color: #808080;
+}

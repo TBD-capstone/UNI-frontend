@@ -1,38 +1,33 @@
-.Button-section {
-    float: right;
-    margin-left: auto;
-    position: relative;
+.user-container {
+    max-width: 1200px;
+    align-content: center;
+    margin: auto;
 }
-
-.Button-section button{
-    height: 30px;
-    width: 60px;
-    border: none;
-    border-radius: 20px;
+.user-container button {
     color: white;
     cursor: pointer;
     background-color: #4CAF50;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-.Button-section button:hover {
+.user-container button:hover {
     background-color: #1C6F20;
 }
 
-/*.Edit {*/
-/*    background-color: #a0886b;*/
-/*}*/
+.button-section {
+    width: 150px;
+    margin: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    float: right;
+    text-align: center;
+}
 
-/*.ChatRoom {*/
-/*    background-color: #a0886b;*/
-/*}*/
-
-/*.Report {*/
-/*    background-color: indianred;*/
-/*}*/
-
-/*.Chatting {*/
-/*    background-color: #4CAF50;*/
-/*}*/
+.button-section button{
+    height: 30px;
+    width: 80%;
+    border: none;
+    border-radius: 2px;
+    /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
+}
 
 .Image-back-container {
     width: 100%;
@@ -41,32 +36,29 @@
     overflow: hidden;
     border-bottom: 1px solid black;
 }
-
 .Image-back {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.Content-container {
-    margin-left: 50px;
-    margin-right: 50px;
+.user-content-container {
     background-color: #fff;
-    max-width: 1200px;
     border-radius: 8px;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
-.Profile-container {
-    width: 200px;
-    margin-top: -150px;
+.profile-container {
+    width: 100%;
 }
 
 .Image-prof-container {
     height: 200px;
     width: 200px;
+    margin-top: -150px;
     background-color: white;
     border-radius: 20px;
 }
@@ -74,11 +66,6 @@
 .Image-prof {
     height: 100%;
     width: 100%;
-    border: 10px #61dafb;
-}
-
-.Profile-content {
-    /*text-align: left;*/
 }
 
 .Hashtag-section {
@@ -94,78 +81,70 @@
     background-color: aquamarine;
     word-break:break-all;
 }
-.Map-section {
-    text-align: center;
-    width: 300px;
-    margin-top: 40px;
+
+.selfPR-container {
+    flex: 1;
+    width: auto;
+    padding: 10px;
+    border: 1px solid #999999;
+    border-radius: 10px;
 }
 
-.Map-container {
+.selfPR {
     width: 100%;
-    height: 300px;
-}
-
-.SelfPR {
-    width: 300px;
-    margin-top: 40px;
-}
-
-.SelfPR span{
-    text-align: center;
-}
-
-.Explain {
-    width: 100%;
-    height: 300px;
+    min-height: 100px;
     text-align: left;
 }
 
-.Qna-container {
+.qna-container {
     margin: auto;
-    max-width: 80%;
+    width: 100%;
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 8px;
     overflow: hidden;
 }
 
-.Qna-box {
+.qna-box {
     margin-left: 50px;
 }
 
-.Reply {
+.qna {
     padding: 10px 15px;
     display: flex;
     align-items: flex-start;
 }
 
-.Reply img {
+.qna img {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     margin-right: 10px;
 }
 
-.Reply-content {
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    padding: 10px 15px;
+.qna-user {
+    font-weight: bold;
+}
+.qna-content {
+    /*padding: 10px 15px;*/
     font-size: 14px;
     color: #333;
     max-width: 200px;
 }
 
-.Reply.user .Reply-content {
-    background-color: #e1f5fe;
+.reply-container {
+    /*border: 1px solid var(--border-color);*/
+    border: 1px solid #ddd;
+    background: #f9f9f9;
 }
 
-.Input-box {
+.input-box {
     display: flex;
     padding: 10px;
     border-top: 1px solid #ddd;
 }
 
-.Input-box input[type="text"] {
+.input-box input[type="text"] {
     flex: 1;
     padding: 8px;
     border: 1px solid #ddd;
@@ -173,28 +152,21 @@
     font-size: 14px;
 }
 
-.Input-box button {
-    background-color: #007bff;
-    color: #fff;
+.input-box button {
     padding: 8px 12px;
     border: none;
     border-radius: 4px;
     margin-left: 5px;
-    cursor: pointer;
     font-size: 14px;
 }
 
-.Input-box button:hover {
-    background-color: #0056b3;
-}
-
-.Qna-options {
+.qna-options {
     display: flex;
     justify-content: space-between;
     margin-top: 5px;
 }
 
-.Qna-options button {
+.qna-options button {
     background: none;
     border: none;
     color: #007bff;
@@ -202,18 +174,50 @@
     font-size: 12px;
 }
 
-.Qna-options button:hover {
+.qna-options button:hover {
+    background: none;
     text-decoration: underline;
 }
 
-.Review-section {
+.review-section {
+    width: 100%;
 }
-.Review {
+.review {
     margin: 10px;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 8px;
 }
-.Star {
+.user-star {
     float: right;
+}
+
+.Map-section {
+    width: 100%;
+    margin-top: 40px;
+}
+.Map-container {
+    width: 100%;
+    height: 300px;
+}
+
+.user-tabs {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    border-bottom: 2px solid #ddd;
+    margin-bottom: 20px;
+}
+
+.tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #666;
+    transition: color 0.3s;
+}
+
+.tab.active {
+    color: #FFBA00;
+    border-bottom: 3px solid #FFBA00;
 }

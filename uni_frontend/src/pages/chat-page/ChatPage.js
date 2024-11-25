@@ -5,13 +5,14 @@ import {Stomp} from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import Cookies from "js-cookie";
 import { useTranslation } from "react-i18next";
+import { IoIosArrowDropdownCircle, IoIosArrowDropupCircle } from "react-icons/io";
 
 
-const ChatPage = () => {
+const ChatPage = (props) => {
     const { t } = useTranslation();
     const {roomId} = useParams();
     const {state} = useLocation();
-    const [messages, setMessages] = useState(state ? state.chatMessages : null);
+    const [messages, setMessages] = useState(null);
     const [message, setMessage] = useState("");
     const [matchingId, setMatchingId] = useState(null);
     const [stompClient, setStompClient] = useState(null);
@@ -24,14 +25,14 @@ const ChatPage = () => {
             const [translatedChat, setTranslatedChat] = useState(null);
 
             const handleClickTranslate = () => {
-                setShowTranslate(prev => !prev);
+                setShowTranslate( ()=> true);
                 if (!translatedChat) {
                     (async () => {
                         fetch(`/api/chat/translate/${props.messageId}`, {
                             method: 'GET',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'Accept-Language': 'en'
+                                'Accept-Language': Cookies.get('language')
                             }
                         })
                             .catch((err) => {
@@ -49,14 +50,20 @@ const ChatPage = () => {
                     })();
                 }
             }
+            const handleClickDropUp = () => {
+                setShowTranslate(()=>false);
+            }
 
             return (
-                <div className="Chat">
+                <div className="chat">
                     <div className={props.owner ? "Mine" : "Them"}>
                         <span>{props.text}</span>
-                        {showTranslate && <><br/><span className="Translate">{translatedChat}</span></>}
+                        {showTranslate && <><br/><span className="translate-text">{translatedChat}</span></>}
                     </div>
-                    <button className={props.owner ? "Right" : "Left"} onClick={handleClickTranslate}>&#127760;</button>
+                    {!props.owner &&
+                        (showTranslate ? <IoIosArrowDropupCircle className={'translate-open'} onClick={handleClickDropUp}/>:
+                        <IoIosArrowDropdownCircle className={'translate-open'} onClick={handleClickTranslate}/>)
+                    }
                 </div>
             )
         };
@@ -64,7 +71,7 @@ const ChatPage = () => {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }, [props.chatList]);
         return (
-            <div className="Chat-section" ref={scrollRef}>
+            <div className="chat-section" ref={scrollRef}>
                 {(props.chatList) && (props.chatList).map((d, i) => {
                     return (
                         <Chat
@@ -76,9 +83,8 @@ const ChatPage = () => {
                     )
                 })}
             </div>
-
-        )
-    }
+        );
+    };
     const handleClickMatch = () => {
         if (stompClient && !matchingId) {
             stompClient.send(
@@ -145,6 +151,11 @@ const ChatPage = () => {
         //
         //         });
         // })();
+        if(!state) {
+            return;
+        }
+        setMessages(() => state.chatMessages)
+        props.changeAlarm(false);
         const socketChat = new SockJS('http://localhost:8080/ws/chat');
         const stompClientInstance = Stomp.over(socketChat);
 
@@ -179,19 +190,20 @@ const ChatPage = () => {
                 stompClientInstance.disconnect();
                 console.log("Disconnected from WebSocket: Chat");
             }
+            props.changeAlarm(true);
         };
 
 
-    }, [roomId, state]);
+    }, [roomId, state, props]);
 
     return (
         messages ? (
-            <div className="Chat-page">
-                <div className="Match-section">
+            <div className="chat-page">
+                <div className="match-section">
                     {/*<div className="logo"/>*/}
-                    <div className="Profile">
-                        {/*<img src="/UNI_Logo.png" alt="Profile"/>*/}
-                        {/*<div className="Profile-name">김현수</div>*/}
+                    <div className="chat-profile">
+                        <img src={state.otherImgProf || '/UNI_Logo.png'} alt="Profile"/>
+                        <div className="Profile-name">{state.otherName || '사용자명'}</div>
                     </div>
                     <div className="Match-button">
                         {isKorean?
@@ -206,14 +218,16 @@ const ChatPage = () => {
                     </div>
                 </div>
                 <ChatBox chatList={messages} userId={state.myId}/>
-                <div className="Input-section">
-                    <input
-                        className="Input-box"
-                        value={message}
-                        onChange={handleChangeMessage}
-                        onKeyDown={(e) => handleKeyDownMessage(e)}
-                        placeholder={t("chatPage.input_message_placeholder")}/>
-                    <button onClick={handleClickSend}>{t("chatPage.send")}</button>
+                <div className="input-section">
+                    <div className='input-content'>
+                        <input
+                            className="input-box"
+                            value={message}
+                            onChange={handleChangeMessage}
+                            onKeyDown={(e) => handleKeyDownMessage(e)}
+                            placeholder={t("chatPage.input_message_placeholder")}/>
+                        <button onClick={handleClickSend}>{t("chatPage.send")}</button>
+                    </div>
                 </div>
 
             </div>) : null

@@ -1,35 +1,25 @@
 import "./EditPage.css";
+import "../user-page/UserPage.css";
 import {useNavigate, useParams} from "react-router-dom";
-import React, {useEffect, useState} from "react";
-import GoogleMap from "../user-page/util/GoogleMap";
-import { useTranslation } from "react-i18next";
+import React, {useEffect, useRef, useState} from "react";
+import GoogleMap from "../../components/GoogleMap";
+import {useTranslation} from "react-i18next";
+import EditModal from "../../components/modal/EditModal.js";
 
 const EditPage = () => {
-    const { t } = useTranslation();
+    const {t} = useTranslation();
     const {userId} = useParams();
     const [user, setUser] = useState(null);
     const [hashtag, setHashtag] = useState("");
     const [profileImage, setProfileImage] = useState(null);
     const [backgroundImage, setBackgroundImage] = useState(null);
+    const [profileImagePreview, setProfileImagePreview] = useState(null);
+    const [backgroundImagePreview, setBackgroundImagePreview] = useState(null);
     const [position, setPosition] = useState(null);
     const [markerName, setMarkerName] = useState("");
     const [markerDescription, setMarkerDescription] = useState("");
-    const [markerAdd, setMarkerAdd] = useState(false);
-    const [markerDelete, setMarkerDelete] = useState(false);
-    const [markerUpdate, setMarkerUpdate] = useState(false);
-    const [markers, setMarkers] = useState([{
-        id: 1,
-        latitude: 37.282,
-        longitude: 127.043,
-        name: "first",
-        description: "this is first"
-    }, {
-        id: 2,
-        latitude: 37.283,
-        longitude: 127.044,
-        name: "second",
-        description: "this is second"
-    }]);
+    const [markerAction, setMarkerAction] = useState('add');
+    const [markers, setMarkers] = useState([]);
     const basicHashtags = ["여행",
         "행정",
         "부동산",
@@ -90,16 +80,19 @@ const EditPage = () => {
     }
 
     const handleClickComplete = () => {
-        const result = fetch(`/api/user/${userId}`, {
+        navigate(`/user/${user.userId}`);
+    };
+    const handleClickEdit = () => {
+        fetch(`/api/user/${userId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(user)
+            body: JSON.stringify
+            (user)
         })
             .then(() => {
                 alert("성공");
-                navigate(`/user/${user.userId}`);
             })
             .catch((err) => {
                 console.log(err);
@@ -110,9 +103,19 @@ const EditPage = () => {
 
     const handleChangeProfileImage = (e) => {
         setProfileImage(e.target.files[0]);
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(e.target.files[0]);
+        fileReader.onloadend = () => {
+            setProfileImagePreview(() => fileReader.result);
+        }
     }
     const handleChangeBackgroundImage = (e) => {
         setBackgroundImage(e.target.files[0]);
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(e.target.files[0]);
+        fileReader.onloadend = () => {
+            setBackgroundImagePreview(() => fileReader.result);
+        }
     }
 
     const handleClickSubmit = (e) => {
@@ -223,15 +226,14 @@ const EditPage = () => {
 
     const BasicHashtag = (props) => {
         const handleClickBasicHashtag = () => {
-            if(user.hashtags.includes(props.basicHashtag)) {
+            if (user.hashtags.includes(props.basicHashtag)) {
                 deleteHashtag(props.basicHashtag);
-            }
-            else {
+            } else {
                 appendHashtag(props.basicHashtag);
             }
         }
         return (
-            <div className="Hashtag Basic"  onClick={handleClickBasicHashtag}>
+            <div className="Hashtag Basic" onClick={handleClickBasicHashtag}>
                 <span>#{props.basicHashtag}</span>
             </div>
         );
@@ -278,123 +280,151 @@ const EditPage = () => {
     }, [userId]);
 
     const handleClickMarkerAdd = () => {
-        setMarkerAdd(prev => !prev);
-        setMarkerDelete(() => false);
-        setMarkerUpdate(() => false);
+        setMarkerAction(() => 'add');
     };
     const handleClickMarkerDelete = () => {
-        setMarkerAdd(() => false);
-        setMarkerDelete(prev => !prev);
-        setMarkerUpdate(() => false);
+        setMarkerAction(() => 'delete');
     };
-    // const handleClickMarkerUpdate = () => {
-    //     setMarkerAdd(() => false);
-    //     setMarkerDelete(() => false);
-    //     setMarkerUpdate(prev => !prev);
-    // };
+    const handleClickMarkerUpdate = () => {
+        setMarkerAction(() => 'update');
+    };
 
     return (
         user ? (
-            <div>
+            <div className={'edit-container'}>
                 <div className="Image-back-container">
-                    <img className="Image-back" src={user.imgBack?user.imgBack:'/UNI_Background.png'} alt="배경사진"/>
+                    <img className="Image-back" src={user.imgBack ? user.imgBack : '/UNI_Background.png'} alt="배경사진"/>
+                </div>
+                <div className={'button-section'}>
+                    프로필로 돌아가기
+                    <button className="Complete" onClick={handleClickComplete}>수정 완료</button>
                 </div>
                 <div>
-                    <button
-                        className="Complete"
-                        onClick={handleClickComplete}
-                    >{t("editPage.edit")}
-                    </button>
                 </div>
-                <div className="Content-container">
-                    <div className="Profile-container">
-                        <div className="Image-prof-container">
-                            <img className="Image-prof" src={user.imgProf?user.imgProf:'/UNI_Logo.png'} alt="프로필사진"/>
-                        </div>
-                        <div className="Profile-content">
-                            <p>⭐ {user.star}</p>
-                            <p>{t("editPage.user")}: {user.userName}</p>
-                            <span>{t("editPage.region")}: </span>
-                            <input
-                                type="text"
-                                value={user.region}
-                                onChange={handleChangeRegion}
-                            />
-                            <p>{t("editPage.university")}: {user.univ}</p>
-                            {/*<p>{t("editPage.employ_count")}: {user.numEmployment}</p>*/}
-                            <span>{t("editPage.time")}: </span>
-                            <input
-                                type="text"
-                                value={user.time}
-                                onChange={handleChangeTime}
-                            />
-                            <span>{t("editPage.basic_hashtag")}</span>
-                            <div className="Hashtag-section">
-                                {basicHashtags.map((basicHashtag, i) => {
-                                    return (
-                                        <BasicHashtag basicHashtag={basicHashtag} key={`basicHashtag-${i}`}/>
-                                    );
-                                })}
-                            </div>
-                            <div className="Hashtag-section">
-                                {user.hashtags && user.hashtags.map((hashtag, i) => {
-                                    return (
-                                        <div className="Hashtag" key={`hashtag-${i}`}>
-                                            <span>#{hashtag}</span>
-                                            <button onClick={() => deleteHashtag(hashtag)}>X</button>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                            <input
-                                type="text"
-                                value={hashtag}
-                                placeholder="hashtag"
-                                onKeyDown={(e) => handleKeyDownHashtag(e)}
-                                onChange={handleChangeHashtag}
-                            />
-                            <span>{t("editPage.profile_image")}: </span>
-                            <input type='file' accept="image/png, image/jpeg" onChange={handleChangeProfileImage}/>
-                            <span>{t("editPage.background_image")}: </span>
-                            <input type='file' accept="image/png, image/jpeg" onChange={handleChangeBackgroundImage}/>
-                            <button onClick={handleClickSubmit}>{t("editPage.image_upload")}</button>
-                        </div>
+                <div className="user-content-container">
+                    <div className="Image-prof-container">
+                        <img className="Image-prof" src={user.imgProf ? user.imgProf : '/UNI_Logo.png'} alt="프로필사진"/>
                     </div>
-                    <div className="Map-section">
-                        <span>{t("editPage.map")}: </span>
-                        <div className="Map-container">
-                            <GoogleMap markers={markers} setting={setting}/>
-                        </div>
-                        <button onClick={handleClickMarkerAdd}>{t("editPage.marker_add")}</button>
-                        <button onClick={handleClickMarkerDelete}>{t("editPage.marker_delete")}</button>
-                        {/*<button onClick={handleClickMarkerUpdate}>Marker Update</button>*/}
-                        {(markerAdd || markerDelete) &&
-                            <input
-                                type="text"
-                                placeholder={t("editPage.marker_title_placeholder")}
-                                value={markerName}
-                                onChange={handleChangeMarkerName}
-                            />}
-                        {(markerAdd || markerUpdate) && <input
+                    <div className="profile-container">
+                        <h2>{user.userName}</h2>
+                        <p>from {user.univ}</p>
+                    </div>
+                    <h3>프로필 편집하기</h3>
+                    <EditModal title={'기본 정보'}>
+                        <h3>{t("editPage.region")}</h3>
+                        <input
                             type="text"
-                            placeholder={t("editPage.marker_description_placeholder")}
-                            value={markerDescription}
-                            onChange={handleChangeMarkerDescription}
+                            value={user.region}
+                            onChange={handleChangeRegion}
                         />
-                        }
-                        {markerAdd && <button onClick={handleClickAdd}>{t("editPage.add")}</button>}
-                        {markerDelete && <button onClick={handleClickDelete}>{t("editPage.delete")}</button>}
-                        {/*{markerUpdate && <button onClick={handleClickUpdate}>Update</button>}*/}
-                    </div>
-                    <div className="SelfPR">
-                        <span>{t("editPage.self_pr")}</span>
+                        <h3>{t("editPage.time")}</h3>
+                        <input
+                            type="text"
+                            value={user.time}
+                            onChange={handleChangeTime}
+                        />
+                        <h3>{t("editPage.basic_hashtag")}</h3>
+                        <div className="Hashtag-section">
+                            {basicHashtags.map((basicHashtag, i) => {
+                                return (
+                                    <BasicHashtag basicHashtag={basicHashtag} key={`basicHashtag-${i}`}/>
+                                );
+                            })}
+                        </div>
+                        <div className="Hashtag-section">
+                            {user.hashtags && user.hashtags.map((hashtag, i) => {
+                                return (
+                                    <div className="Hashtag" key={`hashtag-${i}`}>
+                                        <span>#{hashtag}</span>
+                                        <button onClick={() => deleteHashtag(hashtag)}>X</button>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                        <input
+                            type="text"
+                            value={hashtag}
+                            placeholder="hashtag"
+                            onKeyDown={(e) => handleKeyDownHashtag(e)}
+                            onChange={handleChangeHashtag}
+                        />
+                        <h3>{t("editPage.self_pr")}</h3>
                         <textarea
-                            className="Explain"
+                            className="selfPR"
                             value={user.description}
                             onChange={handleChangeDescription}
                             maxLength={100}
                         />
-                    </div>
+                        <button className={'edit-button'} onClick={handleClickEdit}>{t("editPage.edit")}</button>
+                    </EditModal>
+                    <EditModal title={t("editPage.image_upload")}>
+                        <h3>{t("editPage.profile_image")}</h3>
+                        <label htmlFor='profile'>
+                            <div className="image-edit-prof-container">
+                                <img className="Image-prof" src={profileImagePreview || user.imgProf || '/UNI_Logo.png'}
+                                     alt="프로필사진"/>
+                            </div>
+                        </label>
+                        <input type='file' id='profile' accept="image/png, image/jpeg"
+                               onChange={handleChangeProfileImage}/>
+                        <h3>{t("editPage.background_image")}</h3>
+                        <label htmlFor='background'>
+                            <div className="image-edit-back-container">
+                                <img className="Image-prof" src={backgroundImagePreview || user.imgBack || '/UNI_Background.png'}
+                                     alt="배경사진"/>
+                            </div>
+                        </label>
+                        <input type='file' id='background' accept="image/png, image/jpeg"
+                               onChange={handleChangeBackgroundImage}/>
+                        <button className={'edit-button'}
+                                onClick={handleClickSubmit}>{t("editPage.image_upload")}</button>
+                    </EditModal>
+                    <EditModal title={t("editPage.map")}>
+                        <div>
+                            <div className="edit-map-container">
+                                <GoogleMap markers={markers} setting={setting}/>
+                            </div>
+                        </div>
+                        <div className={'edit-select'}>
+                            <button className={'edit-select'}
+                                    onClick={handleClickMarkerAdd}>{t("editPage.marker_add")}</button>
+                            <button className={'edit-select'}
+                                    onClick={handleClickMarkerDelete}>{t("editPage.marker_delete")}</button>
+                        </div>
+                        {/*<button className={'edit-select'} onClick={handleClickMarkerUpdate}>Marker Update</button>*/}
+                        {markerAction === 'add' &&
+                            <>
+                                <p>지도를 클릭해 마커 위치를 정해주세요</p>
+                                <input
+                                    type="text"
+                                    placeholder={t("editPage.marker_title_placeholder")}
+                                    value={markerName}
+                                    onChange={handleChangeMarkerName}
+                                />
+                                <input
+                                    type="text"
+                                    placeholder={t("editPage.marker_description_placeholder")}
+                                    value={markerDescription}
+                                    onChange={handleChangeMarkerDescription}
+                                />
+                                <button className={'edit-button'} onClick={handleClickAdd}>{t("editPage.add")}</button>
+                            </>
+                        }
+                        {markerAction === 'delete' &&
+                            <>
+                                <p>삭제할 마커의 이름을 입력해주세요.</p>
+                                <input
+                                    type="text"
+                                    placeholder={t("editPage.marker_title_placeholder")}
+                                    value={markerName}
+                                    onChange={handleChangeMarkerName}
+                                />
+                                <button className={'edit-button'}
+                                        onClick={handleClickAdd}>{t("editPage.delete")}</button>
+                            </>
+                        }
+                        {/*{markerUpdate && <button onClick={handleClickUpdate}>Update</button>}*/}
+                    </EditModal>
                 </div>
             </div>) : null
     );
