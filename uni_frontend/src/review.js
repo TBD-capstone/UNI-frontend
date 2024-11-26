@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import './review.css';
+import { AiFillStar, AiOutlineStar } from 'react-icons/ai'; // react-icons에서 별 아이콘 임포트
 
 function Review() {
     const { matchingId } = useParams(); // 매칭 ID 가져오기
@@ -89,20 +90,27 @@ function Review() {
                     <label>별점:</label>
                     <div className="rating-stars">
                         {[1, 2, 3, 4, 5].map((star) => (
-                            <img
-                                key={star}
-                                src={hoverRating >= star || rating >= star ? './star-filled.png' : './star-empty.png'}
-                                alt={`${star} star`}
-                                className="star"
-                                onClick={() => setRating(star)}
-                                onMouseEnter={() => setHoverRating(star)}
-                                onMouseLeave={() => setHoverRating(0)}
-                            />
+                            <span key={star}>
+                                {hoverRating >= star || rating >= star ? (
+                                    <AiFillStar
+                                        size={30}
+                                        color="#FFD700" // 별색을 금색으로 설정
+                                        onClick={() => setRating(star)}
+                                        onMouseEnter={() => setHoverRating(star)}
+                                        onMouseLeave={() => setHoverRating(0)}
+                                    />
+                                ) : (
+                                    <AiOutlineStar
+                                        size={30}
+                                        color="#D3D3D3" // 빈 별색을 회색으로 설정
+                                        onClick={() => setRating(star)}
+                                        onMouseEnter={() => setHoverRating(star)}
+                                        onMouseLeave={() => setHoverRating(0)}
+                                    />
+                                )}
+                            </span>
                         ))}
                     </div>
-                    <p className="rating-text">
-                        {rating > 0 ? `선택한 별점: ${rating}점` : '별점을 선택해주세요.'}
-                    </p>
                 </div>
 
                 <div className="form-group">

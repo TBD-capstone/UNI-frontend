@@ -22,7 +22,12 @@
       "administration": "행정",
       "language": "언어",
       "college_life": "대학 생활",
-      "gastroventure": "맛집 탐방"
+      "gastroventure": "맛집 탐방",
+      "game": "게임",
+      "realty": "부동산",
+      "banking": "은행",
+      "mobile": "휴대폰",
+      "shopping": "쇼핑"
     },
     "profile_alt": "프로필"
   },

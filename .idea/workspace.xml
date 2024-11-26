@@ -6,8 +6,17 @@
   <component name="ChangeListManager">
     <list default="true" id="7141e09f-2a8e-40b4-9e35-8450a5e64986" name="Changes" comment="[HOTFIX] 카테고리 번역 키 추가 작성">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/App.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/Register.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/Register.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/uni_frontend/src/Register.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/Register.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/locales/ko/translation.json" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/locales/ko/translation.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/mainpage.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/mainpage.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/mainpage.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/mainpage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/matchingList.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/matchingList.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/uni_frontend/src/navbar.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/navbar.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/navbar.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/navbar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/review.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/review.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/review.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/review.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,7 +34,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="temppp" />
+        <entry key="$PROJECT_DIR$" value="35-dir_fix" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -70,7 +79,7 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;35-dir__fix&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/asdf9/OneDrive/바탕 화면/School/4-2/캡스톤/frontend&quot;,
     &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
@@ -145,6 +154,8 @@
       <workItem from="1732523821522" duration="7180000" />
       <workItem from="1732538373757" duration="2000" />
       <workItem from="1732603177920" duration="1811000" />
+      <workItem from="1732615776353" duration="3521000" />
+      <workItem from="1732632168115" duration="10541000" />
     </task>
     <servers />
   </component>

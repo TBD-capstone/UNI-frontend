@@ -11,9 +11,13 @@ const categories = [
     { icon: './icons/find-room.png', label: 'college_life' },
     { icon: './icons/category5.png', label: 'gastroventure' },
     { icon: './icons/game.png', label: 'game' },
+    { icon: './icons/realty.png', label: 'realty'},
+    { icon: './icons/banking.png', label: 'banking'},
+    { icon: './icons/mobile.png', label: 'mobile'},
+    { icon: './icons/shopping.png', label: 'shopping'}
 ];
 
-const ITEMS_PER_PAGE = 8;
+const ITEMS_PER_PAGE = 10;
 
 const ProfileGrid = () => {
     const { t } = useTranslation(); // i18n 훅 사용
@@ -25,6 +29,7 @@ const ProfileGrid = () => {
     const [ads, setAds] = useState([]);
     const [currentAd, setCurrentAd] = useState(null);
     const [language, setLanguage] = useState(Cookies.get('language') || 'en');
+    const [sortOrder, setSortOrder] = useState('high'); // 기본값은 높은 별점 순
 
     const fetchWithLanguage = async (url, options = {}) => {
         const headers = {
@@ -81,12 +86,19 @@ const ProfileGrid = () => {
                 );
             }
 
+            // 별점 기준으로 정렬
+            if (sortOrder === 'high') {
+                filtered = filtered.sort((a, b) => b.star - a.star); // 별점 높은 순
+            } else {
+                filtered = filtered.sort((a, b) => a.star - b.star); // 별점 낮은 순
+            }
+
             setFilteredProfiles(filtered);
             setCurrentPage(1);
         };
 
         filterProfiles();
-    }, [selectedCategory, searchQuery, profiles]);
+    }, [selectedCategory, searchQuery, profiles, sortOrder]);
 
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
@@ -117,6 +129,10 @@ const ProfileGrid = () => {
         }
     };
 
+    const handleSortChange = (e) => {
+        setSortOrder(e.target.value);
+    };
+
     return (
         <div className="container">
             {currentAd && (
@@ -134,6 +150,11 @@ const ProfileGrid = () => {
                         onChange={handleSearchChange}
                     />
                     <button>{t('mainpage.search_button')}</button>
+                    {/* 정렬 버튼을 검색버튼 옆으로 이동 */}
+                    <select onChange={handleSortChange} value={sortOrder}>
+                        <option value="high">{t('mainpage.sort_high')}</option>
+                        <option value="low">{t('mainpage.sort_low')}</option>
+                    </select>
                 </div>
             </div>
 

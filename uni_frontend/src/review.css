@@ -38,23 +38,6 @@
     justify-content: center; /* 별들이 중앙 정렬되도록 설정 */
 }
 
-.star {
-    width: 32px;
-    height: 32px;
-    cursor: pointer;
-    background-image: url('./star-empty.png'); /* 빈 별 이미지 */
-    background-size: cover;
-    transition: transform 0.2s ease, background-image 0.2s ease;
-}
-
-.star.filled {
-    background-image: url('./star-filled.png'); /* 노란 별 이미지 */
-}
-
-.star:hover {
-    transform: scale(1.2); /* 호버 시 확대 효과 */
-}
-
 .rating-text {
     margin-top: 10px;
     font-size: 1rem;
@@ -90,4 +73,13 @@ textarea {
     color: red;
     margin-top: 10px;
     text-align: center;
+}
+
+/* 별점 아이콘 클릭 시 확대 효과 */
+.rating-stars svg {
+    transition: transform 0.2s ease;
+}
+
+.rating-stars svg:hover {
+    transform: scale(1.2); /* 호버 시 확대 효과 */
 }

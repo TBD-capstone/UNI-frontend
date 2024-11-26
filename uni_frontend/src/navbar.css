@@ -4,7 +4,7 @@
     align-items: center;
     padding: 10px 20px;
     background-color: #ffffff;
-    border-bottom: none; /* 하단 줄 제거 */
+    border-bottom: 1px solid #ddd; /* 하단 줄 제거 */
     position: relative;
     z-index: 100;
     max-width: 1200px; /* 최대 너비 설정 */
@@ -72,24 +72,26 @@
     background-color: #f0f0f0;
 }
 
+/* 프로필 관련 스타일 */
 .profile {
     display: flex;
-    align-items: center;
+    align-content: center; /* 프로필 이미지와 텍스트 수직 정렬 */
     gap: 8px;
     cursor: pointer;
 }
 
 .profile-image {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    object-fit: cover;
+    width: 40px; /* 프로필 이미지 크기 */
+    height: 40px; /* 프로필 이미지 크기 */
+    border-radius: 50%; /* 원형으로 설정 */
+    object-fit: cover; /* 이미지 비율 유지 */
 }
 
 .username {
-    font-size: 14px;
-    font-weight: bold;
-    color: #333;
+    font-size: 14px; /* 사용자 이름 글꼴 크기 */
+    font-weight: bold; /* 굵게 설정 */
+    color: #333; /* 글자 색상 */
+    line-height: 40px;
 }
 
 .hamburger {

@@ -59,6 +59,15 @@
     background-color: #0056b3;
 }
 
+/* 정렬 select 버튼 */
+.search-bar select {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
 /* 검색 태그 */
 .search-bar .search-tags {
     display: flex;

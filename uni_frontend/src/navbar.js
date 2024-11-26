@@ -89,6 +89,8 @@ function Navbar({ selectedLanguage, fetchWithLanguage }) {
                 </div>
                 <div className="user">
                     <img src={profileImage} alt="프로필" className="profile-image" />
+                </div>
+                <div className="userid">
                     <Link to={`/user/${userId}`} className="username-link">
                         <span className="username">{username || 'Guest'}</span>
                     </Link>

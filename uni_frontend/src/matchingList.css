@@ -98,6 +98,7 @@
     text-decoration: none;
     cursor: pointer;
     transition: background-color 0.3s;
+    box-sizing: border-box;
 }
 
 .review-button:hover {
