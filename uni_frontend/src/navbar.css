@@ -4,7 +4,7 @@
     align-items: center;
     padding: 10px 20px;
     background-color: #ffffff;
-    border-bottom: 1px solid #ddd;
+    border-bottom: none; /* 하단 줄 제거 */
     position: relative;
     z-index: 100;
     max-width: 1200px; /* 최대 너비 설정 */

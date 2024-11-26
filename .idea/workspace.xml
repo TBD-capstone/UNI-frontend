@@ -5,26 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7141e09f-2a8e-40b4-9e35-8450a5e64986" name="Changes" comment="[HOTFIX] 카테고리 번역 키 추가 작성">
-      <change afterPath="$PROJECT_DIR$/uni_frontend/src/star-empty.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/uni_frontend/src/star-filled.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/public/UNI_Logo.png" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/public/UNI_Logo.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/App.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/Register.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/Register.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/uni_frontend/src/Register.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/Register.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/admin.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/chatList.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/chatList.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/chatList.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/chatList.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/login.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/login.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/mainpage.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/mainpage.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/mainpage.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/mainpage.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/matchingList.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/matchingList.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/matchingList.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/matchingList.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/uni_frontend/src/navbar.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/navbar.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/navbar.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/navbar.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/review.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/review.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/review.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/review.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -159,7 +142,9 @@
       <workItem from="1732274243226" duration="2161000" />
       <workItem from="1732443557475" duration="16933000" />
       <workItem from="1732514985042" duration="2926000" />
-      <workItem from="1732523821522" duration="6130000" />
+      <workItem from="1732523821522" duration="7180000" />
+      <workItem from="1732538373757" duration="2000" />
+      <workItem from="1732603177920" duration="1811000" />
     </task>
     <servers />
   </component>

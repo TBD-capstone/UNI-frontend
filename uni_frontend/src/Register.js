@@ -117,7 +117,8 @@ function Register() {
             });
             const data = await response.json();
             if (data.status === 'success') {
-                setStatusMessage({ message: "회원가입 성공!", isError: false });
+                setStatusMessage({ message: "", isError: false }); // 기존 메시지 초기화
+                alert("Signup successful! Redirecting to login page.");
                 navigate('/login'); // 회원가입 성공 시 로그인 화면으로 이동
             } else {
                 setStatusMessage({ message: data.message || "회원가입 실패.", isError: true });
