@@ -4,20 +4,28 @@
     align-items: center;
     padding: 10px 20px;
     background-color: #ffffff;
-    border-bottom: 1px solid #ddd;
+    border-bottom: none; /* 하단 줄 제거 */
     position: relative;
     z-index: 100;
+    max-width: 1200px; /* 최대 너비 설정 */
+    margin: 0 auto; /* 좌우 여백 추가 및 중앙 정렬 */
+    box-sizing: border-box; /* 여백 포함 크기 계산 */
 }
 
 .logo-section {
     display: flex;
     align-items: center;
-
+    cursor: pointer; /* 커서를 손가락 모양으로 변경 */
 }
 
 .uni-logo {
     height: 40px;
     object-fit: contain; /* 이미지가 비율에 맞게 조정되도록 설정 */
+    transition: opacity 0.3s ease;
+}
+
+.logo-section:hover {
+    opacity: 0.8; /* 마우스를 올렸을 때 살짝 어둡게 */
 }
 
 .menu-icons {
@@ -35,7 +43,7 @@
     width: 32px; /* 프로필 이미지와 동일한 크기로 설정 */
     height: 32px;
     object-fit: cover; /* 이미지 비율 유지 */
-    border-radius: 50%; /* 원형으로 설정 (필요 시) */
+    border-radius: 50%; /* 원형으로 설정 */
 }
 
 .language-dropdown {
@@ -107,6 +115,8 @@
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     z-index: 200;
+    max-width: 300px; /* 메뉴 최대 너비 설정 */
+    width: 100%;
 }
 
 .dropdown-menu ul {
@@ -135,4 +145,3 @@
 .logout-button:hover {
     background-color: #ffe5e5;
 }
-

@@ -45,6 +45,19 @@ function MatchingStatus() {
         fetchMatches();
     }, [userId]);
 
+    const getStatusClassName = (status) => {
+        switch (status) {
+            case 'PENDING':
+                return 'status-pending';
+            case 'ACCEPTED':
+                return 'status-accepted';
+            case 'REJECTED':
+                return 'status-rejected';
+            default:
+                return 'status-default';
+        }
+    };
+
     if (isLoading) {
         return <div>로딩 중...</div>;
     }
@@ -55,27 +68,24 @@ function MatchingStatus() {
 
     return (
         <div className="matching-status-page">
-            <h1>매칭 상태</h1>
+            <h1>매칭 목록</h1>
 
             {matches.length > 0 ? (
                 <ul className="matching-list">
                     {matches.map((match) => {
-                        // 매칭 상대의 ID를 한국인 여부에 따라 설정
                         const matchPartnerId = isKorean ? match.requesterId : match.receiverId;
-
-                        // 콘솔에 매칭 ID와 매칭 상대 ID 출력
-                        console.log(`Matching ID: ${match.matchingId}`);
-                        console.log(`Match Partner ID: ${matchPartnerId}`);
-                        console.log(`userName: ${match.userName}`);
 
                         return (
                             <li key={match.matchingId} className="matching-item">
-                                <div>
-                                    <p>매칭 상대: {match.userName}</p>
-                                    <p>상태: {match.status}</p>
-                                    <p>생성 날짜: {new Date(match.createdAt).toLocaleDateString()}</p>
+                                <div className="matching-info">
+                                    <p className="match-name">{match.userName}</p>
+                                    <p className={`match-status ${getStatusClassName(match.status)}`}>
+                                        {match.status}
+                                    </p>
+                                    <p className="match-date">
+                                        매칭 날짜: {new Date(match.createdAt).toLocaleDateString()}
+                                    </p>
                                 </div>
-                                {/* 후기 작성 버튼 - 외국인만 가능하며 매칭 상태가 ACCEPTED일 때 표시 */}
                                 {!isKorean && match.status === 'ACCEPTED' && (
                                     <Link
                                         to={`/review/${match.matchingId}`}
@@ -87,7 +97,6 @@ function MatchingStatus() {
                                     >
                                         후기 작성
                                     </Link>
-
                                 )}
                             </li>
                         );

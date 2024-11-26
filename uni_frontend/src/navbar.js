@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import './navbar.css';
@@ -8,22 +8,24 @@ import languageIcon from './language-icon.png'; // 언어 아이콘 이미지 �
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
 
-
-    
-
-
 function Navbar({ selectedLanguage, fetchWithLanguage }) {
     const { t } = useTranslation();
 
     const [menuOpen, setMenuOpen] = useState(false);
     const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
     const [username, setUsername] = useState('');
+    const [userId, setUserId] = useState(''); // 사용자 ID 저장
     const navigate = useNavigate();
+    const menuRef = useRef(null); // 드롭다운 메뉴 감지를 위한 참조
 
     useEffect(() => {
         const cookieUsername = Cookies.get('userName');
+        const cookieUserId = Cookies.get('userId');
         if (cookieUsername) {
             setUsername(cookieUsername);
+        }
+        if (cookieUserId) {
+            setUserId(cookieUserId);
         }
     }, []);
 
@@ -34,7 +36,7 @@ function Navbar({ selectedLanguage, fetchWithLanguage }) {
     const handleLogout = () => {
         document.cookie = 'userName=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         document.cookie = 'userId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        /*document.cookie = 'language=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';*/
+        setMenuOpen(false); // 로그아웃 시 메뉴 닫기
         navigate('/login');
     };
 
@@ -47,6 +49,20 @@ function Navbar({ selectedLanguage, fetchWithLanguage }) {
         i18n.changeLanguage(newLanguage); // 언어 변경 API 호출
         window.location.reload(); // 변경 후 전체 새로고침으로 언어 반영
     };
+
+    // 외부 클릭 감지 핸들러
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (menuRef.current && !menuRef.current.contains(event.target)) {
+                setMenuOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     return (
         <div className="navbar">
@@ -71,9 +87,11 @@ function Navbar({ selectedLanguage, fetchWithLanguage }) {
                         </div>
                     )}
                 </div>
-                <div className="profile">
+                <div className="user">
                     <img src={profileImage} alt="프로필" className="profile-image" />
-                    <span className="username">{username || 'Guest'}</span>
+                    <Link to={`/user/${userId}`} className="username-link">
+                        <span className="username">{username || 'Guest'}</span>
+                    </Link>
                 </div>
                 <div className="hamburger" onClick={toggleMenu}>
                     <span className="hamburger-line"></span>
@@ -82,15 +100,28 @@ function Navbar({ selectedLanguage, fetchWithLanguage }) {
                 </div>
             </div>
             {menuOpen && (
-                <div className="dropdown-menu">
+                <div className="dropdown-menu" ref={menuRef}>
                     <ul>
                         <li>
-                            <Link to="/matching-list">{t("navbar.menu.matching_list")}</Link>
+                            <Link
+                                to="/matching-list"
+                                onClick={() => setMenuOpen(false)} // 페이지 이동 시 메뉴 닫기
+                            >
+                                {t("navbar.menu.matching_list")}
+                            </Link>
                         </li>
                         <li>
-                            <Link to="/chat-list">{t("navbar.menu.chat_list")}</Link>
+                            <Link
+                                to="/chat-list"
+                                onClick={() => setMenuOpen(false)} // 페이지 이동 시 메뉴 닫기
+                            >
+                                {t("navbar.menu.chat_list")}
+                            </Link>
                         </li>
-                        <li onClick={handleLogout} className="logout-button">
+                        <li
+                            onClick={handleLogout}
+                            className="logout-button"
+                        >
                             {t("navbar.menu.logout")}
                         </li>
                     </ul>

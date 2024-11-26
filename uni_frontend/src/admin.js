@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './admin.css';
+import { useNavigate } from 'react-router-dom';
 
 const ITEMS_PER_PAGE = 5;
 
@@ -7,20 +8,20 @@ function AdminPage() {
     const [activeTab, setActiveTab] = useState('신고확인');
     const [selectedAdId, setSelectedAdId] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [dailyVisitors, setDailyVisitors] = useState(0);
-    const [monthlyVisitors, setMonthlyVisitors] = useState(0);
-
-    // 샘플 광고 데이터
     const [adData, setAdData] = useState([
         { id: 1, advertiser: '회사 A', title: '여름 세일 광고', status: '게시 전', startDate: '2024-01-01', endDate: '2024-01-31', imageUrl: 'https://via.placeholder.com/300x200' },
         { id: 2, advertiser: '회사 B', title: '신제품 출시', status: '게시 중', startDate: '2024-02-01', endDate: '2024-02-28', imageUrl: 'https://via.placeholder.com/300x200' },
         { id: 3, advertiser: '회사 C', title: '할인 이벤트', status: '게시 종료', startDate: '2024-03-01', endDate: '2024-03-31', imageUrl: 'https://via.placeholder.com/300x200' },
     ]);
+    const navigate = useNavigate();
 
+    // 관리자 여부 확인 후 리디렉션
     useEffect(() => {
-        setDailyVisitors(150);
-        setMonthlyVisitors(3200);
-    }, []);
+        const isAdmin = true; // 실제 구현 시 서버에서 관리자 여부를 확인
+        if (!isAdmin) {
+            navigate('/'); // 관리자가 아닐 경우 홈으로 리디렉션
+        }
+    }, [navigate]);
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -33,14 +34,12 @@ function AdminPage() {
     };
 
     const changeAdStatus = async (adId, newStatus) => {
-        // 상태를 로컬에서 변경
         setAdData((prevData) =>
             prevData.map((ad) =>
                 ad.id === adId ? { ...ad, status: newStatus } : ad
             )
         );
 
-        // 변경된 상태를 백엔드에 전송
         try {
             const response = await fetch('/api/admin/ad', {
                 method: 'POST',
@@ -68,7 +67,7 @@ function AdminPage() {
         const newAd = {
             advertiser: e.target.advertiser.value,
             title: e.target.title.value,
-            adStatus: '게시 전', // 기본 상태를 "게시 전"으로 설정
+            adStatus: '게시 전',
             startDate: e.target.startDate.value,
             endDate: e.target.endDate.value,
             imageUrl: e.target.imageUrl.value,
@@ -92,8 +91,7 @@ function AdminPage() {
         }
     };
 
-    // 현재 탭에 따라 데이터를 선택
-    const data = activeTab === '신고확인' ? [] : adData; // 샘플 데이터가 없는 경우 대체
+    const data = activeTab === '신고확인' ? [] : adData;
     const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
@@ -101,17 +99,6 @@ function AdminPage() {
 
     return (
         <div className="admin-page">
-            <div className="visitor-stats">
-                <div className="stat-item">
-                    <h3>일일 방문자 수</h3>
-                    <p>{dailyVisitors}</p>
-                </div>
-                <div className="stat-item">
-                    <h3>월간 방문자 수</h3>
-                    <p>{monthlyVisitors}</p>
-                </div>
-            </div>
-
             <div className="tabs">
                 <div className={`tab ${activeTab === '신고확인' ? 'active' : ''}`} onClick={() => handleTabClick('신고확인')}>
                     신고확인
@@ -133,6 +120,7 @@ function AdminPage() {
                             <th>광고 제목</th>
                             <th>기간</th>
                             <th>상태</th>
+                            <th>관리</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -143,10 +131,15 @@ function AdminPage() {
                                     <td>{ad.title}</td>
                                     <td>{ad.startDate} ~ {ad.endDate}</td>
                                     <td className="status">{ad.status}</td>
+                                    <td>
+                                        <button onClick={() => changeAdStatus(ad.id, '게시 중')}>
+                                            광고 게시
+                                        </button>
+                                    </td>
                                 </tr>
                                 {selectedAdId === ad.id && (
                                     <tr className="ad-details">
-                                        <td colSpan="4">
+                                        <td colSpan="5">
                                             <div className="ad-image-content">
                                                 <h4>광고 이미지</h4>
                                                 <img
@@ -187,14 +180,6 @@ function AdminPage() {
                         <label>
                             광고 제목:
                             <input type="text" name="title" required />
-                        </label>
-                        <label>
-                            광고 상태:
-                            <select name="adStatus" defaultValue="게시 전" required>
-                                <option value="게시 전">게시 전</option>
-                                <option value="게시 중">게시 중</option>
-                                <option value="게시 종료">게시 종료</option>
-                            </select>
                         </label>
                         <label>
                             시작 날짜:
