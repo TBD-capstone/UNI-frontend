@@ -1,15 +1,17 @@
 import "./EditPage.css";
 import "../user-page/UserPage.css";
 import {useNavigate, useParams} from "react-router-dom";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import GoogleMap from "../../components/GoogleMap";
 import {useTranslation} from "react-i18next";
 import EditModal from "../../components/modal/EditModal.js";
+import basicProfileImage from "../../profile-image.png"
 
 const EditPage = () => {
     const {t} = useTranslation();
     const {userId} = useParams();
     const [user, setUser] = useState(null);
+    const [time, setTime] = useState(null);
     const [hashtag, setHashtag] = useState("");
     const [profileImage, setProfileImage] = useState(null);
     const [backgroundImage, setBackgroundImage] = useState(null);
@@ -91,9 +93,9 @@ const EditPage = () => {
             body: JSON.stringify
             (user)
         })
-            .then(() => {
-                alert("성공");
-            })
+            // .then(() => {
+            //     alert("Success");
+            // })
             .catch((err) => {
                 console.log(err);
                 alert('error: fetch fail');
@@ -132,9 +134,6 @@ const EditPage = () => {
 
         fetch(`/api/user/${userId}/update-profile`, {
             method: 'POST',
-            // headers: {
-            //     'Content-Type': 'multipart/form-data'
-            // },
             body: formData
         }).then(response => response.json())
             .then((data) => {
@@ -163,11 +162,11 @@ const EditPage = () => {
 
     const handleClickAdd = () => {
         if (!position || markerName.trim() === "" || markerDescription.trim() === "") {
-            alert("There is no marker, or some text is empty.");
+            alert(t('editPage.no_marker_data'));
             return;
         }
         if (markers.some((e) => e.name === markerName)) {
-            alert("duplicated title existed");
+            alert(t('editPage.duplicated_title'));
             return;
         }
         const result = fetch(`/api/markers/add/${userId}`, {
@@ -184,7 +183,7 @@ const EditPage = () => {
         })
             .then((response) => {
                 console.log(response.json());
-                alert("Marker add Success!");
+                // alert("Marker add Success!");
             })
             .catch((err) => {
                 console.log(err);
@@ -193,12 +192,12 @@ const EditPage = () => {
     }
     const handleClickDelete = () => {
         if (markerName.trim() === "") {
-            alert("Title text is empty.");
+            alert(t('editPage.no_title'));
             return;
         }
         const i = markers.findIndex((e) => e.name === markerName);
         if (i < 0) {
-            alert("duplicated title not existed");
+            alert(t('editPage.no_target_marker'));
             return;
         }
         const result = fetch(`/api/markers/delete/${markers[i].id}`, {
@@ -209,7 +208,7 @@ const EditPage = () => {
         })
             .then((response) => {
                 console.log(response.json());
-                alert("Marker delete Success!");
+                // alert("Marker delete Success!");
             })
             .catch((err) => {
                 console.log(err);
@@ -296,21 +295,20 @@ const EditPage = () => {
                     <img className="Image-back" src={user.imgBack ? user.imgBack : '/UNI_Background.png'} alt="배경사진"/>
                 </div>
                 <div className={'button-section'}>
-                    프로필로 돌아가기
-                    <button className="Complete" onClick={handleClickComplete}>수정 완료</button>
+                    <button className="Complete" onClick={handleClickComplete}>{t("editPage.edit_complete")}</button>
                 </div>
                 <div>
                 </div>
                 <div className="user-content-container">
-                    <div className="Image-prof-container">
-                        <img className="Image-prof" src={user.imgProf ? user.imgProf : '/UNI_Logo.png'} alt="프로필사진"/>
+                    <div className="image-prof-container">
+                        <img className="image-prof" src={user.imgProf ? user.imgProf : basicProfileImage} alt="프로필사진"/>
                     </div>
                     <div className="profile-container">
                         <h2>{user.userName}</h2>
-                        <p>from {user.univ}</p>
+                        <p>{user.univ}</p>
                     </div>
                     <h3>프로필 편집하기</h3>
-                    <EditModal title={'기본 정보'}>
+                    <EditModal title={t('editPage.basic_information')}>
                         <h3>{t("editPage.region")}</h3>
                         <input
                             type="text"
@@ -361,8 +359,8 @@ const EditPage = () => {
                         <h3>{t("editPage.profile_image")}</h3>
                         <label htmlFor='profile'>
                             <div className="image-edit-prof-container">
-                                <img className="Image-prof" src={profileImagePreview || user.imgProf || '/UNI_Logo.png'}
-                                     alt="프로필사진"/>
+                                <img className="image-prof" src={profileImagePreview || user.imgProf || basicProfileImage}
+                                     alt="profile"/>
                             </div>
                         </label>
                         <input type='file' id='profile' accept="image/png, image/jpeg"
@@ -370,8 +368,8 @@ const EditPage = () => {
                         <h3>{t("editPage.background_image")}</h3>
                         <label htmlFor='background'>
                             <div className="image-edit-back-container">
-                                <img className="Image-prof" src={backgroundImagePreview || user.imgBack || '/UNI_Background.png'}
-                                     alt="배경사진"/>
+                                <img className="image-prof" src={backgroundImagePreview || user.imgBack || '/UNI_Background.png'}
+                                     alt="background"/>
                             </div>
                         </label>
                         <input type='file' id='background' accept="image/png, image/jpeg"
@@ -394,7 +392,7 @@ const EditPage = () => {
                         {/*<button className={'edit-select'} onClick={handleClickMarkerUpdate}>Marker Update</button>*/}
                         {markerAction === 'add' &&
                             <>
-                                <p>지도를 클릭해 마커 위치를 정해주세요</p>
+                                <p>{t('editPage.marker_add_explain')}</p>
                                 <input
                                     type="text"
                                     placeholder={t("editPage.marker_title_placeholder")}
@@ -412,7 +410,7 @@ const EditPage = () => {
                         }
                         {markerAction === 'delete' &&
                             <>
-                                <p>삭제할 마커의 이름을 입력해주세요.</p>
+                                <p>{t('editPage.marker_delete_explain')}</p>
                                 <input
                                     type="text"
                                     placeholder={t("editPage.marker_title_placeholder")}
@@ -420,7 +418,7 @@ const EditPage = () => {
                                     onChange={handleChangeMarkerName}
                                 />
                                 <button className={'edit-button'}
-                                        onClick={handleClickAdd}>{t("editPage.delete")}</button>
+                                        onClick={handleClickDelete}>{t("editPage.delete")}</button>
                             </>
                         }
                         {/*{markerUpdate && <button onClick={handleClickUpdate}>Update</button>}*/}

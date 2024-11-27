@@ -49,7 +49,13 @@
     "self_pr": "Self Introduction",
     "user": "User",
     "employ_count": "Employ count",
-    "time": "Time"
+    "time": "Time",
+    "delete": "Delete",
+    "edit_explain": "Feel free to modify your profile.",
+    "chat_explain1":"If you have any questions, you can ask ",
+    "chat_explain2": " via chat.",
+    "no_qna": "There is no Q&A yet.",
+    "no_review": "There is no review yet."
   },
   "editPage": {
     "user": "User",
@@ -70,7 +76,15 @@
     "marker_description_placeholder": "Marker explain",
     "add": "Add",
     "delete": "Delete",
-    "self_pr": "Self Introduction"
+    "self_pr": "Self Introduction",
+    "edit_complete": "Edit completed",
+    "no_marker_data": "There is no marker, or some text is empty.",
+    "duplicated_title": "Duplicated title existed.",
+    "no_title": "Title text is empty.",
+    "no_target_marker": "Marker not existed.",
+    "basic_information": "Basic Information",
+    "marker_add_explain": "Click on the map to locate the marker.",
+    "marker_delete_explain": "Please enter the name of the marker you want to delete."
   },
   "loginPage": {
     "title": "Login",
