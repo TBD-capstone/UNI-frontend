@@ -113,7 +113,7 @@ function Navbar({ selectedLanguage, fetchWithLanguage }) {
                     <img src={Cookies.get("imgProf")} alt="프로필" className="profile-image" />
                 </div>
                 <div className="userid">
-                    <Link to={`/user/${userId}`} className="username-link">
+                    <Link to={`/user/${userId}`} className="username-link" style={{ textDecoration: 'none' }} >
                         <span className="username">{username || 'Guest'}</span>
                     </Link>
                 </div>
@@ -129,7 +129,8 @@ function Navbar({ selectedLanguage, fetchWithLanguage }) {
                         <li>
                             <Link
                                 to="/matching-list"
-                                onClick={() => setMenuOpen(false)} // 페이지 이동 시 메뉴 닫기
+                                onClick={() => setMenuOpen(false) }// 페이지 이동 시 메뉴 닫기
+                                style={{ textDecoration: 'none', color: 'black' }}
                             >
                                 {t("navbar.menu.matching_list")}
                             </Link>
@@ -138,6 +139,7 @@ function Navbar({ selectedLanguage, fetchWithLanguage }) {
                             <Link
                                 to="/chat-list"
                                 onClick={() => setMenuOpen(false)} // 페이지 이동 시 메뉴 닫기
+                                style={{ textDecoration: 'none', color: 'black' }}
                             >
                                 {t("navbar.menu.chat_list")}
                             </Link>

@@ -159,7 +159,7 @@ const ProfileGrid = () => {
             <div className="profile-grid">
                 {currentProfiles.length > 0 ? (
                     currentProfiles.map((user, index) => (
-                        <Link to={`/user/${user.userId}`} key={index} className="profile-card">
+                        <Link to={`/user/${user.userId}`} key={index} className="profile-card" style={{ textDecoration: 'none', color: 'black' }}>
                             <img src={user.imgProf || '/path/to/default-image.jpg'} alt={t('mainpage.profile_alt')} />
                             <div className="Profile-name">{user.username}</div>
                             <div className="profile-university">{user.univName}</div>
