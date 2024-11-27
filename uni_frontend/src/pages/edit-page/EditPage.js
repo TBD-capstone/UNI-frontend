@@ -5,10 +5,10 @@ import React, {useEffect, useState} from "react";
 import GoogleMap from "../../components/GoogleMap";
 import {useTranslation} from "react-i18next";
 import EditModal from "../../components/modal/EditModal.js";
-import basicProfileImage from "../../../public/profile-image.png"
 import Cookies from "js-cookie";
 
 const EditPage = () => {
+    const basicProfileImage = '/profile-image.png'
     const {t} = useTranslation();
     const {userId} = useParams();
     const [user, setUser] = useState(null);

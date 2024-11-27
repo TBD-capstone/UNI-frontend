@@ -7,10 +7,10 @@ import Cookies from "js-cookie";
 import { useTranslation } from "react-i18next";
 import { IoIosArrowDropupCircle } from "react-icons/io";
 import { MdGTranslate } from "react-icons/md";
-import basicProfileImage from "../../../public/profile-image.png"
 
 
 const ChatPage = (props) => {
+    const basicProfileImage = '/profile-image.png'
     const { t } = useTranslation();
     const {roomId} = useParams();
     const {state} = useLocation();

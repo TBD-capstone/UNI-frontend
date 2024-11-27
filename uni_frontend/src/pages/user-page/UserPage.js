@@ -6,9 +6,9 @@ import Cookies from "js-cookie";
 import {useTranslation} from "react-i18next";
 import ReportModal from "../../components/modal/ReportModal";
 import {FaStar} from "react-icons/fa6";
-import profileImage from "../../../public/profile-image.png"
 
 const UserPage = () => {
+    const basicProfileImage = '/profile-image.png'
     const {t} = useTranslation();
     const {userId} = useParams();
     const [user, setUser] = useState(null);
@@ -165,7 +165,7 @@ const UserPage = () => {
         const Qna = (props) => {
             return (
                 <div className="qna">
-                    <img src={props.data.imgProf || profileImage} alt={t("userPage.user_icon_alt")}/>
+                    <img src={props.data.imgProf || basicProfileImage} alt={t("userPage.user_icon_alt")}/>
                     <div>
                         <div
                             className='qna-user'>{props.data.commentAuthor ? props.data.commentAuthor.name : (props.data.commenterName ? props.data.commenterName : null)}</div>
@@ -268,7 +268,7 @@ const UserPage = () => {
             return (
                 <div className="review">
                     <div className={'review-profile'}>
-                        <img src={props.data.commenterImgProf ? props.data.commenterImgProf : profileImage} alt={'./profile'}/>
+                        <img src={props.data.commenterImgProf ? props.data.commenterImgProf : basicProfileImage} alt={'./profile'}/>
                         <span className='review-reviewer'>{props.data.commenterName}</span>
                     </div>
                     <div className="review-star"><FaStar className={'yellow-star'}/> {props.data.star}</div>
@@ -383,7 +383,7 @@ const UserPage = () => {
                 <MoveButton owner={commenterId === userId} userName={user.userName}/>
                 <div className="user-content-container">
                     <div className="image-prof-container">
-                        <img className="image-prof" src={user.imgProf || profileImage} alt="프로필사진"/>
+                        <img className="image-prof" src={user.imgProf || basicProfileImage} alt="프로필사진"/>
                     </div>
                     <div className="profile-container">
                         <h2>{user.userName}</h2>
