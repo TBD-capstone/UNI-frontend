@@ -4,6 +4,8 @@
     padding: 10px;
     cursor: pointer;
     box-sizing: border-box;
+    border-bottom: 1px solid #808080;
+    align-content: center;
 }
 
 .edit-modal input {

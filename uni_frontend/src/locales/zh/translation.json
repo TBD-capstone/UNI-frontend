@@ -28,7 +28,6 @@
     "profile_alt": "个人资料"
   },
   "userPage": {
-    "user": "用户",
     "report": "举报",
     "edit": "编辑",
     "chat": "聊天",
@@ -49,7 +48,13 @@
     "self_pr": "自我介绍",
     "user": "用户",
     "employ_count": "雇用数量",
-    "time": "时间"
+    "time": "时间",
+    "delete": "删除",
+    "edit_explain": "请自由修改您的简历。",
+    "chat_explain1":"如果您有任何问题，可以通过聊天询问 ，",
+    "chat_explain2": "。",
+    "no_qna": "目前还没有Q&A。",
+    "no_review": "还没有写评论。"
   },
   "editPage": {
     "edit": "编辑",
@@ -69,7 +74,15 @@
     "marker_description_placeholder": "标记说明",
     "add": "添加",
     "delete": "删除",
-    "self_pr": "自我介绍"
+    "self_pr": "自我介绍",
+    "edit_complete": "编辑完成",
+    "no_marker_data": "没有标记，或者有些文本是空的。",
+    "duplicated_title": "存在重复的标题。",
+    "no_title": "标题文本为空。",
+    "no_target_marker": "标记不存在。",
+    "basic_information": "基本资料",
+    "marker_add_explain": "点击地图定位标记。",
+    "marker_delete_explain": "请输入您要删除的标记的名称。"
   },
   "loginPage": {
     "title": "登录",

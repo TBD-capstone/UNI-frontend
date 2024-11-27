@@ -1,6 +1,6 @@
 .modal-background {
     position: fixed;
-    z-index: 1;
+    z-index: 200;   /*navbar z = 100*/
     padding-top: 15vh;
     left: 0;
     top: 0;
