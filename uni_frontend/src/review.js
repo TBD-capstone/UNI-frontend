@@ -28,7 +28,7 @@ function Review() {
                 setProfileOwnerId(data.profileOwnerId);
             } catch (error) {
                 console.error('Error fetching matching details:', error);
-                setStatusMessage('매칭 정보를 가져오는 중 오류가 발생했습니다.');
+                setStatusMessage('An error occurred while fetching the matching information.');
             }
         };
 
@@ -39,12 +39,12 @@ function Review() {
         e.preventDefault();
 
         if (!rating || !reviewText.trim()) {
-            setStatusMessage('모든 필드를 입력해주세요.');
+            setStatusMessage('Please fill in all fields.');
             return;
         }
 
         if (!profileOwnerId) {
-            setStatusMessage('리뷰 대상자를 확인할 수 없습니다.');
+            setStatusMessage('Unable to identify the review recipient.');
             return;
         }
 
@@ -70,24 +70,25 @@ function Review() {
             console.log('API Response:', data);
 
             if (response.ok) {
-                setStatusMessage('후기 작성이 완료되었습니다!');
+                setStatusMessage('Review submission completed!');
                 navigate('/matching-list');
             } else {
-                setStatusMessage(data.message || '후기 작성에 실패하였습니다.');
+                setStatusMessage(data.message || 'Failed to submit the review.');
             }
         } catch (error) {
-            setStatusMessage('후기 작성 중 오류가 발생했습니다.');
+            setStatusMessage('An error occurred while submitting the review.' +
+                '\n');
             console.error('Error submitting review:', error);
         }
     };
 
     return (
         <div className="review-page">
-            <h1 className="review-title">후기 작성</h1>
+            <h1 className="review-title">Write a Review</h1>
 
             <form className="review-form" onSubmit={handleSubmitReview}>
                 <div className="form-group">
-                    <label>별점:</label>
+                    <label>Rating:</label>
                     <div className="rating-stars">
                         {[1, 2, 3, 4, 5].map((star) => (
                             <span key={star}>
@@ -114,19 +115,19 @@ function Review() {
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="reviewText">후기 내용:</label>
+                    <label htmlFor="reviewText">Review Content:</label>
                     <textarea
                         id="reviewText"
                         value={reviewText}
                         onChange={(e) => setReviewText(e.target.value)}
-                        placeholder="후기 내용을 입력해주세요."
+                        placeholder="Please enter the review content."
                         rows="5"
                         required
                     />
                 </div>
 
                 <button type="submit" className="submit-button">
-                    후기 제출
+                    Submit Review
                 </button>
             </form>
 
