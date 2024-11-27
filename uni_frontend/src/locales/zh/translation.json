@@ -17,13 +17,20 @@
     "logo_alt": "徽标",
     "search_placeholder": "按标签搜索",
     "search_button": "搜索",
+    "newest": "最新",
+    "highest_rating": "评分最高",
+    "lowest_rating": "评分最低",
     "categories": {
       "trip": "旅行",
       "administration": "行政",
       "language": "语言交换",
       "college_life": "大学生活",
       "gastroventure": "美食探索",
-      "game": "游戏"
+      "game": "游戏",
+      "realty": "房地产",
+      "banking": "银行",
+      "mobile": "通讯",
+      "shopping": "购物"
     },
     "profile_alt": "个人资料"
   },
