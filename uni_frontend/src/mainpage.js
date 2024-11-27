@@ -137,7 +137,7 @@ const ProfileGrid = () => {
                     />
                     <button>{t('mainpage.search_button')}</button>
                     <select onChange={handleSortChange} value={sortOrder}>
-                        <option value="newest">{t('최신 순')}</option>
+                        <option value="newest">{t('최신순')}</option>
                         <option value="highest_rating">{t('별점 높은 순')}</option>
                         <option value="lowest_rating">{t('별점 낮은 순')}</option>
                     </select>

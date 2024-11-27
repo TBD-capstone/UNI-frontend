@@ -17,6 +17,9 @@
     "logo_alt": "徽标",
     "search_placeholder": "按标签搜索",
     "search_button": "搜索",
+    "newest": "最新",
+    "highest_rating": "评分最高",
+    "lowest_rating": "评分最低",
     "categories": {
       "trip": "旅行",
       "administration": "行政",

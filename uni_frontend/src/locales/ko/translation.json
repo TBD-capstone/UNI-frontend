@@ -17,6 +17,9 @@
     "logo_alt": "로고",
     "search_placeholder": "해시태그로 검색",
     "search_button": "검색",
+    "newest": "최신순",
+    "highest_rating": "평점 높은 순",
+    "lowest_rating": "평점 낮은 순",
     "categories": {
       "trip": "여행",
       "administration": "행정",
@@ -127,7 +130,7 @@
     "verify_email_button": "이메일 인증",
     "verification_code_placeholder": "인증 코드",
     "verify_code_button": "인증 확인",
-    "name_placeholder": "이름",
+    "name_placeholder": "영문 이름",
     "password_placeholder": "비밀번호",
     "confirm_password_placeholder": "비밀번호 확인",
     "signup_button": "회원가입",

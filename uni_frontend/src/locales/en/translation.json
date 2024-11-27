@@ -17,6 +17,9 @@
     "logo_alt": "Logo",
     "search_placeholder": "Search by hashtag",
     "search_button": "Search",
+    "newest": "Newest",
+    "highest_rating": "Highest Rating",
+    "lowest_rating": "Lowest Rating",
     "categories": {
       "trip": "Trip",
       "administration": "Administration",
@@ -127,7 +130,7 @@
     "verify_email_button": "Verify E-mail",
     "verification_code_placeholder": "Verification code",
     "verify_code_button": "Verify Code",
-    "name_placeholder": "Name",
+    "name_placeholder": "English Name",
     "password_placeholder": "Password",
     "confirm_password_placeholder": "Confirm Password",
     "signup_button": "Sign Up",

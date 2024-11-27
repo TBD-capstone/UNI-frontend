@@ -146,7 +146,7 @@ function Register() {
                     className={`user-type-button ${!isKorean ? 'selected' : ''}`}
                     onClick={() => handleUserTypeChange('foreigner')}
                 >
-                    {t("registerPage.user_type.foreigner")}
+                    Foreigner
                 </button>
             </div>
 
