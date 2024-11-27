@@ -5,7 +5,8 @@ import React, {useEffect, useState} from "react";
 import GoogleMap from "../../components/GoogleMap";
 import {useTranslation} from "react-i18next";
 import EditModal from "../../components/modal/EditModal.js";
-import basicProfileImage from "../../profile-image.png"
+import basicProfileImage from "../../../public/profile-image.png"
+import Cookies from "js-cookie";
 
 const EditPage = () => {
     const {t} = useTranslation();
@@ -141,6 +142,7 @@ const EditPage = () => {
         }).then(response => response.json())
             .then((data) => {
                 setUser((prev) => ({...prev, imgBack: data.imgBack, imgProf: data.imgProf}));
+                Cookies.set('imgProf', data.imgProf, { expires: 1, path: '/' });
                 setIsOpenImage(() => false);
                 alert('Upload Success!');
             })

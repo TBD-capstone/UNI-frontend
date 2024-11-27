@@ -6,7 +6,7 @@ import Cookies from "js-cookie";
 import {useTranslation} from "react-i18next";
 import ReportModal from "../../components/modal/ReportModal";
 import {FaStar} from "react-icons/fa6";
-import profileImage from "../../profile-image.png"
+import profileImage from "../../../public/profile-image.png"
 
 const UserPage = () => {
     const {t} = useTranslation();

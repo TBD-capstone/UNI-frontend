@@ -7,7 +7,7 @@ import Cookies from "js-cookie";
 import { useTranslation } from "react-i18next";
 import { IoIosArrowDropupCircle } from "react-icons/io";
 import { MdGTranslate } from "react-icons/md";
-import basicProfileImage from "../../profile-image.png"
+import basicProfileImage from "../../../public/profile-image.png"
 
 
 const ChatPage = (props) => {

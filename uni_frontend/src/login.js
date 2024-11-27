@@ -39,15 +39,21 @@ function Login() {
                 Cookies.remove('userName', { path: '/' });
                 Cookies.remove('userId', { path: '/' });
                 Cookies.remove('isKorean', { path: '/' });
+                Cookies.remove('imgProf',  { path: '/' });
+                Cookies.remove('imgBack',  { path: '/' });
 
                 // 새 로그인 정보 저장
                 Cookies.set('userName', data.userName, { expires: 1, path: '/' });
                 Cookies.set('userId', data.userId, { expires: 1, path: '/' });
                 Cookies.set('isKorean', data.isKorean, { expires: 1, path: '/' });
+                Cookies.set('imgProf', data.imgProf, { expires: 1, path: '/' });
+                Cookies.set('imgBack', data.imgBack, { expires: 1, path: '/' });
 
                 console.log('유저 이름:', Cookies.get('userName'));
                 console.log('유저 ID:', Cookies.get('userId'));
                 console.log('한국인 여부:', Cookies.get('isKorean'));
+                console.log('프로필 이미지:', Cookies.get('imgProf'));
+                console.log('배경화면 이미지:', Cookies.get('imgBack'));
 
                 setStatusMessage(data.message || t("loginPage.status_messages.success"));
                 navigate('/main'); // 메인 페이지로 이동
