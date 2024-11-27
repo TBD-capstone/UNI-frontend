@@ -110,11 +110,7 @@ function Navbar({ selectedLanguage, fetchWithLanguage }) {
                 </div>
                 <div className="user">
                     {/* 프로필 이미지 로드 */}
-                    <img
-                        src={profileImage || './profile-image.png'} // 기본 프로필 이미지 설정
-                        alt="프로필"
-                        className="profile-image"
-                    />
+                    <img src={profileImage} alt="프로필" className="profile-image" />
                 </div>
                 <div className="userid">
                     <Link to={`/user/${userId}`} className="username-link">
