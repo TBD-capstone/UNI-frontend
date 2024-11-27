@@ -88,8 +88,8 @@
     "basic_information": "기본 정보",
     "marker_add_explain": "지도를 클릭해 마커 위치를 정해주세요.",
     "marker_delete_explain": "삭제할 마커의 이름을 입력해주세요.",
-    "editPage.duplicate_hash": "이미 존재하는 해시태그입니다.",
-    "editPage.profile_editing": "프로필 편집하기"
+    "duplicate_hash": "이미 존재하는 해시태그입니다.",
+    "profile_editing": "프로필 편집하기"
   },
   "loginPage": {
     "title": "로그인",

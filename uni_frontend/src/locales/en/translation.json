@@ -84,8 +84,8 @@
     "basic_information": "Basic Information",
     "marker_add_explain": "Click on the map to locate the marker.",
     "marker_delete_explain": "Please enter the name of the marker you want to delete.",
-    "editPage.duplicate_hash": "Hashtags that already exist.",
-    "editPage.profile_editing": "Edit Profile"
+    "duplicate_hash": "Hashtags that already exist.",
+    "profile_editing": "Edit Profile"
   },
   "loginPage": {
     "title": "Login",

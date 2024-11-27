@@ -82,8 +82,8 @@
     "basic_information": "基本资料",
     "marker_add_explain": "点击地图定位标记。",
     "marker_delete_explain": "请输入您要删除的标记的名称。",
-    "editPage.duplicate_hash": "该标签已经存在。",
-    "editPage.profile_editing": "编辑个人资料"
+    "duplicate_hash": "该标签已经存在。",
+    "profile_editing": "编辑个人资料"
   },
   "loginPage": {
     "title": "登录",
