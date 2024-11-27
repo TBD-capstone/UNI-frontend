@@ -1,7 +1,6 @@
 .matching-status-page {
     font-family: Arial, sans-serif;
     padding: 20px; /* 기존 패딩 */
-    background-color: #f9f9f9;
     color: #333;
     max-width: 800px; /* 최대 너비 설정으로 좌우 여백 추가 */
     margin: 0 auto; /* 중앙 정렬 */
