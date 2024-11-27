@@ -63,9 +63,52 @@
 .search-bar select {
     padding: 10px 20px;
     font-size: 16px;
-    border: 1px solid #ddd;
+    border: 1px solid #0056b3;
     border-radius: 20px;
     cursor: pointer;
+}
+
+/* 필터링 버튼 (유튜브 스타일) */
+.filter-buttons {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto; /* 가로 스크롤 활성화 */
+    padding: 10px 0;
+    white-space: nowrap; /* 버튼이 한 줄에 표시되도록 */
+    scrollbar-width: thin; /* 스크롤바 폭 조절 */
+    scrollbar-color: #ccc transparent; /* 스크롤바 색상 */
+}
+
+.filter-buttons::-webkit-scrollbar {
+    height: 6px; /* 스크롤바 높이 */
+}
+
+.filter-buttons::-webkit-scrollbar-thumb {
+    background-color: #ccc; /* 스크롤바 색상 */
+    border-radius: 3px;
+}
+
+.filter-button {
+    padding: 10px 15px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    color: #333;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+}
+
+.filter-button:hover {
+    background-color: #f0f0f0;
+}
+
+.filter-button.active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
 }
 
 /* 검색 태그 */
@@ -73,6 +116,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
+    margin-top: 10px;
 }
 
 .search-bar .search-tag {
@@ -241,17 +285,17 @@
     .search-bar {
         flex-direction: column;
         gap: 10px;
-        width: 100%; /* 검색창 전체 너비로 확장 */
-        padding: 0 10px; /* 좌우 여백 추가 */
+        width: 100%;
+        padding: 0 10px;
     }
 
     .search-bar input[type="text"] {
-        max-width: 100%; /* 작은 화면에서 검색창 너비 제한 제거 */
+        max-width: 100%;
         width: 100%;
     }
 
     .search-bar button {
-        width: 100%; /* 버튼도 검색창 아래에 전체 너비로 표시 */
+        width: 100%;
     }
 
     .profile-grid {
@@ -267,12 +311,17 @@
     .category-item {
         flex: 0 0 auto;
     }
+
+    .filter-buttons {
+        justify-content: flex-start;
+        overflow-x: auto;
+    }
 }
 
 @media (max-width: 480px) {
     .search-bar input[type="text"],
     .search-bar button {
-        width: 100%; /* 검색창과 버튼 모두 화면 너비에 맞춤 */
+        width: 100%;
     }
 
     .profile-card {

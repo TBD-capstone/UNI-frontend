@@ -11,10 +11,10 @@ const categories = [
     { icon: './icons/find-room.png', label: 'college_life' },
     { icon: './icons/category5.png', label: 'gastroventure' },
     { icon: './icons/game.png', label: 'game' },
-    { icon: './icons/realty.png', label: 'realty'},
-    { icon: './icons/banking.png', label: 'banking'},
-    { icon: './icons/mobile.png', label: 'mobile'},
-    { icon: './icons/shopping.png', label: 'shopping'}
+    { icon: './icons/realty.png', label: 'realty' },
+    { icon: './icons/banking.png', label: 'banking' },
+    { icon: './icons/mobile.png', label: 'mobile' },
+    { icon: './icons/shopping.png', label: 'shopping' }
 ];
 
 const ITEMS_PER_PAGE = 10;
@@ -29,7 +29,7 @@ const ProfileGrid = () => {
     const [ads, setAds] = useState([]);
     const [currentAd, setCurrentAd] = useState(null);
     const [language, setLanguage] = useState(Cookies.get('language') || 'en');
-    const [sortOrder, setSortOrder] = useState('high'); // 기본값은 높은 별점 순
+    const [sortOrder, setSortOrder] = useState('highest_rating'); // 기본값은 높은 별점 순
 
     const fetchWithLanguage = async (url, options = {}) => {
         const headers = {
@@ -43,9 +43,23 @@ const ProfileGrid = () => {
     useEffect(() => {
         const fetchProfiles = async () => {
             try {
-                const data = await fetchWithLanguage('http://localhost:8080/api/home');
-                setProfiles(data.data || []);
-                setFilteredProfiles(data.data || []);
+                const params = new URLSearchParams();
+                params.append('page', currentPage);
+                params.append('sort', sortOrder);
+
+                // 대학교 이름과 해시태그를 URL 파라미터에 맞게 추가
+                if (searchQuery) {
+                    const hashtags = searchQuery.split(',').map(tag => tag.trim());
+                    params.append('hashtags', hashtags.join(','));
+                }
+                if (selectedCategory) {
+                    params.append('univName', selectedCategory);
+                }
+
+                const url = `http://localhost:8080/api/home?${params.toString()}`;
+                const data = await fetchWithLanguage(url);
+                setProfiles(data.content || []);
+                setFilteredProfiles(data.content || []);
             } catch (error) {
                 console.error(t('mainpage.fetch_profiles_error'), error);
             }
@@ -68,7 +82,7 @@ const ProfileGrid = () => {
 
         fetchProfiles();
         fetchAds();
-    }, [language]);
+    }, [language, currentPage, sortOrder, selectedCategory, searchQuery, t]);
 
     useEffect(() => {
         const filterProfiles = () => {
@@ -76,21 +90,24 @@ const ProfileGrid = () => {
 
             if (selectedCategory) {
                 filtered = filtered.filter(profile =>
-                    profile.hashtags && profile.hashtags.includes(`#${selectedCategory}`)
+                    profile.univName && profile.univName === selectedCategory
                 );
             }
 
             if (searchQuery) {
+                const hashtags = searchQuery.split(',').map(tag => tag.trim());
                 filtered = filtered.filter(profile =>
-                    profile.hashtags && profile.hashtags.some(tag => tag.includes(searchQuery))
+                    profile.hashtags && profile.hashtags.some(tag => hashtags.includes(tag))
                 );
             }
 
-            // 별점 기준으로 정렬
-            if (sortOrder === 'high') {
+            // 정렬 로직 추가
+            if (sortOrder === 'highest_rating') {
                 filtered = filtered.sort((a, b) => b.star - a.star); // 별점 높은 순
-            } else {
+            } else if (sortOrder === 'lowest_rating') {
                 filtered = filtered.sort((a, b) => a.star - b.star); // 별점 낮은 순
+            } else if (sortOrder === 'newest') {
+                filtered = filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // 최신순
             }
 
             setFilteredProfiles(filtered);
@@ -150,23 +167,23 @@ const ProfileGrid = () => {
                         onChange={handleSearchChange}
                     />
                     <button>{t('mainpage.search_button')}</button>
-                    {/* 정렬 버튼을 검색버튼 옆으로 이동 */}
                     <select onChange={handleSortChange} value={sortOrder}>
-                        <option value="high">{t('mainpage.sort_high')}</option>
-                        <option value="low">{t('mainpage.sort_low')}</option>
+                        <option value="newest">{t('최신순')}</option>
+                        <option value="highest_rating">{t('평점 높은 순')}</option>
+                        <option value="lowest_rating">{t('평점 낮은 순')}</option>
                     </select>
                 </div>
             </div>
 
-            <div className="category">
+            <div className="filter-buttons">
                 {categories.map((category, index) => (
-                    <div
-                        className={`category-item ${selectedCategory === category.label ? 'active' : ''}`}
+                    <button
+                        className={`filter-button ${selectedCategory === category.label ? 'active' : ''}`}
                         key={index}
                         onClick={() => handleCategoryClick(category.label)}
                     >
-                        <span>{t(`mainpage.categories.${category.label}`)}</span>
-                    </div>
+                        {t(`mainpage.categories.${category.label}`)}
+                    </button>
                 ))}
             </div>
 
@@ -189,7 +206,7 @@ const ProfileGrid = () => {
                         </Link>
                     ))
                 ) : (
-                    <div className="no-profiles">{t.noProfiles}</div>
+                    <div className="no-profiles">{t('mainpage.noProfiles')}</div>
                 )}
             </div>
 
