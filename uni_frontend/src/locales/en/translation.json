@@ -145,7 +145,7 @@
   },
   "reportModal": {
     "report": "Report",
-    "report_title": "Reasons for reporting",
+    "report_reason": "Reasons for reporting",
     "profile": "Profile",
     "chat": "chat",
     "review": "Review",

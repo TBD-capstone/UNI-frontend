@@ -149,7 +149,7 @@
   },
   "reportModal": {
     "report": "신고",
-    "report_title": "신고 사유",
+    "report_reason": "신고 사유",
     "profile": "프로필",
     "chat": "채팅",
     "review": "후기",
