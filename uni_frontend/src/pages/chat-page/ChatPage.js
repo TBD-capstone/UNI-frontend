@@ -5,7 +5,9 @@ import {Stomp} from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import Cookies from "js-cookie";
 import { useTranslation } from "react-i18next";
-import { IoIosArrowDropdownCircle, IoIosArrowDropupCircle } from "react-icons/io";
+import { IoIosArrowDropupCircle } from "react-icons/io";
+import { MdGTranslate } from "react-icons/md";
+import basicProfileImage from "../../profile-image.png"
 
 
 const ChatPage = (props) => {
@@ -17,6 +19,7 @@ const ChatPage = (props) => {
     const [matchingId, setMatchingId] = useState(null);
     const [stompClient, setStompClient] = useState(null);
     const isKorean = Cookies.get('isKorean') === 'true';
+    const language = Cookies.get('language');
 
     const ChatBox = (props) => {
         const scrollRef = useRef();
@@ -30,9 +33,15 @@ const ChatPage = (props) => {
                     (async () => {
                         fetch(`/api/chat/translate/${props.messageId}`, {
                             method: 'GET',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }
+                            headers: language ?
+                                {
+                                    'Content-Type': 'application/json',
+                                    'Accept-language': language
+                                } :
+                                {
+                                    'Content-Type': 'application/json'
+
+                                }
                         })
                             .catch((err) => {
                                 console.log(err);
@@ -61,7 +70,7 @@ const ChatPage = (props) => {
                     </div>
                     {!props.owner &&
                         (showTranslate ? <IoIosArrowDropupCircle className={'translate-open'} onClick={handleClickDropUp}/>:
-                        <IoIosArrowDropdownCircle className={'translate-open'} onClick={handleClickTranslate}/>)
+                        <MdGTranslate className={'translate-open'} onClick={handleClickTranslate}/>)
                     }
                 </div>
             )
@@ -200,7 +209,7 @@ const ChatPage = (props) => {
             <div className="chat-page">
                 <div className="match-section">
                     <div className="chat-profile">
-                        <img src={state.otherImgProf || '/UNI_Logo.png'} alt="Profile"/>
+                        <img src={state.otherImgProf || basicProfileImage} alt="Profile"/>
                         <div className="Profile-name">{state.otherName}</div>
                     </div>
                     <div className="Match-button">

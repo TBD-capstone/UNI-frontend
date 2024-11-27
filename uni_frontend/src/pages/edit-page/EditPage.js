@@ -11,7 +11,9 @@ const EditPage = () => {
     const {t} = useTranslation();
     const {userId} = useParams();
     const [user, setUser] = useState(null);
-    const [time, setTime] = useState(null);
+    const [isOpenBasic, setIsOpenBasic] = useState(false);
+    const [isOpenImage, setIsOpenImage] = useState(false);
+    const [isOpenMap, setIsOpenMap] = useState(false);
     const [hashtag, setHashtag] = useState("");
     const [profileImage, setProfileImage] = useState(null);
     const [backgroundImage, setBackgroundImage] = useState(null);
@@ -65,7 +67,7 @@ const EditPage = () => {
     };
     const appendHashtag = (hashtag) => {
         if (user.hashtags.includes(hashtag))
-            alert("이미 존재하는 해시태그입니다.");
+            alert(t('editPage.duplicate_hash'));
         else {
             setUser((prev) => ({
                 ...prev,
@@ -93,9 +95,10 @@ const EditPage = () => {
             body: JSON.stringify
             (user)
         })
-            // .then(() => {
-            //     alert("Success");
-            // })
+            .then(() => {
+                setIsOpenBasic(() => false);
+                //     alert("Success");
+            })
             .catch((err) => {
                 console.log(err);
                 alert('error: fetch fail');
@@ -138,6 +141,7 @@ const EditPage = () => {
         }).then(response => response.json())
             .then((data) => {
                 setUser((prev) => ({...prev, imgBack: data.imgBack, imgProf: data.imgProf}));
+                setIsOpenImage(() => false);
                 alert('Upload Success!');
             })
             .catch((err) => {
@@ -160,6 +164,9 @@ const EditPage = () => {
         setMarkerDescription(() => e.target.value);
     }
 
+    const mapClose = () => {
+        setIsOpenMap(() => false);
+    }
     const handleClickAdd = () => {
         if (!position || markerName.trim() === "" || markerDescription.trim() === "") {
             alert(t('editPage.no_marker_data'));
@@ -169,7 +176,7 @@ const EditPage = () => {
             alert(t('editPage.duplicated_title'));
             return;
         }
-        const result = fetch(`/api/markers/add/${userId}`, {
+        fetch(`/api/markers/add/${userId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -183,6 +190,7 @@ const EditPage = () => {
         })
             .then((response) => {
                 console.log(response.json());
+                mapClose();
                 // alert("Marker add Success!");
             })
             .catch((err) => {
@@ -208,6 +216,7 @@ const EditPage = () => {
         })
             .then((response) => {
                 console.log(response.json());
+                mapClose();
                 // alert("Marker delete Success!");
             })
             .catch((err) => {
@@ -222,6 +231,16 @@ const EditPage = () => {
     //     }
     //     alert("미구현");
     // };
+
+    const handleSetIsOpenBasic = (value) => {
+        setIsOpenBasic(value);
+    }
+    const handleSetIsOpenImage = (value) => {
+        setIsOpenImage(value);
+    }
+    const handleSetIsOpenMap = (value) => {
+        setIsOpenMap(value);
+    }
 
     const BasicHashtag = (props) => {
         const handleClickBasicHashtag = () => {
@@ -292,7 +311,7 @@ const EditPage = () => {
         user ? (
             <div className={'edit-container'}>
                 <div className="Image-back-container">
-                    <img className="Image-back" src={user.imgBack ? user.imgBack : '/UNI_Background.png'} alt="배경사진"/>
+                    <img className="Image-back" src={user.imgBack ? user.imgBack : '/basic_background.png'} alt="배경사진"/>
                 </div>
                 <div className={'button-section'}>
                     <button className="Complete" onClick={handleClickComplete}>{t("editPage.edit_complete")}</button>
@@ -307,8 +326,9 @@ const EditPage = () => {
                         <h2>{user.userName}</h2>
                         <p>{user.univ}</p>
                     </div>
-                    <h3>프로필 편집하기</h3>
-                    <EditModal title={t('editPage.basic_information')}>
+                    <h3>{t('editPage.profile_editing')}</h3>
+                    <EditModal title={t('editPage.basic_information')} isOpen={isOpenBasic}
+                               setIsOpen={handleSetIsOpenBasic}>
                         <h3>{t("editPage.region")}</h3>
                         <input
                             type="text"
@@ -355,11 +375,12 @@ const EditPage = () => {
                         />
                         <button className={'edit-button'} onClick={handleClickEdit}>{t("editPage.edit")}</button>
                     </EditModal>
-                    <EditModal title={t("editPage.image_upload")}>
+                    <EditModal title={t("editPage.image_upload")} isOpen={isOpenImage} setIsOpen={handleSetIsOpenImage}>
                         <h3>{t("editPage.profile_image")}</h3>
                         <label htmlFor='profile'>
                             <div className="image-edit-prof-container">
-                                <img className="image-prof" src={profileImagePreview || user.imgProf || basicProfileImage}
+                                <img className="image-prof"
+                                     src={profileImagePreview || user.imgProf || basicProfileImage}
                                      alt="profile"/>
                             </div>
                         </label>
@@ -368,7 +389,8 @@ const EditPage = () => {
                         <h3>{t("editPage.background_image")}</h3>
                         <label htmlFor='background'>
                             <div className="image-edit-back-container">
-                                <img className="image-prof" src={backgroundImagePreview || user.imgBack || '/UNI_Background.png'}
+                                <img className="image-prof"
+                                     src={backgroundImagePreview || user.imgBack || '/basic_background.png'}
                                      alt="background"/>
                             </div>
                         </label>
@@ -377,7 +399,7 @@ const EditPage = () => {
                         <button className={'edit-button'}
                                 onClick={handleClickSubmit}>{t("editPage.image_upload")}</button>
                     </EditModal>
-                    <EditModal title={t("editPage.map")}>
+                    <EditModal title={t("editPage.map")} isOpen={isOpenMap} setIsOpen={handleSetIsOpenMap}>
                         <div>
                             <div className="edit-map-container">
                                 <GoogleMap markers={markers} setting={setting}/>

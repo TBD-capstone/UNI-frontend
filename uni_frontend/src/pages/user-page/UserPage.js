@@ -378,7 +378,7 @@ const UserPage = () => {
             <div className='user-container'>
                 <ReportModal isOpen={report} handleClose={() => setReport(false)}/>
                 <div className='Image-back-container'>
-                    <img className='Image-back' src={user.imgBack || '/UNI_Background.png'} alt="배경사진"/>
+                    <img className='Image-back' src={user.imgBack || '/basic_background.png'} alt="배경사진"/>
                 </div>
                 <MoveButton owner={commenterId === userId} userName={user.userName}/>
                 <div className="user-content-container">
