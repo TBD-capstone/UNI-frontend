@@ -45,11 +45,12 @@ const ProfileGrid = () => {
             try {
                 const params = new URLSearchParams();
                 params.append('page', currentPage);
+                params.append('size', ITEMS_PER_PAGE);  // 페이지 당 항목 수 추가
                 params.append('sort', sortOrder);
 
                 // 대학교 이름과 해시태그를 URL 파라미터에 맞게 추가
                 if (searchQuery) {
-                    params.append('hashtags', searchQuery.split(',').join(','));
+                    params.append('hashtags', searchQuery.split(',').map(tag => tag.trim()).join(','));
                 }
                 if (selectedCategory) {
                     params.append('univName', selectedCategory);
@@ -84,39 +85,6 @@ const ProfileGrid = () => {
         fetchProfiles();
         fetchAds();
     }, [language, currentPage, sortOrder, selectedCategory, searchQuery, t]);
-
-    useEffect(() => {
-        const filterProfiles = () => {
-            let filtered = profiles;
-
-            if (selectedCategory) {
-                filtered = filtered.filter(profile =>
-                    profile.univName && profile.univName === selectedCategory
-                );
-            }
-
-            if (searchQuery) {
-                const hashtags = searchQuery.split(',').map(tag => tag.trim());
-                filtered = filtered.filter(profile =>
-                    profile.hashtags && profile.hashtags.some(tag => hashtags.includes(tag))
-                );
-            }
-
-            // 정렬 로직 추가
-            if (sortOrder === 'highest_rating') {
-                filtered = filtered.sort((a, b) => b.star - a.star); // 별점 높은 순
-            } else if (sortOrder === 'lowest_rating') {
-                filtered = filtered.sort((a, b) => a.star - b.star); // 별점 낮은 순
-            } else if (sortOrder === 'newest') {
-                filtered = filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // 최신순
-            }
-
-            setFilteredProfiles(filtered);
-            setCurrentPage(1);
-        };
-
-        filterProfiles();
-    }, [selectedCategory, searchQuery, profiles, sortOrder]);
 
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
@@ -169,9 +137,9 @@ const ProfileGrid = () => {
                     />
                     <button>{t('mainpage.search_button')}</button>
                     <select onChange={handleSortChange} value={sortOrder}>
-                        <option value="newest">{t('최신순')}</option>
-                        <option value="highest_rating">{t('평점 높은 순')}</option>
-                        <option value="lowest_rating">{t('평점 낮은 순')}</option>
+                        <option value="newest">{t('최신 순')}</option>
+                        <option value="highest_rating">{t('별점 높은 순')}</option>
+                        <option value="lowest_rating">{t('별점 낮은 순')}</option>
                     </select>
                 </div>
             </div>
