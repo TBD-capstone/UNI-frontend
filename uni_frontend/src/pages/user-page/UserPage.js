@@ -18,7 +18,9 @@ const UserPage = () => {
     const [activeTab, setActiveTab] = useState('Qna');
     const [report, setReport] = useState(false);
     const [qnas, setQnas] = useState([]);
+    const [reviews, setReviews] = useState([]);
     const commenterId = Cookies.get('userId');
+    const language = Cookies.get('language');
 
     const handleClickReport = useCallback(() => {
         setReport(() => true);
@@ -262,13 +264,13 @@ const UserPage = () => {
         )
     };
     const ReviewSection = (props) => {
-        const [reviews, setReviews] = useState([]);
 
         const Review = (props) => {
             return (
                 <div className="review">
                     <div className={'review-profile'}>
-                        <img src={props.data.commenterImgProf ? props.data.commenterImgProf : basicProfileImage} alt={'./profile'}/>
+                        <img src={props.data.commenterImgProf ? props.data.commenterImgProf : basicProfileImage}
+                             alt={'./profile'}/>
                         <span className='review-reviewer'>{props.data.commenterName}</span>
                     </div>
                     <div className="review-star"><FaStar className={'yellow-star'}/> {props.data.star}</div>
@@ -276,30 +278,9 @@ const UserPage = () => {
                 </div>
             );
         }
-
-        useEffect(() => {
-            fetch(`/api/review/${props.userId}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .catch((err) => {
-                    console.log(err);
-                    alert('error: fetch fail');
-                })
-                .then(response => response.json())
-                .then((data) => {
-                    setReviews(() => data);
-                    console.log(data); // for debug
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        }, [props.userId]);
         return (
             <div className="review-section">
-                {reviews.length > 0 ? reviews.map((data, i) => {
+                {props.reviews.length > 0 ? props.reviews.map((data, i) => {
                     return (<Review data={data} key={`reviews-${i}`}/>);
                 }) : <p>{t('userPage.no_review')}</p>}
             </div>
@@ -308,15 +289,22 @@ const UserPage = () => {
 
     useEffect(() => {
         (async () => {
+            if(!userId)
+                return;
             await fetch(`/api/user/${userId}`, {
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: language ?
+                    {
+                        'Content-Type': 'application/json',
+                        'Accept-language': language
+                    } :
+                    {
+                        'Content-Type': 'application/json'
+                    }
             })
                 .catch((err) => {
                     console.log(err);
-                    alert('error: fetch fail');
+                    alert('error: user fetch fail');
                 })
                 .then(response => {
                     if (!response.ok)
@@ -332,13 +320,18 @@ const UserPage = () => {
                 });
             await fetch(`/api/markers/user/${userId}`, {
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: language ?
+                    {
+                        'Content-Type': 'application/json',
+                        'Accept-language': language
+                    } :
+                    {
+                        'Content-Type': 'application/json'
+                    }
             })
                 .catch((err) => {
                     console.log(err);
-                    alert('error: fetch fail');
+                    alert('error: markers fetch fail');
                 })
                 .then(response => response.json())
                 .then((data) => {
@@ -347,11 +340,16 @@ const UserPage = () => {
                 .catch((err) => {
                     console.log(err);
                 });
-            fetch(`/api/user/${userId}/qnas`, {
+            await fetch(`/api/user/${userId}/qnas`, {
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: language ?
+                    {
+                        'Content-Type': 'application/json',
+                        'Accept-language': language
+                    } :
+                    {
+                        'Content-Type': 'application/json'
+                    }
             })
                 .catch((err) => {
                     console.log(err);
@@ -370,8 +368,31 @@ const UserPage = () => {
                 .catch((err) => {
                     console.log(err);
                 });
+            await fetch(`/api/review/${userId}`, {
+                method: 'GET',
+                headers: language ?
+                    {
+                        'Content-Type': 'application/json',
+                        'Accept-language': language
+                    } :
+                    {
+                        'Content-Type': 'application/json'
+                    }
+            })
+                .catch((err) => {
+                    console.log(err);
+                    alert('error: review fetch fail');
+                })
+                .then(response => response.json())
+                .then((data) => {
+                    setReviews(() => data);
+                    console.log(data); // for debug
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
         })();
-    }, [userId, pathname]);
+    }, [userId, pathname, language]);
 
     return (
         user ? (
@@ -422,8 +443,9 @@ const UserPage = () => {
                         </div>
                     </div>
                     {activeTab === 'Qna' &&
-                        <QnaSection userId={userId} commenterId={Number(commenterId)} handleReport={handleClickReport}/>}
-                    {activeTab === 'Review' && <ReviewSection userId={userId}/>}
+                        <QnaSection userId={userId} commenterId={Number(commenterId)}
+                                    handleReport={handleClickReport}/>}
+                    {activeTab === 'Review' && <ReviewSection userId={userId} reviews={reviews}/>}
                 </div>
             </div>) : null
     );
