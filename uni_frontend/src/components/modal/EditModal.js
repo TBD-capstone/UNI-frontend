@@ -3,14 +3,13 @@ import { IoIosArrowForward } from "react-icons/io";
 import Modal from './Modal';
 import './EditModal.css'
 
-const EditModal = ({title, children}) => {
-    const [isOpen, setIsOpen] = useState(false);
+const EditModal = ({title, children, isOpen, setIsOpen}) => {
     const handleClickEditBox = () => {
         setIsOpen(() => true);
     };
     return (
         <>
-            <Modal className={'edit-modal'} title={title} isOpen={isOpen} handleClose={() => setIsOpen(false)}>
+            <Modal className={'edit-modal'} title={title} isOpen={isOpen} handleClose={()=>setIsOpen(false)}>
                 {children}
             </Modal>
             <div className={'edit-box'} onClick={handleClickEditBox}>

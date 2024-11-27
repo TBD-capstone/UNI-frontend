@@ -31,7 +31,6 @@
     "report": "举报",
     "edit": "编辑",
     "chat": "聊天",
-    "easter": "复活节",
     "post": "发布",
     "qna_placeholder": "输入评论...",
     "user_icon_alt": "用户图标",
@@ -82,7 +81,9 @@
     "no_target_marker": "标记不存在。",
     "basic_information": "基本资料",
     "marker_add_explain": "点击地图定位标记。",
-    "marker_delete_explain": "请输入您要删除的标记的名称。"
+    "marker_delete_explain": "请输入您要删除的标记的名称。",
+    "editPage.duplicate_hash": "该标签已经存在。",
+    "editPage.profile_editing": "编辑个人资料"
   },
   "loginPage": {
     "title": "登录",
@@ -139,5 +140,19 @@
       "general_error": "发生错误。"
     },
     "already_member": "已经是会员？登录"
+  },
+  "reportModal": {
+    "report": "举报",
+    "report_title": "举报原因",
+    "profile": "轮廓",
+    "chat": "聊天",
+    "review": "评论",
+    "abusive_language": "咒骂/仇恨/歧视",
+    "inappropriate_content": "不恰当的内容",
+    "illegal_activity": "非法活动",
+    "spam": "垃圾邮件/宣传",
+    "detail": "申报内容",
+    "title_placeholder": "请写报告标题。",
+    "detail_placeholder": "请详细填写报告内容。"
   }
 }
