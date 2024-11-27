@@ -31,8 +31,7 @@ const ChatPage = (props) => {
                         fetch(`/api/chat/translate/${props.messageId}`, {
                             method: 'GET',
                             headers: {
-                                'Content-Type': 'application/json',
-                                'Accept-Language': Cookies.get('language')
+                                'Content-Type': 'application/json'
                             }
                         })
                             .catch((err) => {
@@ -200,10 +199,9 @@ const ChatPage = (props) => {
         messages ? (
             <div className="chat-page">
                 <div className="match-section">
-                    {/*<div className="logo"/>*/}
                     <div className="chat-profile">
                         <img src={state.otherImgProf || '/UNI_Logo.png'} alt="Profile"/>
-                        <div className="Profile-name">{state.otherName || '사용자명'}</div>
+                        <div className="Profile-name">{state.otherName}</div>
                     </div>
                     <div className="Match-button">
                         {isKorean?

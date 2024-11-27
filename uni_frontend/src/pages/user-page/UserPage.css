@@ -1,7 +1,7 @@
 .user-container {
     max-width: 1200px;
     align-content: center;
-    margin: auto;
+    margin: auto auto 50px;
 }
 .user-container button {
     color: white;
@@ -26,15 +26,15 @@
     width: 80%;
     border: none;
     border-radius: 2px;
+    margin-top: 5px;
     /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
 }
 
 .Image-back-container {
     width: 100%;
-    max-height: 400px;
+    max-height: 300px;
     min-height: 150px;
     overflow: hidden;
-    border-bottom: 1px solid black;
 }
 .Image-back {
     width: 100%;
@@ -55,17 +55,23 @@
     width: 100%;
 }
 
-.Image-prof-container {
+.image-prof-container {
     height: 200px;
     width: 200px;
     margin-top: -150px;
     background-color: white;
     border-radius: 20px;
+    overflow: hidden;
 }
 
-.Image-prof {
+.image-prof {
     height: 100%;
     width: 100%;
+    object-fit: cover;
+}
+
+.user-star {
+    /*float: right;*/
 }
 
 .Hashtag-section {
@@ -105,6 +111,10 @@
     overflow: hidden;
 }
 
+.qna-container p {
+    margin: 10px;
+}
+
 .qna-box {
     margin-left: 50px;
 }
@@ -112,14 +122,29 @@
 .qna {
     padding: 10px 15px;
     display: flex;
-    align-items: flex-start;
+    justify-content: flex-start;
 }
-
 .qna img {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     margin-right: 10px;
+    object-fit: cover;
+}
+.qna button {
+    background: none;
+    border: none;
+    color: #999999;
+    cursor: pointer;
+    font-size: 12px;
+}
+.qna button:hover {
+    background: none;
+    text-decoration: underline;
+}
+.qna-button {
+    margin-left: auto;
+    margin-bottom: auto;
 }
 
 .qna-user {
@@ -161,9 +186,9 @@
 }
 
 .qna-options {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 5px;
+    /*display: flex;*/
+    /*justify-content: space-between;*/
+    /*margin-top: 5px;*/
 }
 
 .qna-options button {
@@ -188,8 +213,27 @@
     border: 1px solid #ddd;
     border-radius: 8px;
 }
-.user-star {
-    float: right;
+.review img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin: 10px;
+    object-fit: cover;
+
+}
+.review-profile {
+    display: flex;
+}
+.review-reviewer {
+    font-weight: bold;
+    font-size: large;
+    margin: auto auto auto 0;
+}
+.review-star {
+    /*float: right;*/
+}
+.yellow-star {
+    color: #FFBA00;
 }
 
 .Map-section {

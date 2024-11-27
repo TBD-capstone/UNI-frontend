@@ -47,7 +47,13 @@
     "self_pr": "자기소개",
     "user": "사용자",
     "employ_count": "고용 수",
-    "time": "연락 시간"
+    "time": "연락 시간",
+    "delete": "삭제",
+    "edit_explain": "프로필을 자유롭게 수정해보세요.",
+    "chat_explain1":"궁금한게 있다면 ",
+    "chat_explain2": "님에게 채팅으로 물어볼 수 있습니다.",
+    "no_qna": "아직 Q&A가 없습니다.",
+    "no_review": "아직 리뷰가 없습니다."
   },
   "editPage": {
     "user": "이름",
@@ -68,7 +74,15 @@
     "marker_description_placeholder": "마커 설명",
     "add": "추가",
     "delete": "삭제",
-    "self_pr": "자기소개"
+    "self_pr": "자기소개",
+    "edit_complete": "수정 완료",
+    "no_marker_data": "마커가 없거나 일부 입력이 비어 있습니다.",
+    "duplicated_title": "이미 존제하는 이름입니다.",
+    "no_title": "이름이 비어있습니다.",
+    "no_target_marker": "마커가 존재하지 않습니다.",
+    "basic_information": "기본 정보",
+    "marker_add_explain": "지도를 클릭해 마커 위치를 정해주세요.",
+    "marker_delete_explain": "삭제할 마커의 이름을 입력해주세요."
   },
   "loginPage": {
     "title": "로그인",

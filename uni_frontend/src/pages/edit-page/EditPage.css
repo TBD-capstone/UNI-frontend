@@ -1,7 +1,7 @@
 .edit-container {
     max-width: 1200px;
     align-content: center;
-    margin: auto;
+    margin: auto auto 50px;
 }
 .Complete {
     color: #ffffff;
