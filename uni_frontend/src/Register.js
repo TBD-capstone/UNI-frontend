@@ -162,7 +162,7 @@ function Register() {
                 <input
                     type="email"
                     className="input-field"
-                    placeholder="이메일"
+                    placeholder="e-mail"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
@@ -178,7 +178,7 @@ function Register() {
                 <input
                     type="text"
                     className="input-field"
-                    placeholder="인증 코드"
+                    placeholder="code"
                     value={verificationCode}
                     onChange={(e) => setVerificationCode(e.target.value)}
                 />

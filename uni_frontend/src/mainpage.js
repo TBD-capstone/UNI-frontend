@@ -49,8 +49,7 @@ const ProfileGrid = () => {
 
                 // 대학교 이름과 해시태그를 URL 파라미터에 맞게 추가
                 if (searchQuery) {
-                    const hashtags = searchQuery.split(',').map(tag => tag.trim());
-                    params.append('hashtags', hashtags.join(','));
+                    params.append('hashtags', searchQuery.split(',').join(','));
                 }
                 if (selectedCategory) {
                     params.append('univName', selectedCategory);
@@ -58,6 +57,8 @@ const ProfileGrid = () => {
 
                 const url = `http://localhost:8080/api/home?${params.toString()}`;
                 const data = await fetchWithLanguage(url);
+
+                // API 명세에 맞게 데이터 처리
                 setProfiles(data.content || []);
                 setFilteredProfiles(data.content || []);
             } catch (error) {

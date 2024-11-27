@@ -9,6 +9,8 @@ function MatchingStatus() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isKorean, setIsKorean] = useState(false); // 한국인 여부
+    const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+    const [matchesPerPage] = useState(5); // 한 페이지에 보일 매칭 수
     const userId = paramUserId || Cookies.get('userId'); // URL에서 가져오지 못하면 쿠키에서 가져오기
 
     useEffect(() => {
@@ -30,7 +32,9 @@ function MatchingStatus() {
                 const data = await response.json();
 
                 if (response.ok) {
-                    setMatches(data);
+                    // 매칭 데이터를 시간 기준으로 내림차순 정렬
+                    const sortedMatches = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    setMatches(sortedMatches);
                 } else {
                     setError(data.message || '매칭 데이터를 불러오는 데 실패했습니다.');
                 }
@@ -58,6 +62,18 @@ function MatchingStatus() {
         }
     };
 
+    // 현재 페이지에 해당하는 매칭 데이터를 가져오기
+    const indexOfLastMatch = currentPage * matchesPerPage;
+    const indexOfFirstMatch = indexOfLastMatch - matchesPerPage;
+    const currentMatches = matches.slice(indexOfFirstMatch, indexOfLastMatch);
+
+    // 페이지네이션 처리
+    const totalPages = Math.ceil(matches.length / matchesPerPage);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
     if (isLoading) {
         return <div>로딩 중...</div>;
     }
@@ -72,7 +88,7 @@ function MatchingStatus() {
 
             {matches.length > 0 ? (
                 <ul className="matching-list">
-                    {matches.map((match) => {
+                    {currentMatches.map((match) => {
                         const matchPartnerId = isKorean ? match.requesterId : match.receiverId;
 
                         return (
@@ -104,6 +120,25 @@ function MatchingStatus() {
                 </ul>
             ) : (
                 <p>매칭 중인 혹은 매칭 완료된 매칭이 없습니다.</p>
+            )}
+
+            {/* 페이지네이션 */}
+            {totalPages > 1 && (
+                <div className="pagination">
+                    <button
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                    >
+                        이전
+                    </button>
+                    <span>{currentPage} / {totalPages}</span>
+                    <button
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                    >
+                        다음
+                    </button>
+                </div>
             )}
         </div>
     );

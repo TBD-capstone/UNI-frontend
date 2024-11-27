@@ -61,7 +61,6 @@
 .input-field-container {
     position: relative;
     width: 100%;
-    margin-bottom: 15px; /* 간격 균일하게 설정 */
 }
 
 /* 입력 필드 스타일 */

@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import './navbar.css';
 
-import profileImage from './profile-image.png'; // 프로필 이미지 경로 설정
 import languageIcon from './language-icon.png'; // 언어 아이콘 이미지 경로
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
@@ -15,6 +14,7 @@ function Navbar({ selectedLanguage, fetchWithLanguage }) {
     const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
     const [username, setUsername] = useState('');
     const [userId, setUserId] = useState(''); // 사용자 ID 저장
+    const [profileImage, setProfileImage] = useState(''); // 프로필 이미지 상태 추가
     const navigate = useNavigate();
     const menuRef = useRef(null); // 드롭다운 메뉴 감지를 위한 참조
 
@@ -28,6 +28,27 @@ function Navbar({ selectedLanguage, fetchWithLanguage }) {
             setUserId(cookieUserId);
         }
     }, []);
+
+    useEffect(() => {
+        if (userId) {
+            // 프로필 이미지 가져오기
+            const fetchProfileImage = async () => {
+                try {
+                    const response = await fetch(`http://localhost:8080/api/users/${userId}/profile-image`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        setProfileImage(data.imageUrl); // API 응답에서 이미지 URL을 설정
+                    } else {
+                        console.error('Failed to fetch profile image');
+                    }
+                } catch (error) {
+                    console.error('Error fetching profile image:', error);
+                }
+            };
+
+            fetchProfileImage();
+        }
+    }, [userId]); // userId가 변경될 때마다 프로필 이미지 로드
 
     const toggleMenu = () => {
         setMenuOpen(!menuOpen);
@@ -88,7 +109,12 @@ function Navbar({ selectedLanguage, fetchWithLanguage }) {
                     )}
                 </div>
                 <div className="user">
-                    <img src={profileImage} alt="프로필" className="profile-image" />
+                    {/* 프로필 이미지 로드 */}
+                    <img
+                        src={profileImage || './profile-image.png'} // 기본 프로필 이미지 설정
+                        alt="프로필"
+                        className="profile-image"
+                    />
                 </div>
                 <div className="userid">
                     <Link to={`/user/${userId}`} className="username-link">
