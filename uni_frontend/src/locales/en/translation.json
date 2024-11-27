@@ -31,7 +31,6 @@
     "report": "Report",
     "edit": "Edit",
     "chat": "Chat",
-    "easter": "Easter",
     "post": "Post",
     "qna_placeholder": "Write a comment...",
     "user_icon_alt": "User Icon",
@@ -52,7 +51,7 @@
     "time": "Time",
     "delete": "Delete",
     "edit_explain": "Feel free to modify your profile.",
-    "chat_explain1":"If you have any questions, you can ask ",
+    "chat_explain1": "If you have any questions, you can ask ",
     "chat_explain2": " via chat.",
     "no_qna": "There is no Q&A yet.",
     "no_review": "There is no review yet."
@@ -84,7 +83,9 @@
     "no_target_marker": "Marker not existed.",
     "basic_information": "Basic Information",
     "marker_add_explain": "Click on the map to locate the marker.",
-    "marker_delete_explain": "Please enter the name of the marker you want to delete."
+    "marker_delete_explain": "Please enter the name of the marker you want to delete.",
+    "editPage.duplicate_hash": "Hashtags that already exist.",
+    "editPage.profile_editing": "Edit Profile"
   },
   "loginPage": {
     "title": "Login",
@@ -141,5 +142,19 @@
       "general_error": "An error occurred."
     },
     "already_member": "Already a member? Login"
+  },
+  "reportModal": {
+    "report": "Report",
+    "report_reason": "Reasons for reporting",
+    "profile": "Profile",
+    "chat": "chat",
+    "review": "Review",
+    "abusive_language": "Swearing/Hate/Discrimination",
+    "inappropriate_content": "inappropriate content",
+    "illegal_activity": "illegal_activity",
+    "spam": "spam",
+    "detail": "Report Detail",
+    "title_placeholder": "Please write the report title.",
+    "detail_placeholder": "Please write the report detail."
   }
 }

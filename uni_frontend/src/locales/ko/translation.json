@@ -87,7 +87,9 @@
     "no_target_marker": "마커가 존재하지 않습니다.",
     "basic_information": "기본 정보",
     "marker_add_explain": "지도를 클릭해 마커 위치를 정해주세요.",
-    "marker_delete_explain": "삭제할 마커의 이름을 입력해주세요."
+    "marker_delete_explain": "삭제할 마커의 이름을 입력해주세요.",
+    "editPage.duplicate_hash": "이미 존재하는 해시태그입니다.",
+    "editPage.profile_editing": "프로필 편집하기"
   },
   "loginPage": {
     "title": "로그인",
@@ -144,5 +146,19 @@
       "general_error": "오류가 발생했습니다."
     },
     "already_member": "이미 회원이신가요? 로그인"
+  },
+  "reportModal": {
+    "report": "신고",
+    "report_reason": "신고 사유",
+    "profile": "프로필",
+    "chat": "채팅",
+    "review": "후기",
+    "abusive_language": "욕설/혐오/차별",
+    "inappropriate_content": "음란물",
+    "illegal_activity": "부적절한 행동",
+    "spam": "스팸/홍보",
+    "detail": "상세 내용",
+    "title_placeholder": "신고 제목을 작성해주세요.",
+    "detail_placeholder": "신고 내용을 작성해주세요."
   }
 }
