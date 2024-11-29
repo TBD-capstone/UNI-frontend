@@ -1,22 +1,99 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {BrowserRouter as Router, Route, Routes, Navigate} from 'react-router-dom';
+import Layout from './layout';
 import Mainpage from './mainpage';
 import Register from './Register';
+import Login from './login';
 import UserPage from './pages/user-page/UserPage';
 import EditPage from "./pages/edit-page/EditPage";
 import ChatPage from "./pages/chat-page/ChatPage";
+import Admin from "./admin";
+import Cookies from "js-cookie";
+import MatchingStatus from './matchingList';
+import ChatList from './chatList';
+import Review from './review'; // Review 페이지 추가
+import usePushNotification from "./Alarm";
+import SockJS from "sockjs-client";
+import {Stomp} from "@stomp/stompjs";
 
+
+// fetchWithLanguage 함수 정의
+const fetchWithLanguage = async (url, options = {}) => {
+    const selectedLanguage = Cookies.get('language') || 'en'; // 쿠키에서 언어 가져오기
+    const headers = {
+        ...options.headers,
+        'Accept-Language': selectedLanguage,
+    };
+    console.log(`Request to: ${url} with Accept-Language: ${selectedLanguage}`);
+    return fetch(url, { ...options, headers });
+};
 
 
 function App() {
+    const notification = usePushNotification();
+    const [alarm, setAlarm] = useState(true);
+    const userId = Cookies.get('userId');
+
+    const changeAlarm = (b) => {
+        setAlarm(() => b);
+    }
+
+    useEffect(() => {
+
+        if (userId) {
+            const socketChat = new SockJS('http://localhost:8080/ws/chat');
+            const stompClientInstance = Stomp.over(socketChat);
+
+            stompClientInstance.debug = (str) => console.log(str);
+
+            stompClientInstance.connect({}, () => {
+                console.log("Connected to WebSocket");
+
+                stompClientInstance.subscribe(`/sub/user/${userId}`, (msg) => {
+                    if(alarm){
+                        const newMessage = JSON.parse(msg.body);
+                        console.log("Received message:", newMessage);
+                        notification.fireNotification('new message', newMessage.content);
+                    }
+                });
+            }, (error) => {
+                console.error("WebSocket connection error:", error);
+            });
+
+            return () => {
+                if (stompClientInstance) {
+                    stompClientInstance.disconnect();
+                    console.log("Disconnected from WebSocket: Alarm");
+                }
+            }
+        }
+    }, [userId, alarm, notification]);
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<Mainpage />} />
+                {/* 기본 경로를 로그인 페이지로 리다이렉트 */}
+                <Route
+                    path="/"
+                    element={Cookies.get('userName')
+                        ? <Navigate to="/main" replace />
+                        : <Navigate to="/login" replace />}
+                />
+
+                {/* 로그인과 회원가입 페이지는 상단바 없이 렌더링 */}
                 <Route path="/register" element={<Register />} />
-                <Route path="/user/:id" element={<UserPage/>} />
-                <Route path="/user/:id/edit" element={<EditPage/>} />
-                <Route path="/chat/:id" element={<ChatPage/>} />
+                <Route path="/login" element={<Login />} />
+
+                {/* 상단바가 포함된 레이아웃으로 렌더링 */}
+                <Route element={<Layout />}>
+                    <Route path="/main" element={<Mainpage fetchWithLanguage={fetchWithLanguage} />} />
+                    <Route path="/user/:userId" element={<UserPage fetchWithLanguage={fetchWithLanguage} />} />
+                    <Route path="/user/:userId/edit" element={<EditPage fetchWithLanguage={fetchWithLanguage} />} />
+                    <Route path="/chat/:roomId" element={<ChatPage fetchWithLanguage={fetchWithLanguage} changeAlarm={changeAlarm}/>} />
+                    <Route path="/admin" element={<Admin fetchWithLanguage={fetchWithLanguage} />} />
+                    <Route path="/matching-list" element={<MatchingStatus fetchWithLanguage={fetchWithLanguage} />} />
+                    <Route path="/chat-list" element={<ChatList fetchWithLanguage={fetchWithLanguage} />} />
+                    <Route path="/review/:matchingId" element={<Review fetchWithLanguage={fetchWithLanguage} />} />
+                </Route>
             </Routes>
         </Router>
     );

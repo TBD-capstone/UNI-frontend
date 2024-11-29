@@ -1,74 +1,107 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import Select from 'react-select';
 import './Register.css';
+import { useTranslation } from "react-i18next";
 
 function Register() {
+    const { t } = useTranslation();
+    const navigate = useNavigate();
     const [isKorean, setIsKorean] = useState(true);
     const [email, setEmail] = useState('');
     const [univName, setUnivName] = useState('');
     const [nickname, setNickname] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [statusMessage, setStatusMessage] = useState('');
+    const [emailMessage, setEmailMessage] = useState({ message: '', isError: false });
+    const [codeMessage, setCodeMessage] = useState({ message: '', isError: false });
+    const [signupMessage, setSignupMessage] = useState({ message: '', isError: false });
     const [emailVerified, setEmailVerified] = useState(false);
-    const [univVerified, setUnivVerified] = useState(false);
+    const [verificationCode, setVerificationCode] = useState('');
+    const [codeVerified, setCodeVerified] = useState(false);
+    const [univList, setUnivList] = useState([]);
 
-    const handleUserTypeChange = (e) => {
-        setIsKorean(e.target.value === 'korean');
-        setEmailVerified(false);
+    useEffect(() => {
+        const fetchUnivList = async () => {
+            try {
+                const response = await fetch(`http://localhost:8080/api/auth/univ`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await response.json();
+
+                if (Array.isArray(data)) {
+                    setUnivList(data.map((university) => ({
+                        value: university.univName,
+                        label: university.univName
+                    })));
+                } else {
+                    setSignupMessage({ message: t("registerPage.status_messages.fetch_university_list_fail"), isError: true });
+                }
+            } catch (error) {
+                setSignupMessage({ message: t("registerPage.status_messages.fetch_university_list_error"), isError: true });
+            }
+        };
+
+        fetchUnivList();
+    }, [t]);
+
+    const handleUserTypeChange = (userType) => {
+        setIsKorean(userType === 'korean');
     };
 
     const handleEmailVerification = async () => {
-        /*const endpoint = isKorean ? '/auth/api/validate' : '/auth/api/foreign';
+        if (!email.trim()) {
+            setEmailMessage({ message: "이메일을 입력해주세요.", isError: true });
+            return;
+        }
         try {
-            const response = await fetch(endpoint, {
+            const response = await fetch('/api/auth/validate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: email }),
+                body: JSON.stringify({ email, univName })
             });
             const data = await response.json();
             if (data.status === 'success') {
                 setEmailVerified(true);
-                setStatusMessage("이메일 인증 성공!");
+                setEmailMessage({ message: "이메일 인증 요청 성공!", isError: false });
             } else {
-                setEmailVerified(false);
-                setStatusMessage("이메일 인증 실패");
+                setEmailMessage({ message: data.message || "이메일 인증 요청 실패.", isError: true });
             }
         } catch (error) {
-            setEmailVerified(false);
-            setStatusMessage("이메일 인증 중 오류가 발생했습니다");
-            console.error(error);
-        }*/
-        setEmailVerified(true);
-        setStatusMessage("이메일 인증 성공!"); //임시방편
+            setEmailMessage({ message: "이메일 인증 요청 중 오류가 발생했습니다.", isError: true });
+        }
     };
 
-    const handleUnivVerification = async () => {
-        /*try {
-            const response = await fetch('/auth/api/univ', {
+    const handleCodeVerification = async () => {
+        if (!verificationCode.trim()) {
+            setCodeMessage({ message: "인증 코드를 입력해주세요.", isError: true });
+            return;
+        }
+        try {
+            const response = await fetch('/api/auth/verify', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ univ_name: univName }),
+                body: JSON.stringify({
+                    email,
+                    code: parseInt(verificationCode)
+                })
             });
             const data = await response.json();
             if (data.status === 'success') {
-                setUnivVerified(true);
-                setStatusMessage("대학 인증 성공!");
+                setCodeVerified(true);
+                setCodeMessage({ message: "인증 확인 성공!", isError: false });
             } else {
-                setUnivVerified(false);
-                setStatusMessage("대학 인증 실패");
+                setCodeMessage({ message: data.message || "인증 확인 실패.", isError: true });
             }
         } catch (error) {
-            setUnivVerified(false);
-            setStatusMessage("대학 인증 중 오류가 발생했습니다");
-            console.error(error);
-        }*/
-        setUnivVerified(true);
-        setStatusMessage("대학 인증 성공!");//임시방편2
+            setCodeMessage({ message: "인증 확인 중 오류가 발생했습니다.", isError: true });
+        }
     };
 
     const handleSubmit = async () => {
-        if (password !== confirmPassword) {
-            setStatusMessage("비밀번호가 일치하지 않습니다");
+        if (!codeVerified || password !== confirmPassword) {
+            setSignupMessage({ message: "입력값이 유효하지 않습니다.", isError: true });
             return;
         }
 
@@ -77,57 +110,120 @@ function Register() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    isKorean: isKorean,
-                    email: email,
-                    univName: univName,
+                    isKorean,
+                    email,
+                    univName,
                     name: nickname,
-                    password: password,
-                }),
+                    password
+                })
             });
-
             const data = await response.json();
             if (data.status === 'success') {
-                setStatusMessage("회원가입 성공!");
+                setSignupMessage({ message: "", isError: false });
+                alert("Signup successful! Redirecting to login page.");
+                navigate('/login');
             } else {
-                setStatusMessage("회원가입 실패");
+                setSignupMessage({ message: data.message || "회원가입 실패.", isError: true });
             }
         } catch (error) {
-            setStatusMessage("회원가입 중 오류가 발생했습니다");
-            console.error(error);
+            setSignupMessage({ message: "회원가입 중 오류가 발생했습니다.", isError: true });
         }
     };
 
     return (
         <div className="signup-page">
             <div className="main-logo"></div>
-            <h1 className="signup-title">회원가입</h1>
+            <h1 className="signup-title">{t("registerPage.title")}</h1>
 
             <div className="user-type">
-                <label>
-                    <input type="radio" name="userType" value="korean" checked={isKorean} onChange={handleUserTypeChange} /> 한국인 대학생
-                </label>
-                <label>
-                    <input type="radio" name="userType" value="foreigner" checked={!isKorean} onChange={handleUserTypeChange} /> 외국인
-                </label>
+                <button
+                    className={`user-type-button ${isKorean ? 'selected' : ''}`}
+                    onClick={() => handleUserTypeChange('korean')}
+                >
+                    {t("registerPage.user_type.korean")}
+                </button>
+                <button
+                    className={`user-type-button ${!isKorean ? 'selected' : ''}`}
+                    onClick={() => handleUserTypeChange('foreigner')}
+                >
+                    Foreigner
+                </button>
             </div>
 
-            <input type="email" className="input-field" placeholder="이메일" value={email} onChange={(e) => setEmail(e.target.value)} />
-            <button className="verify-button" onClick={handleEmailVerification}>이메일 인증하기</button>
+            <Select
+                className="select-field"
+                options={univList}
+                onChange={(selectedOption) => setUnivName(selectedOption.value)}
+                placeholder={t("registerPage.university_placeholder")}
+                isSearchable
+            />
 
-            <input type="text" className="input-field" placeholder="대학명" value={univName} onChange={(e) => setUnivName(e.target.value)} />
-            <button className="verify-button" onClick={handleUnivVerification}>대학 인증하기</button>
+            <div className="input-field-container">
+                <input
+                    type="email"
+                    className="input-field"
+                    placeholder="e-mail"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
+                <button className="input-field-button" onClick={handleEmailVerification}>
+                    {t("registerPage.verify_email_button")}
+                </button>
+            </div>
+            <div className="field-message" style={{ color: emailMessage.isError ? 'red' : 'blue' }}>
+                {emailMessage.message}
+            </div>
 
-            <input type="text" className="input-field" placeholder="이름" value={nickname} onChange={(e) => setNickname(e.target.value)} />
+            <div className="input-field-container">
+                <input
+                    type="text"
+                    className="input-field"
+                    placeholder="code"
+                    value={verificationCode}
+                    onChange={(e) => setVerificationCode(e.target.value)}
+                />
+                <button className="input-field-button" onClick={handleCodeVerification}>
+                    {t("registerPage.verify_code_button")}
+                </button>
+            </div>
+            <div className="field-message" style={{ color: codeMessage.isError ? 'red' : 'blue' }}>
+                {codeMessage.message}
+            </div>
 
-            <input type="password" className="input-field" placeholder="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <input
+                type="text"
+                className="input-field"
+                placeholder={t("registerPage.name_placeholder")}
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+            />
 
-            <input type="password" className="input-field" placeholder="비밀번호 확인" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+            <input
+                type="password"
+                className="input-field"
+                placeholder={t("registerPage.password_placeholder")}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+            />
 
-            <button className="signup-button" onClick={handleSubmit}>회원가입</button>
+            <input
+                type="password"
+                className="input-field"
+                placeholder={t("registerPage.confirm_password_placeholder")}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+            />
 
-            <div className="status-message">{statusMessage}</div>
+            <button className="signup-button" onClick={handleSubmit}>
+                {t("registerPage.signup_button")}
+            </button>
+            <div className="field-message" style={{ color: signupMessage.isError ? 'red' : 'blue' }}>
+                {signupMessage.message}
+            </div>
 
-            <div className="bottom-link">회원이신가요? 로그인하세요</div>
+            <div className="bottom-link">
+                <Link to="/login">{t("registerPage.already_member")}</Link>
+            </div>
         </div>
     );
 }

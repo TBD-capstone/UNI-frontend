@@ -1,0 +1,158 @@
+.matching-status-page {
+    font-family: Arial, sans-serif;
+    padding: 20px; /* 기존 패딩 */
+    color: #333;
+    max-width: 800px; /* 최대 너비 설정으로 좌우 여백 추가 */
+    margin: 0 auto; /* 중앙 정렬 */
+    box-sizing: border-box; /* 여백 포함 크기 계산 */
+}
+
+.matching-status-page h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #4caf50;
+}
+
+/* 매칭 리스트 스타일 */
+.matching-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+/* 매칭 항목 스타일 */
+.matching-item {
+    background-color: #ffffff;
+    margin: 10px 0;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: box-shadow 0.3s;
+    flex-wrap: wrap; /* 작은 화면에서 줄바꿈 허용 */
+}
+
+.matching-item:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 매칭 정보 스타일 */
+.matching-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+}
+
+/* 매칭 이름 스타일 */
+.match-name {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+/* 매칭 상태 스타일 */
+.match-status {
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    text-align: center;
+    width: fit-content;
+}
+
+.status-pending {
+    background-color: #ffcc00;
+}
+
+.status-accepted {
+    background-color: #4caf50;
+}
+
+.status-rejected {
+    background-color: #f44336;
+}
+
+.status-default {
+    background-color: #999;
+}
+
+/* 매칭 날짜 스타일 */
+.match-date {
+    font-size: 14px;
+    color: #777;
+    margin-top: 5px;
+}
+
+/* 리뷰 버튼 스타일 */
+.review-button {
+    padding: 10px 15px;
+    background-color: #4caf50;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    box-sizing: border-box;
+}
+
+.review-button:hover {
+    background-color: #45a049;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    .matching-item {
+        flex-direction: column; /* 항목을 세로로 배치 */
+        align-items: flex-start; /* 왼쪽 정렬 */
+    }
+
+    .match-status {
+        font-size: 12px; /* 상태 텍스트 크기 축소 */
+        padding: 5px 8px; /* 패딩 줄임 */
+    }
+
+    .review-button {
+        font-size: 14px; /* 버튼 텍스트 크기 축소 */
+        width: 100%; /* 버튼을 화면 너비에 맞춤 */
+        padding: 10px;
+        margin-top: 10px; /* 버튼과 다른 요소 간격 추가 */
+    }
+
+    .match-name {
+        font-size: 15px; /* 이름 텍스트 크기 축소 */
+    }
+
+    .match-date {
+        font-size: 12px; /* 날짜 텍스트 크기 축소 */
+    }
+}
+
+@media (max-width: 480px) {
+    .matching-item {
+        padding: 10px; /* 항목 간 여백 축소 */
+        border-radius: 5px; /* 둥근 모서리 축소 */
+    }
+
+    .match-status {
+        font-size: 11px; /* 상태 텍스트 크기 더 축소 */
+        padding: 4px 6px; /* 패딩 더 줄임 */
+    }
+
+    .review-button {
+        font-size: 12px; /* 버튼 텍스트 크기 더 축소 */
+        padding: 8px; /* 버튼 패딩 축소 */
+    }
+
+    .match-name {
+        font-size: 14px; /* 이름 텍스트 크기 더 축소 */
+    }
+
+    .match-date {
+        font-size: 11px; /* 날짜 텍스트 크기 더 축소 */
+    }
+}

@@ -1,0 +1,85 @@
+.review-page {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background-color: #f9f9f9;
+    color: #333;
+    max-width: 600px;
+    margin: 0 auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.review-title {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #4caf50;
+}
+
+.review-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    margin-bottom: 5px;
+    display: block;
+    font-weight: bold;
+}
+
+.rating-stars {
+    display: flex;
+    gap: 5px;
+    font-size: 2rem;
+    cursor: pointer;
+    justify-content: center; /* 별들이 중앙 정렬되도록 설정 */
+}
+
+.rating-text {
+    margin-top: 10px;
+    font-size: 1rem;
+    color: #555;
+    text-align: center;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    resize: none;
+}
+
+.submit-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.submit-button:hover {
+    background-color: #218838;
+}
+
+.status-message {
+    color: red;
+    margin-top: 10px;
+    text-align: center;
+}
+
+/* 별점 아이콘 클릭 시 확대 효과 */
+.rating-stars svg {
+    transition: transform 0.2s ease;
+}
+
+.rating-stars svg:hover {
+    transform: scale(1.2); /* 호버 시 확대 효과 */
+}

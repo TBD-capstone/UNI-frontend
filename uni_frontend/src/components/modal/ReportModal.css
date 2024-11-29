@@ -1,0 +1,53 @@
+.report-modal {
+    display: flex;
+    flex-direction: column;
+}
+
+.report-modal input {
+    padding: 5px;
+    font-size: 12pt;
+    margin-bottom: 10px;
+}
+.report-modal input:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+.report-modal textarea {
+    border-color: #505050;
+    font: inherit;
+    font-size: 12pt;
+    box-sizing: border-box;
+}
+.report-modal textarea:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+.report-purpose {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.report-radio {
+    width: 49%;
+}
+
+.after {
+    margin-left: auto;
+}
+
+.report-modal-button {
+    background-color: #6AB24F;
+    color: #FFFFFF;
+    font-size: 18px;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+    text-align: center;
+}
+.report-modal-button:hover {
+    background-color: #1C6F20;
+}
