@@ -55,7 +55,7 @@
     font-weight: bold;
 }
 
-/* 신고확인, 광고관리 테이블 스타일 */
+/* 신고확인, 광고관리, 유저관리 테이블 스타일 */
 .table-container {
     background-color: #ffffff;
     border-radius: 8px;
@@ -86,26 +86,85 @@
     font-weight: bold;
 }
 
-/* 신고 내용 스타일 */
-.report-details {
-    background-color: #f9f9f9;
+/* 유저관리 스타일 */
+.user-management {
+    margin-bottom: 20px;
 }
 
-.report-content {
-    padding: 15px;
-    border-top: 1px solid #ddd;
+.user-management .filter {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 15px;
 }
 
-.report-content h4 {
-    margin: 0 0 10px;
-    font-size: 16px;
+.user-management .filter label {
+    font-weight: bold;
+    margin-right: 10px;
     color: #333;
 }
 
-.report-content p {
-    margin: 0;
+.user-management .filter select {
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
     font-size: 14px;
-    color: #555;
+}
+
+.user-management .table-container {
+    margin-top: 15px;
+}
+
+.user-management .actions button {
+    background-color: #FFBA00;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.user-management .actions button:hover {
+    background-color: #E0A800;
+}
+
+/* 신고 내용 스타일 */
+.report-details {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+}
+
+/* 신고 리스트 행의 hover 효과 */
+.table tr {
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* 펼쳐진 신고 내역 테이블 스타일 */
+.nested-table {
+    width: 100%;
+    margin-top: 10px;
+    border-collapse: collapse;
+    background-color: #f9f9f9;
+}
+
+.nested-table th, .nested-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.nested-table th {
+    background-color: #FFBA00;
+    color: white;
+    font-weight: bold;
 }
 
 /* 광고 이미지 내용 스타일 */
@@ -131,6 +190,7 @@
     border: 1px solid #ccc;
     border-radius: 5px;
 }
+
 .ad-status-dropdown {
     margin-top: 10px;
 }
@@ -140,7 +200,6 @@
     border: 1px solid #ddd;
     border-radius: 4px;
 }
-
 
 /* 페이지네이션 스타일 */
 .pagination {
@@ -157,10 +216,16 @@
     cursor: pointer;
     border-radius: 4px;
     color: #333;
+    transition: background-color 0.3s;
 }
 
 .pagination button.active {
     background-color: #FFBA00;
+    color: white;
+}
+
+.pagination button:hover {
+    background-color: #E0A800;
     color: white;
 }
 
@@ -191,7 +256,6 @@
     margin: 0;
 }
 
-
 /* 반응형 스타일 */
 @media (max-width: 768px) {
     .visitor-stats {
@@ -202,5 +266,14 @@
     .visitor-card {
         width: 80%;
         margin-bottom: 20px;
+    }
+
+    .user-management .filter {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .user-management .filter label {
+        margin-bottom: 10px;
     }
 }

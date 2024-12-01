@@ -44,16 +44,16 @@ const ProfileGrid = () => {
         const fetchProfiles = async () => {
             try {
                 const params = new URLSearchParams();
-                params.append('page', currentPage);
-                params.append('size', ITEMS_PER_PAGE);  // 페이지 당 항목 수 추가
+                params.append('page', currentPage); // 페이지 번호 유지
                 params.append('sort', sortOrder);
 
                 // 대학교 이름과 해시태그를 URL 파라미터에 맞게 추가
-                if (searchQuery) {
-                    params.append('hashtags', searchQuery.split(',').map(tag => tag.trim()).join(','));
-                }
                 if (selectedCategory) {
-                    params.append('univName', selectedCategory);
+                    params.append('univName', selectedCategory); // 대학교 이름 추가
+                }
+                if (searchQuery) {
+                    const hashtags = searchQuery.split(',').map(tag => tag.trim()).join(',');
+                    params.append('hashtags', hashtags); // 해시태그 추가
                 }
 
                 const url = `http://localhost:8080/api/home?${params.toString()}`;
@@ -137,9 +137,9 @@ const ProfileGrid = () => {
                     />
                     <button>{t('mainpage.search_button')}</button>
                     <select onChange={handleSortChange} value={sortOrder}>
-                        <option value="newest">{t('최신순')}</option>
-                        <option value="highest_rating">{t('별점 높은 순')}</option>
-                        <option value="lowest_rating">{t('별점 낮은 순')}</option>
+                        <option value="newest">{t('mainpage.newest')}</option>
+                        <option value="highest_rating">{t('mainpage.highest_rating')}</option>
+                        <option value="lowest_rating">{t('mainpage.lowest_rating')}</option>
                     </select>
                 </div>
             </div>
@@ -175,7 +175,7 @@ const ProfileGrid = () => {
                         </Link>
                     ))
                 ) : (
-                    <div className="no-profiles">{t('mainpage.noProfiles')}</div>
+                    <div className="no-profiles"> </div>
                 )}
             </div>
 
