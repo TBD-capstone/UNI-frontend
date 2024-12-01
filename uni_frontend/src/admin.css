@@ -131,23 +131,40 @@
 /* 신고 내용 스타일 */
 .report-details {
     background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
 }
 
-.report-content {
-    padding: 15px;
-    border-top: 1px solid #ddd;
+/* 신고 리스트 행의 hover 효과 */
+.table tr {
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
 }
 
-.report-content h4 {
-    margin: 0 0 10px;
-    font-size: 16px;
-    color: #333;
+.table tr:hover {
+    background-color: #f1f1f1;
 }
 
-.report-content p {
-    margin: 0;
-    font-size: 14px;
-    color: #555;
+/* 펼쳐진 신고 내역 테이블 스타일 */
+.nested-table {
+    width: 100%;
+    margin-top: 10px;
+    border-collapse: collapse;
+    background-color: #f9f9f9;
+}
+
+.nested-table th, .nested-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.nested-table th {
+    background-color: #FFBA00;
+    color: white;
+    font-weight: bold;
 }
 
 /* 광고 이미지 내용 스타일 */

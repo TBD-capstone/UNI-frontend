@@ -6,6 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="7141e09f-2a8e-40b4-9e35-8450a5e64986" name="Changes" comment="[HOTFIX] 카테고리 번역 키 추가 작성">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/admin.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/admin.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/admin.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -146,7 +148,8 @@
       <workItem from="1732615776353" duration="3521000" />
       <workItem from="1732632168115" duration="10694000" />
       <workItem from="1732691027018" duration="23463000" />
-      <workItem from="1732733998452" duration="430000" />
+      <workItem from="1732733998452" duration="1496000" />
+      <workItem from="1733043819136" duration="6847000" />
     </task>
     <servers />
   </component>

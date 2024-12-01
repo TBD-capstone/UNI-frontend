@@ -6,41 +6,50 @@ const ITEMS_PER_PAGE = 5;
 
 function AdminPage() {
     const [activeTab, setActiveTab] = useState('신고확인');
-    const [selectedAdId, setSelectedAdId] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [adData, setAdData] = useState([]);
     const [reportedUsers, setReportedUsers] = useState([]);
+    const [expandedUserId, setExpandedUserId] = useState(null);
     const [users, setUsers] = useState([]);
     const [statusFilter, setStatusFilter] = useState('');
     const [totalPages, setTotalPages] = useState(0);
+    const [banDays, setBanDays] = useState({});
+    const [adForm, setAdForm] = useState({ advertiser: '', title: '', startDate: '', endDate: '', imageUrl: '' });
+
     const navigate = useNavigate();
 
     // 관리자 여부 확인 후 리디렉션
     useEffect(() => {
-        const isAdmin = true; // 실제 구현 시 서버에서 관리자 여부를 확인
+        const isAdmin = true;
         if (!isAdmin) {
-            navigate('/'); // 관리자가 아닐 경우 홈으로 리디렉션
+            navigate('/');
         }
     }, [navigate]);
 
     // 데이터 불러오기
     useEffect(() => {
-        if (activeTab === '광고게시' || activeTab === '광고등록') {
+        if (activeTab === '광고게시') {
             fetch('/api/admin/ad')
                 .then((response) => response.json())
                 .then((data) => setAdData(data.ads || []))
                 .catch((error) => console.error('광고 데이터 불러오기 실패:', error));
         } else if (activeTab === '신고확인') {
-            fetch('/api/admin/reported-users')
-                .then((response) => response.json())
-                .then((data) => setReportedUsers(data.content || []))
-                .catch((error) => console.error('신고된 유저 데이터 불러오기 실패:', error));
+            fetchReportedUsers(currentPage - 1);
         } else if (activeTab === '유저관리') {
-            fetchUsers(statusFilter, currentPage - 1); // 페이지는 0부터 시작
+            fetchUsers(statusFilter, currentPage - 1);
         }
     }, [activeTab, statusFilter, currentPage]);
 
-    // 유저 목록 불러오기
+    const fetchReportedUsers = (page = 0) => {
+        fetch(`/api/admin/reported-users?page=${page}&size=${ITEMS_PER_PAGE}`)
+            .then((response) => response.json())
+            .then((data) => {
+                setReportedUsers(data.content || []);
+                setTotalPages(data.totalPages || 0);
+            })
+            .catch((error) => console.error('신고된 유저 데이터 불러오기 실패:', error));
+    };
+
     const fetchUsers = (status = '', page = 0) => {
         let url = `/api/admin/users?page=${page}&size=${ITEMS_PER_PAGE}`;
         if (status) url += `&status=${status}`;
@@ -56,68 +65,25 @@ function AdminPage() {
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
-        setSelectedAdId(null);
         setCurrentPage(1);
+        setExpandedUserId(null);
     };
 
-    const handleAdClick = (adId) => {
-        setSelectedAdId(selectedAdId === adId ? null : adId);
-    };
-
-    const changeAdStatus = async (adId, newStatus) => {
-        try {
-            const response = await fetch('/api/admin/ad', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ adId: adId, status: newStatus }),
-            });
-
-            const result = await response.json();
-            if (result.status === 'success') {
-                setAdData((prevData) =>
-                    prevData.map((ad) =>
-                        ad.adId === adId ? { ...ad, adStatus: newStatus } : ad
-                    )
-                );
-            } else {
-                console.error('광고 상태 업데이트 실패:', result.message);
-            }
-        } catch (error) {
-            console.error('광고 상태 업데이트 중 오류가 발생했습니다:', error);
+    const toggleUserDetails = (userId) => {
+        if (expandedUserId === userId) {
+            setExpandedUserId(null);
+        } else {
+            setExpandedUserId(userId);
         }
     };
 
-    const handleNewAdSubmit = async (e) => {
-        e.preventDefault();
-        const newAd = {
-            advertiser: e.target.advertiser.value,
-            title: e.target.title.value,
-            adStatus: 'posted',
-            startDate: e.target.startDate.value,
-            endDate: e.target.endDate.value,
-            imageUrl: e.target.imageUrl.value,
-        };
-
-        try {
-            const response = await fetch('/api/admin/ad/new', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newAd),
-            });
-            const result = await response.json();
-            if (result.status === 'success') {
-                setAdData([...adData, { ...newAd, adId: result.adId }]);
-                alert('광고가 성공적으로 등록되었습니다.');
-            } else {
-                console.error('광고 등록 실패:', result.message);
-            }
-        } catch (error) {
-            console.error('광고 등록 중 오류가 발생했습니다:', error);
-        }
+    const handleBanDaysChange = (userId, days) => {
+        setBanDays((prev) => ({ ...prev, [userId]: days }));
     };
 
-    const updateUserStatus = async (userId, newStatus, banDays = 0) => {
-        const url = `/api/admin/users/${userId}/status?status=${newStatus}&banDays=${banDays}`;
+    const updateUserStatus = async (userId, newStatus) => {
+        const days = banDays[userId] || 0;
+        const url = `/api/admin/users/${userId}/status?status=${newStatus}&banDays=${days}`;
         try {
             const response = await fetch(url, { method: 'PATCH' });
             const result = await response.json();
@@ -132,15 +98,48 @@ function AdminPage() {
         }
     };
 
+    const handleAdFormChange = (e) => {
+        const { name, value } = e.target;
+        setAdForm((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleAdSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch('/api/admin/ad/new', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(adForm),
+            });
+            const result = await response.json();
+            if (result.status === 'success') {
+                alert('광고가 성공적으로 등록되었습니다.');
+                setAdForm({ advertiser: '', title: '', startDate: '', endDate: '', imageUrl: '' });
+            } else {
+                console.error('광고 등록 실패:', result.message);
+            }
+        } catch (error) {
+            console.error('광고 등록 중 오류가 발생했습니다:', error);
+        }
+    };
+
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
 
-    const data = activeTab === '신고확인' ? reportedUsers : adData;
-    const totalPagesForActiveTab = activeTab === '유저관리' ? totalPages : Math.ceil(data.length / ITEMS_PER_PAGE);
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
-    const currentData = activeTab === '유저관리' ? users : data.slice(startIndex, endIndex);
+    const renderPagination = () => (
+        <div className="pagination">
+            {[...Array(totalPages)].map((_, index) => (
+                <button
+                    key={index}
+                    onClick={() => handlePageChange(index + 1)}
+                    className={currentPage === index + 1 ? 'active' : ''}
+                >
+                    {index + 1}
+                </button>
+            ))}
+        </div>
+    );
 
     return (
         <div className="admin-page">
@@ -159,6 +158,99 @@ function AdminPage() {
                 </div>
             </div>
 
+            {activeTab === '신고확인' && (
+                <div>
+                    <h3>신고된 유저 목록</h3>
+                    <table className="table">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Email</th>
+                            <th>신고 횟수</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {reportedUsers.map((user) => (
+                            <React.Fragment key={user.userId}>
+                                <tr onClick={() => toggleUserDetails(user.userId)}>
+                                    <td>{user.userId}</td>
+                                    <td>{user.email}</td>
+                                    <td>{user.reportCount}</td>
+                                </tr>
+                                {expandedUserId === user.userId && (
+                                    <tr>
+                                        <td colSpan="3">
+                                            {user.reports.map((report, index) => (
+                                                <div key={index}>
+                                                    <p><strong>카테고리:</strong> {report.category}</p>
+                                                    <p><strong>이유:</strong> {report.reason}</p>
+                                                    <p><strong>상세 내용:</strong> {report.detailedReason}</p>
+                                                </div>
+                                            ))}
+                                        </td>
+                                    </tr>
+                                )}
+                            </React.Fragment>
+                        ))}
+                        </tbody>
+                    </table>
+                    {renderPagination()}
+                </div>
+            )}
+
+            {activeTab === '광고게시' && (
+                <div>
+                    <h3>광고 리스트</h3>
+                    <table className="table">
+                        <thead>
+                        <tr>
+                            <th>광고주</th>
+                            <th>제목</th>
+                            <th>기간</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {adData.map((ad) => (
+                            <tr key={ad.adId}>
+                                <td>{ad.advertiser}</td>
+                                <td>{ad.title}</td>
+                                <td>{`${ad.startDate} ~ ${ad.endDate}`}</td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+
+            {activeTab === '광고등록' && (
+                <div>
+                    <h3>새 광고 등록</h3>
+                    <form onSubmit={handleAdSubmit}>
+                        <label>
+                            광고주:
+                            <input type="text" name="advertiser" value={adForm.advertiser} onChange={handleAdFormChange} required />
+                        </label>
+                        <label>
+                            광고 제목:
+                            <input type="text" name="title" value={adForm.title} onChange={handleAdFormChange} required />
+                        </label>
+                        <label>
+                            시작 날짜:
+                            <input type="date" name="startDate" value={adForm.startDate} onChange={handleAdFormChange} required />
+                        </label>
+                        <label>
+                            종료 날짜:
+                            <input type="date" name="endDate" value={adForm.endDate} onChange={handleAdFormChange} required />
+                        </label>
+                        <label>
+                            이미지 URL:
+                            <input type="text" name="imageUrl" value={adForm.imageUrl} onChange={handleAdFormChange} required />
+                        </label>
+                        <button type="submit">등록</button>
+                    </form>
+                </div>
+            )}
+
             {activeTab === '유저관리' && (
                 <div>
                     <div className="filter">
@@ -167,7 +259,6 @@ function AdminPage() {
                             <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
                                 <option value="">전체</option>
                                 <option value="ACTIVE">ACTIVE</option>
-                                <option value="INACTIVE">INACTIVE</option>
                                 <option value="BANNED">BANNED</option>
                             </select>
                         </label>
@@ -178,134 +269,34 @@ function AdminPage() {
                             <th>ID</th>
                             <th>이름</th>
                             <th>상태</th>
-                            <th>신고 횟수</th>
+                            <th>밴 설정</th>
                             <th>관리</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {currentData.map((user) => (
+                        {users.map((user) => (
                             <tr key={user.userId}>
                                 <td>{user.userId}</td>
                                 <td>{user.name}</td>
                                 <td>{user.status}</td>
-                                <td>{user.reportCount}</td>
                                 <td>
-                                    <button onClick={() => updateUserStatus(user.userId, 'BANNED', 7)}>BAN (7일)</button>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        placeholder="일수 입력"
+                                        value={banDays[user.userId] || ''}
+                                        onChange={(e) => handleBanDaysChange(user.userId, e.target.value)}
+                                    />
+                                </td>
+                                <td>
+                                    <button onClick={() => updateUserStatus(user.userId, 'BANNED')}>밴</button>
                                     <button onClick={() => updateUserStatus(user.userId, 'ACTIVE')}>활성화</button>
                                 </td>
                             </tr>
                         ))}
                         </tbody>
                     </table>
-                    <div className="pagination">
-                        {[...Array(totalPagesForActiveTab)].map((_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => handlePageChange(index + 1)}
-                                className={currentPage === index + 1 ? 'active' : ''}
-                            >
-                                {index + 1}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            {activeTab === '광고게시' && (
-                <div className="table-container">
-                    <table className="table">
-                        <thead>
-                        <tr>
-                            <th>광고주</th>
-                            <th>광고 제목</th>
-                            <th>기간</th>
-                            <th>상태</th>
-                            <th>관리</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {currentData.map((ad) => (
-                            <React.Fragment key={ad.adId}>
-                                <tr onClick={() => handleAdClick(ad.adId)}>
-                                    <td>{ad.advertiser}</td>
-                                    <td>{ad.title}</td>
-                                    <td>{ad.startDate} ~ {ad.endDate}</td>
-                                    <td className="status">{ad.adStatus}</td>
-                                    <td>
-                                        <button onClick={() => changeAdStatus(ad.adId, 'posted')}>광고 게시</button>
-                                    </td>
-                                </tr>
-                                {selectedAdId === ad.adId && (
-                                    <tr className="ad-details">
-                                        <td colSpan="5">
-                                            <div className="ad-image-content">
-                                                <h4>광고 이미지</h4>
-                                                <img
-                                                    src={ad.imageUrl}
-                                                    alt="광고 이미지"
-                                                    className="selected-ad-image"
-                                                />
-                                                <div className="ad-status-dropdown">
-                                                    <label>상태 변경:</label>
-                                                    <select
-                                                        value={ad.adStatus}
-                                                        onChange={(e) => changeAdStatus(ad.adId, e.target.value)}
-                                                    >
-                                                        <option value="posted">게시 중</option>
-                                                        <option value="ended">게시 종료</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                )}
-                            </React.Fragment>
-                        ))}
-                        </tbody>
-                    </table>
-                </div>
-            )}
-
-            {activeTab === '광고등록' && (
-                <div className="ad-registration">
-                    <h3>새 광고 등록</h3>
-                    <form onSubmit={handleNewAdSubmit}>
-                        <label>
-                            광고주:
-                            <input type="text" name="advertiser" required />
-                        </label>
-                        <label>
-                            광고 제목:
-                            <input type="text" name="title" required />
-                        </label>
-                        <label>
-                            시작 날짜:
-                            <input type="date" name="startDate" required />
-                        </label>
-                        <label>
-                            종료 날짜:
-                            <input type="date" name="endDate" required />
-                        </label>
-                        <label>
-                            이미지 URL:
-                            <input type="text" name="imageUrl" required />
-                        </label>
-                        <button type="submit">등록</button>
-                    </form>
-                </div>
-            )}
-
-            {activeTab !== '광고등록' && (
-                <div className="pagination">
-                    {[...Array(totalPagesForActiveTab)].map((_, index) => (
-                        <button
-                            key={index}
-                            onClick={() => handlePageChange(index + 1)}
-                            className={currentPage === index + 1 ? 'active' : ''}
-                        >
-                            {index + 1}
-                        </button>
-                    ))}
+                    {renderPagination()}
                 </div>
             )}
         </div>
