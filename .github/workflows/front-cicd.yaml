@@ -3,7 +3,7 @@ name: Frontend CI/CD
 on:
   push:
     branches:
-      - main # main 브랜치에 푸시될 때 실행
+      - cicd # main 브랜치에 푸시될 때 실행
 
 jobs:
   frontend-CICD:
@@ -19,7 +19,7 @@ jobs:
         node-version: 23
 
     - name: 종속 모듈들 캐싱
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ${{ github.workspace }}/uni_frontend/node_modules
         key: npm-packages-${{ hashFiles('/uni_frontend/package-lock.json') }}
@@ -32,12 +32,12 @@ jobs:
       run: npm install --prefix uni_frontend
 
     - name: react 빌드
-      run: npm run build --prefix uni_frontend
+      run: CI=false npm run build --prefix uni_frontend
 
     - name: S3에 Deploy
       uses: jakejarvis/s3-sync-action@v0.5.1
       with:
-        args: --acl public-read --delete
+        args: --delete
       env:
         AWS_S3_BUCKET: uni-frontend
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -46,11 +46,11 @@ jobs:
         SOURCE_DIR: uni_frontend/build
 
     - name: CloudFront 캐시 무효화
-      uses: awact/cloudfront-action@v1.2
-      with:
-        distribution-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
-        paths: "/*"
+      uses: chetan/invalidate-cloudfront-action@master
       env:
+        PATHS: '/*'
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: 'ap-northeast-2'
+        DISTRIBUTION: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
 
