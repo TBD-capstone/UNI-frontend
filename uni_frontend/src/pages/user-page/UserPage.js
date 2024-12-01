@@ -21,9 +21,13 @@ const UserPage = () => {
     const [reviews, setReviews] = useState([]);
     const commenterId = Cookies.get('userId');
     const language = Cookies.get('language');
+    const [reportedId, setReportedId] = useState(null);
 
-    const handleClickReport = useCallback(() => {
-        setReport(() => true);
+    const handleClickReport = useCallback((reportedId) => {
+        return () => {
+            setReportedId(() => reportedId);
+            setReport(() => true);
+        }
     }, []);
     const MoveButton = (props) => {
         const handleClickEdit = () => {
@@ -62,7 +66,7 @@ const UserPage = () => {
                     <>
                         {t('userPage.chat_explain1')}{props.userName}{t('userPage.chat_explain2')}
                         <button className="Chatting" onClick={handleClickChat}>{t('userPage.chat')}</button>
-                        <button className="Report" onClick={handleClickReport}>{t('userPage.report')}</button>
+                        <button className="Report" onClick={handleClickReport(userId)}>{t('userPage.report')}</button>
                     </>
                 }
             </div>
@@ -171,11 +175,13 @@ const UserPage = () => {
                     <div>
                         <div
                             className='qna-user'>{props.data.commentAuthor ? props.data.commentAuthor.name : (props.data.commenterName ? props.data.commenterName : null)}</div>
-                        <div className='qna-content'>{props.data.content}</div>
+                        <div
+                            className='qna-content'>{props.data.deleted ? props.data.deletedMessage : props.data.content}</div>
                     </div>
                     {props.owner ?
                         <button className={'qna-button'} onClick={props.handleDelete}>{t('userPage.delete')}</button> :
-                        <button className={'qna-button'} onClick={props.handleReport}>{t('userPage.report')}</button>
+                        <button className={'qna-button'}
+                                onClick={props.handleReport(props.data.commenterAuthor ? props.data.commenterAuthor.userId : props.data.commenterId)}>{t('userPage.report')}</button>
                     }
                 </div>
             );
@@ -184,8 +190,6 @@ const UserPage = () => {
         const QnaBox = (props) => {
             return (
                 props.data && props.data.map((data, i) => {
-                    // console.log(typeof (props.commenterId));
-                    // console.log(typeof (data.commenterId));
                     return <div className={'reply-container'} key={`reply-container-${i}`}>
                         <Qna
                             data={data}
@@ -264,6 +268,43 @@ const UserPage = () => {
         )
     };
     const ReviewSection = (props) => {
+        const ReviewInputBox = (props) => {
+            const [content, setContent] = useState("");
+
+            const handleChangeContent = (e) => {
+                setContent(() => e.target.value);
+            }
+            const handleClickPost = () => {
+                const fetchPOST = () => {
+                    fetch(`/api/review/${props.reviewId}/reply/${props.commenterId}`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({"content": content})
+                    })
+                        .catch((err) => {
+                            console.log(err);
+                            alert(t("userPage.chat_error"));
+                        });
+                };
+                fetchPOST();
+                setContent(() => "");
+            };
+            const handleKeyDownPost = (e) => {
+                if (e.key === "Enter") {
+                    handleClickPost();
+                }
+            }
+            return (
+                <div className="input-box">
+                    <input type="text" value={content} onChange={handleChangeContent}
+                           placeholder={t("userPage.review_reply_placeholder")}
+                           onKeyDown={(e) => handleKeyDownPost(e)}/>
+                    <button onClick={handleClickPost}>{t("userPage.post")}</button>
+                </div>
+            )
+        }
 
         const Review = (props) => {
             return (
@@ -275,13 +316,27 @@ const UserPage = () => {
                     </div>
                     <div className="review-star"><FaStar className={'yellow-star'}/> {props.data.star}</div>
                     <p>{props.data.content}</p>
+                    {props.data.replies.length > 0 && props.data.replies.map((data, i) => {
+                        return (
+                            <div className={'review-reply'}>
+                                <div className={'review-profile'}>
+                                    <img src={data.commenterImgProf ? data.commenterImgProf : basicProfileImage}
+                                         alt={'./profile'}/>
+                                    <span className='review-reviewer'>{data.commenterName}</span>
+                                </div>
+                                <p>{data.content}</p>
+                            </div>
+                        )
+                    })}
+                    {props.owner && <ReviewInputBox reviewId={props.data.reviewId} commenterId={props.commenterId}/>}
                 </div>
             );
         }
         return (
             <div className="review-section">
                 {props.reviews.length > 0 ? props.reviews.map((data, i) => {
-                    return (<Review data={data} key={`reviews-${i}`}/>);
+                    return (
+                        <Review data={data} key={`reviews-${i}`} owner={props.owner} commenterId={props.commenterId}/>);
                 }) : <p>{t('userPage.no_review')}</p>}
             </div>
         )
@@ -289,7 +344,7 @@ const UserPage = () => {
 
     useEffect(() => {
         (async () => {
-            if(!userId)
+            if (!userId)
                 return;
             await fetch(`/api/user/${userId}`, {
                 method: 'GET',
@@ -363,7 +418,7 @@ const UserPage = () => {
                         }
                         return prev; // 데이터가 같다면 업데이트하지 않음
                     });
-                    console.log(data); // for debug
+                    // console.log(data); // for debug
                 })
                 .catch((err) => {
                     console.log(err);
@@ -386,7 +441,7 @@ const UserPage = () => {
                 .then(response => response.json())
                 .then((data) => {
                     setReviews(() => data);
-                    console.log(data); // for debug
+                    // console.log(data); // for debug
                 })
                 .catch((err) => {
                     console.log(err);
@@ -397,7 +452,8 @@ const UserPage = () => {
     return (
         user ? (
             <div className='user-container'>
-                <ReportModal isOpen={report} handleClose={() => setReport(false)}/>
+                <ReportModal isOpen={report} handleClose={() => setReport(false)} reporterId={Number(commenterId)}
+                             reportedId={reportedId}/>
                 <div className='Image-back-container'>
                     <img className='Image-back' src={user.imgBack || '/basic_background.png'} alt="배경사진"/>
                 </div>
@@ -443,9 +499,13 @@ const UserPage = () => {
                         </div>
                     </div>
                     {activeTab === 'Qna' &&
-                        <QnaSection userId={userId} commenterId={Number(commenterId)}
-                                    handleReport={handleClickReport}/>}
-                    {activeTab === 'Review' && <ReviewSection userId={userId} reviews={reviews}/>}
+                        <QnaSection
+                            userId={userId} commenterId={Number(commenterId)}
+                            handleReport={handleClickReport}/>}
+                    {activeTab === 'Review' &&
+                        <ReviewSection
+                            userId={userId} commenterId={commenterId} reviews={reviews}
+                            owner={commenterId === `${userId}`}/>}
                 </div>
             </div>) : null
     );
