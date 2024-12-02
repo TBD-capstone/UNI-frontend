@@ -40,6 +40,7 @@
     "chat": "Chat",
     "post": "Post",
     "qna_placeholder": "Write a comment...",
+    "qna_reply_placeholder": "Write a reply...",
     "user_icon_alt": "User Icon",
     "profile_alt": "Profile Picture",
     "background_alt": "Background Picture",
@@ -61,7 +62,8 @@
     "chat_explain1": "If you have any questions, you can ask ",
     "chat_explain2": " via chat.",
     "no_qna": "There is no Q&A yet.",
-    "no_review": "There is no review yet."
+    "no_review": "There is no review yet.",
+    "review_reply_placeholder": "Write a reply..."
   },
   "editPage": {
     "user": "User",
@@ -160,8 +162,12 @@
     "inappropriate_content": "inappropriate content",
     "illegal_activity": "illegal_activity",
     "spam": "spam",
+    "other": "other",
     "detail": "Report Detail",
     "title_placeholder": "Please write the report title.",
-    "detail_placeholder": "Please write the report detail."
+    "detail_placeholder": "Please write the report detail.",
+    "select_none": "Please select the subject of reporting and the classification of reporting.",
+    "title_none": "The report title must be at least 5 characters long.",
+    "detail_none": "The reason for reporting must be at least 10 characters."
   }
 }

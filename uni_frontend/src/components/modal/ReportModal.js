@@ -11,14 +11,14 @@ const ReportModal = ({isOpen, handleClose, reportedId, reporterId}) => {
     const [detail, setDetail] = useState("");
     const handleClickPost = () => {
         if(category.length === 0 || reason.length === 0) {
-            alert("선택해주세요");
+            alert(t('reportModal.select_none'));
             return;
         }
         if(title.length < 5) {
-            alert("신고 제목은 최소 5자 이상이어야 합니다.")
+            alert(t('reportModal.title_none'))
         }
         if(detail.length < 10) {
-            alert("신고 사유는 최소 10자 이상이어야 합니다.");
+            alert(t('reportModal.detail_none'));
             return;
         }
         fetch(`/api/user/${reportedId}/report`, {
@@ -92,6 +92,10 @@ const ReportModal = ({isOpen, handleClose, reportedId, reporterId}) => {
                     <div>
                         <input type='radio' name={'radio-2'} id={'radio-2-4'} value={'SPAM'} onChange={handleChangeCategory}/>
                         <label id={'radio-2-4'}>{t('reportModal.spam')}</label>
+                    </div>
+                    <div>
+                        <input type='radio' name={'radio-2'} id={'radio-2-5'} value={'OTHER'} onChange={handleChangeCategory}/>
+                        <label id={'radio-2-5'}>{t('reportModal.other')}</label>
                     </div>
                 </div>
             </div>

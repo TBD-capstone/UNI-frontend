@@ -4,9 +4,9 @@
 }
 
 .report-modal input {
-    padding: 5px;
-    font-size: 12pt;
+    padding: 10px;
     margin-bottom: 10px;
+    font: inherit;
 }
 .report-modal input:focus {
     border-color: #4CAF50;
@@ -17,6 +17,7 @@
     font: inherit;
     font-size: 12pt;
     box-sizing: border-box;
+    min-height: 80px;
 }
 .report-modal textarea:focus {
     border-color: #4CAF50;

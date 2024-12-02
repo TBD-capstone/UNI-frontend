@@ -40,6 +40,7 @@
     "chat": "聊天",
     "post": "发布",
     "qna_placeholder": "输入评论...",
+    "qna_reply_placeholder": "请输入评论...",
     "user_icon_alt": "用户图标",
     "profile_alt": "个人资料图片",
     "background_alt": "背景图片",
@@ -60,7 +61,8 @@
     "chat_explain1":"如果您有任何问题，可以通过聊天询问 ，",
     "chat_explain2": "。",
     "no_qna": "目前还没有Q&A。",
-    "no_review": "还没有写评论。"
+    "no_review": "还没有写评论。",
+    "review_reply_placeholder": "请输入回复..."
   },
   "editPage": {
     "edit": "编辑",
@@ -158,8 +160,12 @@
     "inappropriate_content": "不恰当的内容",
     "illegal_activity": "非法活动",
     "spam": "垃圾邮件/宣传",
+    "other": "其它",
     "detail": "申报内容",
     "title_placeholder": "请写报告标题。",
-    "detail_placeholder": "请详细填写报告内容。"
+    "detail_placeholder": "请详细填写报告内容。",
+    "select_none": "请选择申报对象和申报分类。",
+    "title_none": "申报书名至少5个字。",
+    "detail_none": "申报理由不得少于10个字。"
   }
 }

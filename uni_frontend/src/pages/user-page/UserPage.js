@@ -162,7 +162,7 @@ const UserPage = () => {
             return (
                 <div className="input-box">
                     <input type="text" value={content} onChange={handleChangeContent}
-                           placeholder={t("userPage.qna_placeholder")}
+                           placeholder={(props.type === 'qna' ? t("userPage.qna_placeholder") : t("userPage.qna_reply_placeholder"))}
                            onKeyDown={(e) => handleKeyDownPost(e)}/>
                     <button onClick={handleClickPost}>{t("userPage.post")}</button>
                 </div>
@@ -245,7 +245,11 @@ const UserPage = () => {
 
         return (
             <div className="qna-container">
-                <InputBox userId={props.userId} url={`/api/user/${props.userId}/qnas/${props.commenterId}`}/>
+                <InputBox
+                    userId={props.userId}
+                    url={`/api/user/${props.userId}/qnas/${props.commenterId}`}
+                    type={'qna'}
+                />
                 {qnas.length > 0 ? qnas.map((data, i) => {
                     return (
                         <div key={`Qna-${i}`}>
@@ -359,7 +363,7 @@ const UserPage = () => {
             })
                 .catch((err) => {
                     console.log(err);
-                    alert('error: user fetch fail');
+                    // alert('error: user fetch fail');
                 })
                 .then(response => {
                     if (!response.ok)
@@ -386,7 +390,7 @@ const UserPage = () => {
             })
                 .catch((err) => {
                     console.log(err);
-                    alert('error: markers fetch fail');
+                    // alert('error: markers fetch fail');
                 })
                 .then(response => response.json())
                 .then((data) => {
@@ -408,7 +412,7 @@ const UserPage = () => {
             })
                 .catch((err) => {
                     console.log(err);
-                    alert('loading fail');
+                    // alert('loading fail');
                 })
                 .then(response => response.json())
                 .then((data) => {
@@ -416,7 +420,7 @@ const UserPage = () => {
                         if (prev !== data) {
                             return data;
                         }
-                        return prev; // 데이터가 같다면 업데이트하지 않음
+                        return prev;
                     });
                     // console.log(data); // for debug
                 })
