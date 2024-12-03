@@ -48,7 +48,11 @@
     padding: 10px 20px;
     font-size: 16px;
     color: #fff;
+<<<<<<< HEAD
     background-color: #fabc05; /* UNI 로고 노란색 */
+=======
+    background-color: #E9AE58;
+>>>>>>> fc862546d09f593091b7634bc969f5951f191820
     border: none;
     border-radius: 20px;
     cursor: pointer;
@@ -56,14 +60,22 @@
 }
 
 .search-bar button:hover {
+<<<<<<< HEAD
     background-color: #e0aa05; /* 살짝 어두운 노란색 */
+=======
+    background-color: #cd900b;
+>>>>>>> fc862546d09f593091b7634bc969f5951f191820
 }
 
 /* 정렬 select 버튼 */
 .search-bar select {
     padding: 10px 20px;
     font-size: 16px;
+<<<<<<< HEAD
     border: 1px solid #fabc05; /* UNI 로고 노란색 테두리 */
+=======
+    border: 1px solid #E9AE58;
+>>>>>>> fc862546d09f593091b7634bc969f5951f191820
     border-radius: 20px;
     cursor: pointer;
 }
@@ -72,19 +84,25 @@
 .filter-buttons {
     display: flex;
     gap: 10px;
-    overflow-x: auto; /* 가로 스크롤 활성화 */
+    overflow-x: auto;
+    /* 가로 스크롤 활성화 */
     padding: 10px 0;
-    white-space: nowrap; /* 버튼이 한 줄에 표시되도록 */
-    scrollbar-width: thin; /* 스크롤바 폭 조절 */
-    scrollbar-color: #ccc transparent; /* 스크롤바 색상 */
+    white-space: nowrap;
+    /* 버튼이 한 줄에 표시되도록 */
+    scrollbar-width: thin;
+    /* 스크롤바 폭 조절 */
+    scrollbar-color: #ccc transparent;
+    /* 스크롤바 색상 */
 }
 
 .filter-buttons::-webkit-scrollbar {
-    height: 6px; /* 스크롤바 높이 */
+    height: 6px;
+    /* 스크롤바 높이 */
 }
 
 .filter-buttons::-webkit-scrollbar-thumb {
-    background-color: #ccc; /* 스크롤바 색상 */
+    background-color: #ccc;
+    /* 스크롤바 색상 */
     border-radius: 3px;
 }
 
@@ -98,7 +116,8 @@
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease;
-    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+    white-space: nowrap;
+    /* 텍스트 줄바꿈 방지 */
 }
 
 .filter-button:hover {
@@ -106,9 +125,9 @@
 }
 
 .filter-button.active {
-    background-color: #007bff;
+    background-color: #E9AE58;
     color: #fff;
-    border-color: #007bff;
+    border-color: #E9AE58;
 }
 
 /* 검색 태그 */
@@ -122,7 +141,7 @@
 .search-bar .search-tag {
     display: flex;
     align-items: center;
-    background-color: #007bff;
+    background-color: #E9AE58;
     color: #fff;
     padding: 5px 10px;
     border-radius: 20px;
@@ -163,7 +182,7 @@
 }
 
 .category-item.active {
-    background-color: #007bff;
+    background-color: #E9AE58;
     color: #fff;
 }
 
@@ -271,12 +290,12 @@
 }
 
 .pagination button.active {
-    background-color: #007bff;
+    background-color: #E9AE58;
     color: white;
 }
 
 .pagination button:hover {
-    background-color: #0056b3;
+    background-color: #cd900b;
     color: white;
 }
 
@@ -319,6 +338,7 @@
 }
 
 @media (max-width: 480px) {
+
     .search-bar input[type="text"],
     .search-bar button {
         width: 100%;

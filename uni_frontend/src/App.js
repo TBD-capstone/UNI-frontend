@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {BrowserRouter as Router, Route, Routes, Navigate} from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Layout from './layout';
 import Mainpage from './mainpage';
 import Register from './Register';
@@ -14,7 +14,7 @@ import ChatList from './chatList';
 import Review from './review'; // Review 페이지 추가
 import usePushNotification from "./Alarm";
 import SockJS from "sockjs-client";
-import {Stomp} from "@stomp/stompjs";
+import { Stomp } from "@stomp/stompjs";
 
 // fetchWithLanguage 함수 정의
 const fetchWithLanguage = async (url, options = {}) => {
@@ -44,7 +44,7 @@ function App() {
 
     useEffect(() => {
         if (userId) {
-            const socketChat = new SockJS('http://localhost:8080/ws/chat');
+            const socketChat = new SockJS(`${process.env.REACT_APP_API_URL}/ws/chat`);
             const stompClientInstance = Stomp.over(socketChat);
 
             stompClientInstance.debug = (str) => console.log(str);
@@ -89,6 +89,7 @@ function App() {
 
                 {/* 상단바가 포함된 레이아웃으로 렌더링 */}
                 <Route element={<Layout />}>
+<<<<<<< HEAD
                     <Route path="/main" element={<PrivateRoute element={<Mainpage fetchWithLanguage={fetchWithLanguage} />} />} />
                     <Route path="/user/:userId" element={<PrivateRoute element={<UserPage fetchWithLanguage={fetchWithLanguage} />} />} />
                     <Route path="/user/:userId/edit" element={<PrivateRoute element={<EditPage fetchWithLanguage={fetchWithLanguage} />} />} />
@@ -97,6 +98,16 @@ function App() {
                     <Route path="/matching-list" element={<PrivateRoute element={<MatchingStatus fetchWithLanguage={fetchWithLanguage} />} />} />
                     <Route path="/chat-list" element={<PrivateRoute element={<ChatList fetchWithLanguage={fetchWithLanguage} />} />} />
                     <Route path="/review/:matchingId" element={<PrivateRoute element={<Review fetchWithLanguage={fetchWithLanguage} />} />} />
+=======
+                    <Route path="/main" element={<Mainpage fetchWithLanguage={fetchWithLanguage} />} />
+                    <Route path="/user/:userId" element={<UserPage fetchWithLanguage={fetchWithLanguage} />} />
+                    <Route path="/user/:userId/edit" element={<EditPage fetchWithLanguage={fetchWithLanguage} />} />
+                    <Route path="/chat/:roomId" element={<ChatPage fetchWithLanguage={fetchWithLanguage} changeAlarm={changeAlarm} />} />
+                    <Route path="/admin" element={<Admin fetchWithLanguage={fetchWithLanguage} />} />
+                    <Route path="/matching-list" element={<MatchingStatus fetchWithLanguage={fetchWithLanguage} />} />
+                    <Route path="/chat-list" element={<ChatList fetchWithLanguage={fetchWithLanguage} />} />
+                    <Route path="/review/:matchingId" element={<Review fetchWithLanguage={fetchWithLanguage} />} />
+>>>>>>> fc862546d09f593091b7634bc969f5951f191820
                 </Route>
             </Routes>
         </Router>

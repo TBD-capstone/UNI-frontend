@@ -60,10 +60,30 @@ const ProfileGrid = () => {
                         .join(',');
                     params.append('hashtags', hashtags); // 해시태그 추가
                 }
+<<<<<<< HEAD
+=======
+
+                const url = `/api/home?${params.toString()}`;
+                const data = await fetchWithLanguage(url);
+
+                // API 명세에 맞게 데이터 처리
+                setProfiles(data.content || []);
+                setFilteredProfiles(data.content || []);
+            } catch (error) {
+                console.error(t('mainpage.fetch_profiles_error'), error);
+>>>>>>> fc862546d09f593091b7634bc969f5951f191820
             }
 
+<<<<<<< HEAD
             const url = `http://localhost:8080/api/home?${params.toString()}`;
             const data = await fetchWithLanguage(url);
+=======
+        const fetchAds = async () => {
+            try {
+                const response = await fetch('/api/ads');
+                const adData = await response.json();
+                const activeAds = adData.filter(ad => ad.status === t('mainpage.active_ad_status'));
+>>>>>>> fc862546d09f593091b7634bc969f5951f191820
 
             // API 명세에 맞게 데이터 처리
             setProfiles(data.content || []);

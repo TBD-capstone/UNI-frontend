@@ -21,7 +21,7 @@ function Register() {
     useEffect(() => {
         const fetchUnivList = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/api/auth/univ`, {
+                const response = await fetch(`/api/auth/univ`, {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' }
                 });

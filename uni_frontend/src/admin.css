@@ -25,8 +25,8 @@
 }
 
 .tab.active {
-    color: #FFBA00;
-    border-bottom: 3px solid #FFBA00;
+    color: #E9AE58;
+    border-bottom: 3px solid #E9AE58;
 }
 
 /* 기존 스타일 유지, 충돌 가능성 점검 */
@@ -66,7 +66,7 @@
 
 .visitor-card p {
     font-size: 20px;
-    color: #6AB24F;
+    color: #7BB05B;
     font-weight: bold;
 }
 
@@ -83,7 +83,8 @@
     border-collapse: collapse;
 }
 
-.table th, .table td {
+.table th,
+.table td {
     padding: 12px;
     text-align: center;
     border-bottom: 1px solid #ddd;
@@ -91,7 +92,7 @@
 }
 
 .table th {
-    background-color: #FFBA00;
+    background-color: #E9AE58;
     color: white;
     font-weight: bold;
 }
@@ -122,19 +123,106 @@
     font-size: 14px;
 }
 
+<<<<<<< HEAD
 .ad-form button {
     background-color: #FFBA00;
+=======
+.user-management .table-container {
+    margin-top: 15px;
+}
+
+.user-management .actions button {
+    background-color: #E9AE58;
+>>>>>>> fc862546d09f593091b7634bc969f5951f191820
     color: white;
     border: none;
     padding: 10px 15px;
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s;
+<<<<<<< HEAD
+=======
+}
+
+.user-management .actions button:hover {
+    background-color: #cd900b;
+}
+
+/* 신고 내용 스타일 */
+.report-details {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+}
+
+/* 신고 리스트 행의 hover 효과 */
+.table tr {
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* 펼쳐진 신고 내역 테이블 스타일 */
+.nested-table {
+>>>>>>> fc862546d09f593091b7634bc969f5951f191820
     width: 100%;
 }
 
+<<<<<<< HEAD
 .ad-form button:hover {
     background-color: #E0A800;
+=======
+.nested-table th,
+.nested-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.nested-table th {
+    background-color: #E9AE58;
+    color: white;
+    font-weight: bold;
+}
+
+/* 광고 이미지 내용 스타일 */
+.ad-details {
+    background-color: #f9f9f9;
+}
+
+.ad-image-content {
+    padding: 15px;
+    border-top: 1px solid #ddd;
+    text-align: center;
+}
+
+.ad-image-content h4 {
+    margin: 0 0 10px;
+    font-size: 16px;
+    color: #333;
+}
+
+.ad-image-content img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.ad-status-dropdown {
+    margin-top: 10px;
+}
+
+.ad-status-dropdown select {
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+>>>>>>> fc862546d09f593091b7634bc969f5951f191820
 }
 
 /* 페이지네이션 스타일 */
@@ -156,12 +244,44 @@
 }
 
 .pagination button.active {
-    background-color: #FFBA00;
+    background-color: #E9AE58;
     color: white;
 }
 
 .pagination button:hover {
+<<<<<<< HEAD
     background-color: #E0A800;
+=======
+    background-color: #cd900b;
+    color: white;
+}
+
+/* 방문자 통계 스타일 */
+.visitor-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.stat-item h3 {
+    font-size: 18px;
+    color: #333;
+}
+
+.stat-item p {
+    font-size: 24px;
+    font-weight: bold;
+    color: #6AB24F;
+    margin: 0;
+>>>>>>> fc862546d09f593091b7634bc969f5951f191820
 }
 
 /* 반응형 스타일 */
