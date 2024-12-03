@@ -34,7 +34,7 @@ function Navbar({ selectedLanguage, fetchWithLanguage }) {
             // 프로필 이미지 가져오기
             const fetchProfileImage = async () => {
                 try {
-                    const response = await fetch(`http://localhost:8080/api/users/${userId}/profile-image`);
+                    const response = await fetch(`/api/users/${userId}/profile-image`);
                     if (response.ok) {
                         const data = await response.json();
                         setProfileImage(data.imageUrl); // API 응답에서 이미지 URL을 설정
@@ -129,7 +129,7 @@ function Navbar({ selectedLanguage, fetchWithLanguage }) {
                         <li>
                             <Link
                                 to="/matching-list"
-                                onClick={() => setMenuOpen(false) }// 페이지 이동 시 메뉴 닫기
+                                onClick={() => setMenuOpen(false)}// 페이지 이동 시 메뉴 닫기
                                 style={{ textDecoration: 'none', color: 'black' }}
                             >
                                 {t("navbar.menu.matching_list")}

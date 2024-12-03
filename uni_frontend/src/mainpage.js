@@ -56,7 +56,7 @@ const ProfileGrid = () => {
                     params.append('hashtags', hashtags); // 해시태그 추가
                 }
 
-                const url = `http://localhost:8080/api/home?${params.toString()}`;
+                const url = `/api/home?${params.toString()}`;
                 const data = await fetchWithLanguage(url);
 
                 // API 명세에 맞게 데이터 처리
@@ -69,7 +69,7 @@ const ProfileGrid = () => {
 
         const fetchAds = async () => {
             try {
-                const response = await fetch('http://localhost:8080/api/ads');
+                const response = await fetch('/api/ads');
                 const adData = await response.json();
                 const activeAds = adData.filter(ad => ad.status === t('mainpage.active_ad_status'));
 
