@@ -30,6 +30,8 @@ const ProfileGrid = () => {
     const [currentAd, setCurrentAd] = useState(null);
     const [language, setLanguage] = useState(Cookies.get('language') || 'en');
     const [sortOrder, setSortOrder] = useState('highest_rating'); // 기본값은 높은 별점 순
+    const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
+    const [isProfilesEmpty, setIsProfilesEmpty] = useState(false); // 프로필 없음 상태 추가
 
     const fetchWithLanguage = async (url, options = {}) => {
         const headers = {
@@ -40,41 +42,41 @@ const ProfileGrid = () => {
         return response.json();
     };
 
-    const fetchProfiles = async () => {
-        try {
-            const params = new URLSearchParams();
-            params.append('page', currentPage - 1); // 페이지 번호 유지
-            params.append('sort', sortOrder); // 백엔드로 정렬 옵션 전달
+    useEffect(() => {
+        const fetchProfiles = async () => {
+            setIsLoading(true); // 로딩 상태 시작
+            try {
+                const params = new URLSearchParams();
+                params.append('page', currentPage); // 페이지 번호 유지
+                params.append('sort', sortOrder);
 
-            // 대학교 이름과 해시태그를 URL 파라미터에 맞게 추가
-            /*const univNameRegex = /^[A-Za-z가-힣\s]+$/; // 대학교 이름이 입력되었는지 확인*/
-            const hashtagRegex = /^#/; // 해시태그인지 확인
+                // 대학교 이름과 해시태그를 URL 파라미터에 맞게 추가
+                /*const univNameRegex = /^[A-Za-z가-힣\s]+$/; // 대학교 이름이 입력되었는지 확인*/
+                const hashtagRegex = /^#/; // 해시태그인지 확인
 
-            if (searchQuery) {
-                if (univNameRegex.test(searchQuery)) {
-                    params.append('univName', searchQuery.trim()); // 대학교 이름 추가
-                } else if (hashtagRegex.test(searchQuery)) {
-                    const hashtags = searchQuery
-                        .split(',')
-                        .map(tag => tag.trim().replace('#', ''))
-                        .join(',');
-                    params.append('hashtags', hashtags); // 해시태그 추가
-                }
-
+                if (searchQuery) {
+                    /*if (univNameRegex.test(searchQuery)) {
+                        params.append('univName', searchQuery.trim()); // 대학교 이름 추가
+                    } else*/ if (hashtagRegex.test(searchQuery)) {
+                        const hashtags = searchQuery
+                            .split(',')
+                            .map(tag => tag.trim().replace('#', ''))
+                            .join(',');
+                        params.append('hashtags', hashtags); // 해시태그 추가
+                    }
                 const url = `/api/home?${params.toString()}`;
                 const data = await fetchWithLanguage(url);
 
                 // API 명세에 맞게 데이터 처리
                 setProfiles(data.content || []);
                 setFilteredProfiles(data.content || []);
+                setIsProfilesEmpty(data.content.length === 0); // 프로필 없음 상태 설정
             } catch (error) {
                 console.error(t('mainpage.fetch_profiles_error'), error);
-
+            } finally {
+                setIsLoading(false); // 로딩 상태 종료
             }
-
-
-            const url = `http://localhost:8080/api/home?${params.toString()}`;
-            const data = await fetchWithLanguage(url);
+        };
 
         const fetchAds = async () => {
             try {
@@ -82,33 +84,18 @@ const ProfileGrid = () => {
                 const adData = await response.json();
                 const activeAds = adData.filter(ad => ad.status === t('mainpage.active_ad_status'));
 
-            // API 명세에 맞게 데이터 처리
-            setProfiles(data.content || []);
-            setFilteredProfiles(data.content || []);
-        } catch (error) {
-            console.error(t('mainpage.fetch_profiles_error'), error);
-        }
-    };
-
-    const fetchAds = async () => {
-        try {
-            const response = await fetch('http://localhost:8080/api/ads');
-            const adData = await response.json();
-            const activeAds = adData.filter(ad => ad.status === t('mainpage.active_ad_status'));
-
-            setAds(activeAds);
-            if (activeAds.length > 0) {
-                setCurrentAd(activeAds[0]);
+                setAds(activeAds);
+                if (activeAds.length > 0) {
+                    setCurrentAd(activeAds[0]);
+                }
+            } catch (error) {
+                console.error(t('mainpage.fetch_ads_error'), error);
             }
-        } catch (error) {
-            console.error(t('mainpage.fetch_ads_error'), error);
-        }
-    };
+        };
 
-    useEffect(() => {
+        fetchProfiles();
         fetchAds();
-        fetchProfiles(); // 메인 페이지 로드 시 자동으로 검색 실행
-    }, [language, t, currentPage, sortOrder, searchQuery]);
+    }, [language, currentPage, sortOrder, selectedCategory, searchQuery, t]);
 
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
@@ -120,27 +107,27 @@ const ProfileGrid = () => {
     };
 
     const handleCategoryClick = (label) => {
-        const categoryHashtag = `#${t(`mainpage.categories.${label}`)}`;
         if (selectedCategory === label) {
             setSelectedCategory(null);
-            setSearchQuery(''); // 검색창 비우기
+            setSearchQuery('');
         } else {
             setSelectedCategory(label);
-            setSearchQuery(categoryHashtag); // 카테고리 선택 시 해시태그를 검색창에 입력
+            setSearchQuery(`#${t(`mainpage.categories.${label}`)}`);
         }
     };
 
     const handleSearchChange = (e) => {
-        setSearchQuery(e.target.value);
+        const query = e.target.value;
+        setSearchQuery(query);
+
+        // 검색창에서 입력이 지워지면 카테고리 선택 해제
+        if (query === '') {
+            setSelectedCategory(null);
+        }
     };
 
     const handleSortChange = (e) => {
-        setSortOrder(e.target.value); // 정렬 옵션 업데이트
-    };
-
-    const handleSearch = () => {
-        // 검색 버튼을 눌렀을 때만 검색 실행
-        fetchProfiles();
+        setSortOrder(e.target.value);
     };
 
     return (
@@ -159,7 +146,7 @@ const ProfileGrid = () => {
                         value={searchQuery}
                         onChange={handleSearchChange}
                     />
-                    <button onClick={handleSearch}>{t('mainpage.search_button')}</button>
+                    <button>{t('mainpage.search_button')}</button>
                     <select onChange={handleSortChange} value={sortOrder}>
                         <option value="newest">{t('mainpage.newest')}</option>
                         <option value="highest_rating">{t('mainpage.highest_rating')}</option>
@@ -181,7 +168,11 @@ const ProfileGrid = () => {
             </div>
 
             <div className="profile-grid">
-                {currentProfiles.length > 0 ? (
+                {isLoading ? (
+                    <div className="loading-message">{t('mainpage.loading')}</div>
+                ) : isProfilesEmpty ? (
+                    <div className="no-profiles">{t('mainpage.no_profiles')}</div>
+                ) : (
                     currentProfiles.map((user, index) => (
                         <Link to={`/user/${user.userId}`} key={index} className="profile-card" style={{ textDecoration: 'none', color: 'black' }}>
                             <img src={user.imgProf || '/path/to/default-image.jpg'} alt={t('mainpage.profile_alt')} />
@@ -198,8 +189,6 @@ const ProfileGrid = () => {
                             </div>
                         </Link>
                     ))
-                ) : (
-                    <div className="no-profiles">{t('mainpage.no_profiles')}</div>
                 )}
             </div>
 
