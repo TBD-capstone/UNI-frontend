@@ -6,12 +6,14 @@ import GoogleMap from "../../components/GoogleMap";
 import {useTranslation} from "react-i18next";
 import EditModal from "../../components/modal/EditModal.js";
 import Cookies from "js-cookie";
+import TimeSelector from "../../components/TimeSelector";
 
 const EditPage = () => {
     const basicProfileImage = '/profile-image.png'
     const {t} = useTranslation();
     const {userId} = useParams();
     const [user, setUser] = useState(null);
+    const [time, setTime] = useState([]);
     const [isOpenBasic, setIsOpenBasic] = useState(false);
     const [isOpenImage, setIsOpenImage] = useState(false);
     const [isOpenMap, setIsOpenMap] = useState(false);
@@ -25,7 +27,8 @@ const EditPage = () => {
     const [markerDescription, setMarkerDescription] = useState("");
     const [markerAction, setMarkerAction] = useState('add');
     const [markers, setMarkers] = useState([]);
-    const basicHashtags = ["여행",
+    const basicHashtags = [
+        "여행",
         "행정",
         "부동산",
         "은행",
@@ -34,7 +37,8 @@ const EditPage = () => {
         "대학 생활",
         "맛집",
         "게임",
-        "쇼핑"];
+        "쇼핑"
+    ];
     const navigate = useNavigate();
 
     const handleChangeRegion = (e) => {
@@ -43,10 +47,11 @@ const EditPage = () => {
             region: e.target.value
         }));
     };
-    const handleChangeTime = (e) => {
+    const handleChangeTime = (value) => {
+        setTime(value);
         setUser((prev) => ({
             ...prev,
-            time: e.target.value
+            time: `${time[0]} ${time[1]} - ${time[2]} ${time[3]}`
         }));
     };
 
@@ -274,6 +279,12 @@ const EditPage = () => {
                 .then(response => response.json())
                 .then((data) => {
                     setUser(() => data);
+                    if(data.time) {
+                        setTime(() => data.time.split('-'));
+                    }
+                    else {
+                        setTime(['12', 'am', '12', 'am']);
+                    }
                 })
                 .catch((err) => {
                     console.log(err);
@@ -338,11 +349,7 @@ const EditPage = () => {
                             onChange={handleChangeRegion}
                         />
                         <h3>{t("editPage.time")}</h3>
-                        <input
-                            type="text"
-                            value={user.time}
-                            onChange={handleChangeTime}
-                        />
+                        <TimeSelector onChange={handleChangeTime}/>
                         <h3>{t("editPage.basic_hashtag")}</h3>
                         <div className="Hashtag-section">
                             {basicHashtags.map((basicHashtag, i) => {
