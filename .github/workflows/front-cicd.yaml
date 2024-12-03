@@ -3,7 +3,7 @@ name: Frontend CI/CD
 on:
   push:
     branches:
-      - cicd # main 브랜치에 푸시될 때 실행
+      - main # main 브랜치에 푸시될 때 실행
 
 jobs:
   frontend-CICD:
@@ -26,6 +26,13 @@ jobs:
         restore-keys: |
           npm-packages-
       id: cache
+
+    - name: proxy 값 변경
+      run: |
+        sed -i 's|"proxy": "http://localhost:8080"|"proxy": "http://52.78.81.0:8080"|' uni_frontend/package.json
+
+    - name: env 추가
+      run: echo "${{ secrets.ENV }}" | base64 --decode > uni_frontend/.env
     
     - name: 종속 모듈들 설치
       if: steps.cache.outputs.cache-hit != 'true'
