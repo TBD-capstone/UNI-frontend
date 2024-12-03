@@ -12,7 +12,6 @@ const UserPage = () => {
     const {t} = useTranslation();
     const {userId} = useParams();
     const [user, setUser] = useState(null);
-    const {pathname} = useLocation();
     const navigate = useNavigate();
     const [markers, setMarkers] = useState(null);
     const [activeTab, setActiveTab] = useState('Qna');
@@ -31,7 +30,7 @@ const UserPage = () => {
     }, []);
     const MoveButton = (props) => {
         const handleClickEdit = () => {
-            navigate(`${pathname}/edit`);
+            navigate('/edit');
         };
         const handleClickChat = () => {
             fetch("/api/chat/request", {
@@ -129,29 +128,8 @@ const UserPage = () => {
                             alert(t("userPage.chat_error"));
                         });
                 };
-                const fetchGET = () => {
-                    return fetch(`/api/user/${props.userId}/qnas`, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                        .catch((err) => {
-                            console.log(err);
-                            alert('error: fetch fail');
-                        })
-                        .then(response => response.json())
-                        .then((data) => {
-                            setQnas(() => data);
-                            console.log(data);
-                            // console.log(data); // for debug
-                        })
-                        .catch((err) => {
-                            console.log(err);
-                        });
-                }
                 await fetchPOST();
-                await fetchGET();
+                await fetchGetQnas(props.userId)
                 setContent(() => "");
             };
             const handleKeyDownPost = (e) => {
@@ -271,14 +249,14 @@ const UserPage = () => {
             </div>
         )
     };
-    const ReviewSection = (props) => {
+    const ReviewSection = ({userId, commenterId, reviews, owner}) => {
         const ReviewInputBox = (props) => {
             const [content, setContent] = useState("");
 
             const handleChangeContent = (e) => {
                 setContent(() => e.target.value);
             }
-            const handleClickPost = () => {
+            const handleClickPost = async () => {
                 const fetchPOST = () => {
                     fetch(`/api/review/${props.reviewId}/reply/${props.commenterId}`, {
                         method: "POST",
@@ -292,7 +270,8 @@ const UserPage = () => {
                             alert(t("userPage.chat_error"));
                         });
                 };
-                fetchPOST();
+                await fetchPOST();
+                await fetchGetReivews(userId);
                 setContent(() => "");
             };
             const handleKeyDownPost = (e) => {
@@ -338,12 +317,69 @@ const UserPage = () => {
         }
         return (
             <div className="review-section">
-                {props.reviews.length > 0 ? props.reviews.map((data, i) => {
+                {reviews.length > 0 ? reviews.map((data, i) => {
                     return (
-                        <Review data={data} key={`reviews-${i}`} owner={props.owner} commenterId={props.commenterId}/>);
+                        <Review data={data} key={`reviews-${i}`} owner={owner} commenterId={commenterId}/>);
                 }) : <p>{t('userPage.no_review')}</p>}
             </div>
         )
+    }
+
+    function fetchGetQnas(userId) {
+        return fetch(`/api/user/${userId}/qnas`, {
+            method: 'GET',
+            headers: language ?
+                {
+                    'Content-Type': 'application/json',
+                    'Accept-language': language
+                } :
+                {
+                    'Content-Type': 'application/json'
+                }
+        })
+            .catch((err) => {
+                console.log(err);
+                // alert('loading fail');
+            })
+            .then(response => response.json())
+            .then((data) => {
+                setQnas((prev) => {
+                    if (prev !== data) {
+                        return data;
+                    }
+                    return prev;
+                });
+                // console.log(data); // for debug
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
+
+    function fetchGetReivews(userId) {
+        return fetch(`/api/review/${userId}`, {
+            method: 'GET',
+            headers: language ?
+                {
+                    'Content-Type': 'application/json',
+                    'Accept-language': language
+                } :
+                {
+                    'Content-Type': 'application/json'
+                }
+        })
+            .catch((err) => {
+                console.log(err);
+                alert('error: review fetch fail');
+            })
+            .then(response => response.json())
+            .then((data) => {
+                setReviews(() => data);
+                // console.log(data); // for debug
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     }
 
     useEffect(() => {
@@ -399,59 +435,10 @@ const UserPage = () => {
                 .catch((err) => {
                     console.log(err);
                 });
-            await fetch(`/api/user/${userId}/qnas`, {
-                method: 'GET',
-                headers: language ?
-                    {
-                        'Content-Type': 'application/json',
-                        'Accept-language': language
-                    } :
-                    {
-                        'Content-Type': 'application/json'
-                    }
-            })
-                .catch((err) => {
-                    console.log(err);
-                    // alert('loading fail');
-                })
-                .then(response => response.json())
-                .then((data) => {
-                    setQnas((prev) => {
-                        if (prev !== data) {
-                            return data;
-                        }
-                        return prev;
-                    });
-                    // console.log(data); // for debug
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-            await fetch(`/api/review/${userId}`, {
-                method: 'GET',
-                headers: language ?
-                    {
-                        'Content-Type': 'application/json',
-                        'Accept-language': language
-                    } :
-                    {
-                        'Content-Type': 'application/json'
-                    }
-            })
-                .catch((err) => {
-                    console.log(err);
-                    alert('error: review fetch fail');
-                })
-                .then(response => response.json())
-                .then((data) => {
-                    setReviews(() => data);
-                    // console.log(data); // for debug
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
+            await fetchGetQnas(userId);
+            await fetchGetReivews(userId);
         })();
-    }, [userId, pathname, language]);
+    }, [userId, language]);
 
     return (
         user ? (
@@ -472,10 +459,10 @@ const UserPage = () => {
                         <p className={'user-star'}><FaStar className={'yellow-star'}/> {user.star}</p>
                         <p>{t("userPage.region")}: {user.region}</p>
                         <p>{t("userPage.time")}: {user.time}</p>
-                        <div className="Hashtag-section">
+                        <div className="hashtag-section">
                             {user.hashtags && user.hashtags.map((hashtag, i) => {
                                 return (
-                                    <div className="Hashtag" key={`hashtag-${i}`}>
+                                    <div className="hashtag-item" key={`hashtag-${i}`}>
                                         <span>#{hashtag}</span>
                                     </div>
                                 )

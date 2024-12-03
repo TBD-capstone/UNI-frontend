@@ -11,7 +11,7 @@ import TimeSelector from "../../components/TimeSelector";
 const EditPage = () => {
     const basicProfileImage = '/profile-image.png'
     const {t} = useTranslation();
-    const {userId} = useParams();
+    const [userId, setUserId] = useState(null);
     const [user, setUser] = useState(null);
     const [time, setTime] = useState([]);
     const [isOpenBasic, setIsOpenBasic] = useState(false);
@@ -71,7 +71,13 @@ const EditPage = () => {
             appendHashtag(hashtag);
         }
     };
+    const handleClickTag = () => {
+        appendHashtag(hashtag);
+    }
     const appendHashtag = (hashtag) => {
+        if (hashtag.length === 0) {
+            return;
+        }
         if (user.hashtags.includes(hashtag))
             alert(t('editPage.duplicate_hash'));
         else {
@@ -107,23 +113,30 @@ const EditPage = () => {
             })
             .catch((err) => {
                 console.log(err);
-                alert('error: fetch fail');
             });
     };
 
 
     const handleChangeProfileImage = (e) => {
-        setProfileImage(e.target.files[0]);
+        const file = e.target.files[0];
+        if(!file){
+            return;
+        }
+        setProfileImage(file);
         const fileReader = new FileReader();
-        fileReader.readAsDataURL(e.target.files[0]);
+        fileReader.readAsDataURL(file);
         fileReader.onloadend = () => {
             setProfileImagePreview(() => fileReader.result);
         }
     }
     const handleChangeBackgroundImage = (e) => {
-        setBackgroundImage(e.target.files[0]);
+        const file = e.target.files[0];
+        if(!file){
+            return;
+        }
+        setBackgroundImage(file);
         const fileReader = new FileReader();
-        fileReader.readAsDataURL(e.target.files[0]);
+        fileReader.readAsDataURL(file);
         fileReader.onloadend = () => {
             setBackgroundImagePreview(() => fileReader.result);
         }
@@ -147,13 +160,11 @@ const EditPage = () => {
         }).then(response => response.json())
             .then((data) => {
                 setUser((prev) => ({...prev, imgBack: data.imgBack, imgProf: data.imgProf}));
-                Cookies.set('imgProf', data.imgProf, { expires: 1, path: '/' });
                 setIsOpenImage(() => false);
                 alert('Upload Success!');
             })
             .catch((err) => {
                 console.log(err);
-                alert('error: fetch fail');
             });
     };
 
@@ -258,7 +269,7 @@ const EditPage = () => {
             }
         }
         return (
-            <div className="Hashtag Basic" onClick={handleClickBasicHashtag}>
+            <div className="hashtag-item basic-hashtag" onClick={handleClickBasicHashtag}>
                 <span>#{props.basicHashtag}</span>
             </div>
         );
@@ -266,7 +277,19 @@ const EditPage = () => {
 
     useEffect(() => {
         (async () => {
-            await fetch(`/api/user/${userId}`, {
+            const result = await fetch('api/user/me', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .catch((err) => {
+                    console.log(err);
+                    alert('error: fetch fail');
+                })
+                .then(response => response.json());
+            setUserId(() => result.userId);
+            await fetch(`/api/user/${result.userId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -279,10 +302,9 @@ const EditPage = () => {
                 .then(response => response.json())
                 .then((data) => {
                     setUser(() => data);
-                    if(data.time) {
+                    if (data.time) {
                         setTime(() => data.time.split('-'));
-                    }
-                    else {
+                    } else {
                         setTime(['12', 'am', '12', 'am']);
                     }
                 })
@@ -307,7 +329,6 @@ const EditPage = () => {
                     console.log(err);
                 });
         })();
-
     }, [userId]);
 
     const handleClickMarkerAdd = () => {
@@ -316,9 +337,9 @@ const EditPage = () => {
     const handleClickMarkerDelete = () => {
         setMarkerAction(() => 'delete');
     };
-    const handleClickMarkerUpdate = () => {
-        setMarkerAction(() => 'update');
-    };
+    // const handleClickMarkerUpdate = () => {
+    //     setMarkerAction(() => 'update');
+    // };
 
     return (
         user ? (
@@ -327,7 +348,7 @@ const EditPage = () => {
                     <img className="Image-back" src={user.imgBack ? user.imgBack : '/basic_background.png'} alt="배경사진"/>
                 </div>
                 <div className={'button-section'}>
-                    <button className="Complete" onClick={handleClickComplete}>{t("editPage.edit_complete")}</button>
+                    <button className="complete-button" onClick={handleClickComplete}>{t("editPage.edit_complete")}</button>
                 </div>
                 <div>
                 </div>
@@ -351,30 +372,34 @@ const EditPage = () => {
                         <h3>{t("editPage.time")}</h3>
                         <TimeSelector onChange={handleChangeTime}/>
                         <h3>{t("editPage.basic_hashtag")}</h3>
-                        <div className="Hashtag-section">
+                        <div className="hashtag-section">
                             {basicHashtags.map((basicHashtag, i) => {
                                 return (
                                     <BasicHashtag basicHashtag={basicHashtag} key={`basicHashtag-${i}`}/>
                                 );
                             })}
                         </div>
-                        <div className="Hashtag-section">
+                        <div className="hashtag-section">
                             {user.hashtags && user.hashtags.map((hashtag, i) => {
                                 return (
-                                    <div className="Hashtag" key={`hashtag-${i}`}>
+                                    <div className="hashtag-item" key={`hashtag-${i}`}>
                                         <span>#{hashtag}</span>
                                         <button onClick={() => deleteHashtag(hashtag)}>X</button>
                                     </div>
                                 )
                             })}
                         </div>
-                        <input
-                            type="text"
-                            value={hashtag}
-                            placeholder="hashtag"
-                            onKeyDown={(e) => handleKeyDownHashtag(e)}
-                            onChange={handleChangeHashtag}
-                        />
+                        <div className="hashtag-input">
+                            <input
+                                type="text"
+                                value={hashtag}
+                                placeholder="hashtag"
+                                onKeyDown={(e) => handleKeyDownHashtag(e)}
+                                onChange={handleChangeHashtag}
+                                maxLength={25}
+                            />
+                            <button onClick={handleClickTag}>Tag!</button>
+                        </div>
                         <h3>{t("editPage.self_pr")}</h3>
                         <textarea
                             className="selfPR"
@@ -389,7 +414,7 @@ const EditPage = () => {
                         <label htmlFor='profile'>
                             <div className="image-edit-prof-container">
                                 <img className="image-prof"
-                                     src={profileImagePreview || user.imgProf || basicProfileImage}
+                                     src={profileImagePreview || user.imgProf}
                                      alt="profile"/>
                             </div>
                         </label>
@@ -399,7 +424,7 @@ const EditPage = () => {
                         <label htmlFor='background'>
                             <div className="image-edit-back-container">
                                 <img className="image-prof"
-                                     src={backgroundImagePreview || user.imgBack || '/basic_background.png'}
+                                     src={backgroundImagePreview || user.imgBack}
                                      alt="background"/>
                             </div>
                         </label>

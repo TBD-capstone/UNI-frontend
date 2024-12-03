@@ -89,7 +89,7 @@ function App() {
                 <Route element={<Layout />}>
                     <Route path="/main" element={<Mainpage fetchWithLanguage={fetchWithLanguage} />} />
                     <Route path="/user/:userId" element={<UserPage fetchWithLanguage={fetchWithLanguage} />} />
-                    <Route path="/user/:userId/edit" element={<EditPage fetchWithLanguage={fetchWithLanguage} />} />
+                    <Route path="/edit" element={<EditPage fetchWithLanguage={fetchWithLanguage} />} />
                     <Route path="/chat/:roomId" element={<ChatPage fetchWithLanguage={fetchWithLanguage} changeAlarm={changeAlarm}/>} />
                     <Route path="/admin" element={<Admin fetchWithLanguage={fetchWithLanguage} />} />
                     <Route path="/matching-list" element={<MatchingStatus fetchWithLanguage={fetchWithLanguage} />} />

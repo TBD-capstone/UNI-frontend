@@ -74,11 +74,11 @@
     /*float: right;*/
 }
 
-.Hashtag-section {
+.hashtag-section {
     display: flex; /* 아이템을 가로로 정렬 */
     flex-wrap: wrap;
 }
-.Hashtag {
+.hashtag-item {
     display: inline-block;
     max-width: max-content;
     margin: 2px;
