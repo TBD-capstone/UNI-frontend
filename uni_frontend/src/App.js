@@ -11,7 +11,8 @@ import Admin from "./admin";
 import Cookies from "js-cookie";
 import MatchingStatus from './matchingList';
 import ChatList from './chatList';
-import Review from './review'; // Review 페이지 추가
+import Review from './review';
+import Forget from "./Forgat";
 import usePushNotification from "./Alarm";
 import SockJS from "sockjs-client";
 import {Stomp} from "@stomp/stompjs";
@@ -82,6 +83,7 @@ function App() {
                 {/* 로그인과 회원가입 페이지는 상단바 없이 렌더링 */}
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/forget" element={<Forget />} />
 
                 {/* 상단바가 포함된 레이아웃으로 렌더링 */}
                 <Route element={<Layout />}>

@@ -3,12 +3,17 @@
   font-weight: normal;
   src: url("./fonts/GmarketSansTTFMedium.ttf") format("truetype");
 }
+@font-face {
+  font-family: "NotoSansSC-VariableFont_wght";
+  font-weight: normal;
+  src: url("./fonts/NotoSansSC-VariableFont_wght.ttf") format("truetype");
+}
 
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'GmarketSansTTFMedium',
-    sans-serif;
+  "NotoSansSC-VariableFont_wght", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

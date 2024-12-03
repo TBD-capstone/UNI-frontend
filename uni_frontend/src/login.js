@@ -105,7 +105,7 @@ function Login() {
             <div className="status-message">{statusMessage}</div>
 
             <div className="bottom-link">
-                <a href="/forgot-password">{t("loginPage.forgot_password")}</a>
+                <Link to="/forget">{t("loginPage.forgot_password")}</Link>
                 <br />
                 <Link to="/register">{t("loginPage.sign_up")}</Link>
             </div>

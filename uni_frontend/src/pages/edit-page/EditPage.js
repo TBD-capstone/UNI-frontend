@@ -373,7 +373,7 @@ const EditPage = () => {
                             className="selfPR"
                             value={user.description}
                             onChange={handleChangeDescription}
-                            maxLength={100}
+                            maxLength={1000}
                         />
                         <button className={'edit-button'} onClick={handleClickEdit}>{t("editPage.edit")}</button>
                     </EditModal>
