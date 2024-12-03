@@ -5,16 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7141e09f-2a8e-40b4-9e35-8450a5e64986" name="Changes" comment="[HOTFIX] 카테고리 번역 키 추가 작성">
-      <change afterPath="$PROJECT_DIR$/uni_frontend/public/UNI_ICON.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/public/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/Register.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/Register.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/admin.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/admin.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/admin.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/login.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/login.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/mainpage.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/mainpage.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/mainpage.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/mainpage.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -158,7 +149,7 @@
       <workItem from="1732733998452" duration="1496000" />
       <workItem from="1733043819136" duration="7515000" />
       <workItem from="1733135106582" duration="2722000" />
-      <workItem from="1733226472059" duration="18033000" />
+      <workItem from="1733226472059" duration="21482000" />
     </task>
     <servers />
   </component>

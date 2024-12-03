@@ -47,7 +47,7 @@ const ProfileGrid = () => {
             params.append('sort', sortOrder); // 백엔드로 정렬 옵션 전달
 
             // 대학교 이름과 해시태그를 URL 파라미터에 맞게 추가
-            const univNameRegex = /^[A-Za-z가-힣\s]+$/; // 대학교 이름이 입력되었는지 확인
+            /*const univNameRegex = /^[A-Za-z가-힣\s]+$/; // 대학교 이름이 입력되었는지 확인*/
             const hashtagRegex = /^#/; // 해시태그인지 확인
 
             if (searchQuery) {
