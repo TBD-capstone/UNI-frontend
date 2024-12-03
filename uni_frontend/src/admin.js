@@ -10,15 +10,16 @@ function AdminPage() {
     const [adData, setAdData] = useState([]);
     const [reportedUsers, setReportedUsers] = useState([]);
     const [expandedUserId, setExpandedUserId] = useState(null);
+    const [expandedAdId, setExpandedAdId] = useState(null);
     const [users, setUsers] = useState([]);
     const [statusFilter, setStatusFilter] = useState('');
     const [totalPages, setTotalPages] = useState(0);
     const [banDays, setBanDays] = useState({});
-    const [adForm, setAdForm] = useState({ advertiser: '', title: '', startDate: '', endDate: '', imageUrl: '' });
+    const [adForm, setAdForm] = useState({ advertiser: '', title: '', startDate: '', endDate: '' });
+    const [adImage, setAdImage] = useState(null);
 
     const navigate = useNavigate();
 
-    // 관리자 여부 확인 후 리디렉션
     useEffect(() => {
         const isAdmin = true;
         if (!isAdmin) {
@@ -26,7 +27,6 @@ function AdminPage() {
         }
     }, [navigate]);
 
-    // 데이터 불러오기
     useEffect(() => {
         if (activeTab === '광고게시') {
             fetch('/api/admin/ad')
@@ -67,6 +67,7 @@ function AdminPage() {
         setActiveTab(tab);
         setCurrentPage(1);
         setExpandedUserId(null);
+        setExpandedAdId(null);
     };
 
     const toggleUserDetails = (userId) => {
@@ -74,6 +75,14 @@ function AdminPage() {
             setExpandedUserId(null);
         } else {
             setExpandedUserId(userId);
+        }
+    };
+
+    const toggleAdDetails = (adId) => {
+        if (expandedAdId === adId) {
+            setExpandedAdId(null);
+        } else {
+            setExpandedAdId(adId);
         }
     };
 
@@ -103,18 +112,31 @@ function AdminPage() {
         setAdForm((prev) => ({ ...prev, [name]: value }));
     };
 
+    const handleAdImageChange = (e) => {
+        setAdImage(e.target.files[0]);
+    };
+
     const handleAdSubmit = async (e) => {
         e.preventDefault();
+        const formData = new FormData();
+        formData.append('advertiser', adForm.advertiser);
+        formData.append('title', adForm.title);
+        formData.append('startDate', adForm.startDate);
+        formData.append('endDate', adForm.endDate);
+        if (adImage) {
+            formData.append('image', adImage);
+        }
+
         try {
             const response = await fetch('/api/admin/ad/new', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(adForm),
+                body: formData,
             });
             const result = await response.json();
             if (result.status === 'success') {
                 alert('광고가 성공적으로 등록되었습니다.');
-                setAdForm({ advertiser: '', title: '', startDate: '', endDate: '', imageUrl: '' });
+                setAdForm({ advertiser: '', title: '', startDate: '', endDate: '' });
+                setAdImage(null);
             } else {
                 console.error('광고 등록 실패:', result.message);
             }
@@ -211,11 +233,21 @@ function AdminPage() {
                         </thead>
                         <tbody>
                         {adData.map((ad) => (
-                            <tr key={ad.adId}>
-                                <td>{ad.advertiser}</td>
-                                <td>{ad.title}</td>
-                                <td>{`${ad.startDate} ~ ${ad.endDate}`}</td>
-                            </tr>
+                            <React.Fragment key={ad.adId}>
+                                <tr onClick={() => toggleAdDetails(ad.adId)}>
+                                    <td>{ad.advertiser}</td>
+                                    <td>{ad.title}</td>
+                                    <td>{`${ad.startDate} ~ ${ad.endDate}`}</td>
+                                </tr>
+                                {expandedAdId === ad.adId && (
+                                    <tr>
+                                        <td colSpan="3">
+                                            <p><strong>상세 설명:</strong> {ad.description}</p>
+                                            <p><strong>이미지:</strong> <img src={ad.imageUrl} alt="광고 이미지" /></p>
+                                        </td>
+                                    </tr>
+                                )}
+                            </React.Fragment>
                         ))}
                         </tbody>
                     </table>
@@ -243,8 +275,8 @@ function AdminPage() {
                             <input type="date" name="endDate" value={adForm.endDate} onChange={handleAdFormChange} required />
                         </label>
                         <label>
-                            이미지 URL:
-                            <input type="text" name="imageUrl" value={adForm.imageUrl} onChange={handleAdFormChange} required />
+                            이미지 업로드:
+                            <input type="file" name="image" onChange={handleAdImageChange} accept="image/*" />
                         </label>
                         <button type="submit">등록</button>
                     </form>

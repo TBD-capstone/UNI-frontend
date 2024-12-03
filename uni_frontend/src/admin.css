@@ -20,13 +20,27 @@
     cursor: pointer;
     font-weight: bold;
     color: #666;
-    transition: color 0.3s;
+    transition: color 0.3s, border-bottom 0.3s;
+    border-bottom: 3px solid transparent;
 }
 
 .tab.active {
     color: #FFBA00;
     border-bottom: 3px solid #FFBA00;
 }
+
+/* 기존 스타일 유지, 충돌 가능성 점검 */
+.tab-content {
+    display: none; /* 기본적으로 숨김 */
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.tab-content.active {
+    display: block; /* 활성 탭만 표시 */
+}
+
 
 /* 방문자 수 섹션 */
 .visitor-stats {
@@ -41,6 +55,7 @@
     border-radius: 8px;
     width: 48%;
     text-align: center;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .visitor-card h2 {
@@ -55,7 +70,7 @@
     font-weight: bold;
 }
 
-/* 신고확인, 광고관리, 유저관리 테이블 스타일 */
+/* 테이블 스타일 */
 .table-container {
     background-color: #ffffff;
     border-radius: 8px;
@@ -81,124 +96,45 @@
     font-weight: bold;
 }
 
-.table .status {
-    color: #6AB24F;
+/* 광고 등록 폼 스타일 */
+.ad-form {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.ad-form label {
+    display: block;
+    margin-bottom: 10px;
     font-weight: bold;
-}
-
-/* 유저관리 스타일 */
-.user-management {
-    margin-bottom: 20px;
-}
-
-.user-management .filter {
-    display: flex;
-    justify-content: flex-start;
-    margin-bottom: 15px;
-}
-
-.user-management .filter label {
-    font-weight: bold;
-    margin-right: 10px;
     color: #333;
 }
 
-.user-management .filter select {
-    padding: 5px;
+.ad-form input[type="text"],
+.ad-form input[type="date"],
+.ad-form input[type="url"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 14px;
 }
 
-.user-management .table-container {
-    margin-top: 15px;
-}
-
-.user-management .actions button {
+.ad-form button {
     background-color: #FFBA00;
     color: white;
     border: none;
-    padding: 8px 12px;
+    padding: 10px 15px;
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s;
-}
-
-.user-management .actions button:hover {
-    background-color: #E0A800;
-}
-
-/* 신고 내용 스타일 */
-.report-details {
-    background-color: #f9f9f9;
-    padding: 10px;
-    border-radius: 5px;
-    margin-top: 10px;
-    border: 1px solid #ddd;
-}
-
-/* 신고 리스트 행의 hover 효과 */
-.table tr {
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
-}
-
-.table tr:hover {
-    background-color: #f1f1f1;
-}
-
-/* 펼쳐진 신고 내역 테이블 스타일 */
-.nested-table {
     width: 100%;
-    margin-top: 10px;
-    border-collapse: collapse;
-    background-color: #f9f9f9;
 }
 
-.nested-table th, .nested-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-}
-
-.nested-table th {
-    background-color: #FFBA00;
-    color: white;
-    font-weight: bold;
-}
-
-/* 광고 이미지 내용 스타일 */
-.ad-details {
-    background-color: #f9f9f9;
-}
-
-.ad-image-content {
-    padding: 15px;
-    border-top: 1px solid #ddd;
-    text-align: center;
-}
-
-.ad-image-content h4 {
-    margin: 0 0 10px;
-    font-size: 16px;
-    color: #333;
-}
-
-.ad-image-content img {
-    max-width: 100%;
-    height: auto;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.ad-status-dropdown {
-    margin-top: 10px;
-}
-
-.ad-status-dropdown select {
-    padding: 5px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+.ad-form button:hover {
+    background-color: #E0A800;
 }
 
 /* 페이지네이션 스타일 */
@@ -226,38 +162,15 @@
 
 .pagination button:hover {
     background-color: #E0A800;
-    color: white;
-}
-
-/* 방문자 통계 스타일 */
-.visitor-stats {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 20px;
-}
-
-.stat-item {
-    text-align: center;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-}
-
-.stat-item h3 {
-    font-size: 18px;
-    color: #333;
-}
-
-.stat-item p {
-    font-size: 24px;
-    font-weight: bold;
-    color: #6AB24F;
-    margin: 0;
 }
 
 /* 반응형 스타일 */
 @media (max-width: 768px) {
+    .tabs {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
     .visitor-stats {
         flex-direction: column;
         align-items: center;
@@ -268,12 +181,20 @@
         margin-bottom: 20px;
     }
 
-    .user-management .filter {
-        flex-direction: column;
-        align-items: flex-start;
+    .ad-form button {
+        width: auto;
+        padding: 10px;
     }
+}
 
-    .user-management .filter label {
-        margin-bottom: 10px;
+/* 애니메이션 효과 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
