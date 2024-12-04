@@ -24,8 +24,8 @@ const ProfileGrid = () => {
     const [profiles, setProfiles] = useState([]);
     const [filteredProfiles, setFilteredProfiles] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [selectedCategory, setSelectedCategory] = useState(null);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQuery, setSearchQuery] = useState(''); // 검색창 값
+    const [hashtags, setHashtags] = useState([]); // 선택된 해시태그 상태
     const [ads, setAds] = useState([]);
     const [currentAd, setCurrentAd] = useState(null);
     const [language] = useState(Cookies.get('language') || 'en');
@@ -45,23 +45,12 @@ const ProfileGrid = () => {
     const fetchData = async () => {
         setIsLoading(true);
         try {
-            // Fetch profiles
             const params = new URLSearchParams();
             params.append('page', currentPage - 1);
             params.append('sort', sortOrder);
 
-            /*const univNameRegex = /^[A-Za-z가-힣\s]+$/;*/
-            const hashtagRegex = /^#/;
-            if (searchQuery) {
-                /*if (univNameRegex.test(searchQuery.trim())) {
-                    params.append('univName', searchQuery.trim());
-                } else*/ if (hashtagRegex.test(searchQuery.trim())) {
-                    const hashtags = searchQuery
-                        .split(',')
-                        .map(tag => tag.trim().replace('#', ''))
-                        .join(',');
-                    params.append('hashtags', hashtags);
-                }
+            if (hashtags.length > 0) {
+                params.append('hashtags', hashtags.join(','));
             }
 
             const profileUrl = `/api/home?${params.toString()}`;
@@ -72,7 +61,6 @@ const ProfileGrid = () => {
             setFilteredProfiles(fetchedProfiles);
             setIsProfilesEmpty(fetchedProfiles.length === 0);
 
-            // Fetch ads
             const adsResponse = await fetch('/api/ads');
             const adData = await adsResponse.json();
             const activeAds = adData.filter(ad => ad.status === t('mainpage.active_ad_status'));
@@ -88,26 +76,45 @@ const ProfileGrid = () => {
 
     useEffect(() => {
         fetchData();
-    }, [language, t, currentPage, sortOrder, searchQuery]);
+    }, [language, t, currentPage, sortOrder, hashtags]);
 
     const handlePageChange = (page) => setCurrentPage(page);
 
+    const updateSearchQuery = (updatedHashtags) => {
+        setSearchQuery(updatedHashtags.map(tag => `#${tag}`).join(' ')); // 검색창 값 업데이트
+    };
+
     const handleCategoryClick = (label) => {
-        const categoryHashtag = `#${t(`mainpage.categories.${label}`)}`;
-        if (selectedCategory === label) {
-            setSelectedCategory(null);
-            setSearchQuery('');
+        const categoryHashtag = t(`mainpage.categories.${label}`);
+        if (hashtags.includes(categoryHashtag)) {
+            // 해시태그 제거
+            const updatedHashtags = hashtags.filter((tag) => tag !== categoryHashtag);
+            setHashtags(updatedHashtags);
+            updateSearchQuery(updatedHashtags);
         } else {
-            setSelectedCategory(label);
-            setSearchQuery(categoryHashtag);
+            // 해시태그 추가
+            const updatedHashtags = [...hashtags, categoryHashtag];
+            setHashtags(updatedHashtags);
+            updateSearchQuery(updatedHashtags);
         }
     };
 
-    const handleSearchChange = (e) => setSearchQuery(e.target.value);
+    const handleSearchInputChange = (e) => {
+        const input = e.target.value;
+        setSearchQuery(input); // 검색창 값 업데이트
+
+        const inputHashtags = input
+            .split(' ')
+            .map(tag => tag.trim().replace('#', ''))
+            .filter(tag => tag !== '');
+        setHashtags(Array.from(new Set(inputHashtags))); // 중복 제거 후 업데이트
+    };
+
+    const handleSearch = () => {
+        fetchData(); // 검색 실행
+    };
 
     const handleSortChange = (e) => setSortOrder(e.target.value);
-
-    const handleSearch = () => fetchData();
 
     const currentProfiles = filteredProfiles.slice(
         (currentPage - 1) * ITEMS_PER_PAGE,
@@ -129,7 +136,7 @@ const ProfileGrid = () => {
                         type="text"
                         placeholder={t('mainpage.search_placeholder')}
                         value={searchQuery}
-                        onChange={handleSearchChange}
+                        onChange={handleSearchInputChange} // 검색창에서 값 입력 가능
                     />
                     <button onClick={handleSearch}>{t('mainpage.search_button')}</button>
                     <select onChange={handleSortChange} value={sortOrder}>
@@ -143,8 +150,8 @@ const ProfileGrid = () => {
             <div className="filter-buttons">
                 {categories.map((category) => (
                     <button
-                        className={`filter-button ${selectedCategory === category.label ? 'active' : ''}`}
                         key={category.label}
+                        className={`filter-button ${hashtags.includes(t(`mainpage.categories.${category.label}`)) ? 'active' : ''}`}
                         onClick={() => handleCategoryClick(category.label)}
                     >
                         {t(`mainpage.categories.${category.label}`)}

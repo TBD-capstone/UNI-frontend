@@ -27,7 +27,7 @@ function Navbar({ selectedLanguage, fetchWithLanguage }) {
                     const data = await response.json();
                     setUserId(data.userId);
                     setUsername(data.name);
-                    setProfileImage(data.imgProf || '/default-image.jpg');
+                    setProfileImage(data.imgProf || './profile-image.jpg');
                 } else {
                     console.error('Failed to fetch profile image');
                 }
