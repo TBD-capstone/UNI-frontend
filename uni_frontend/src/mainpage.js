@@ -50,12 +50,12 @@ const ProfileGrid = () => {
             params.append('page', currentPage - 1);
             params.append('sort', sortOrder);
 
-            const univNameRegex = /^[A-Za-z가-힣\s]+$/;
+            /*const univNameRegex = /^[A-Za-z가-힣\s]+$/;*/
             const hashtagRegex = /^#/;
             if (searchQuery) {
-                if (univNameRegex.test(searchQuery.trim())) {
+                /*if (univNameRegex.test(searchQuery.trim())) {
                     params.append('univName', searchQuery.trim());
-                } else if (hashtagRegex.test(searchQuery.trim())) {
+                } else*/ if (hashtagRegex.test(searchQuery.trim())) {
                     const hashtags = searchQuery
                         .split(',')
                         .map(tag => tag.trim().replace('#', ''))

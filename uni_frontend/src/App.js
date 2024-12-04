@@ -89,7 +89,6 @@ function App() {
 
                 {/* 상단바가 포함된 레이아웃으로 렌더링 */}
                 <Route element={<Layout />}>
-<<<<<<< HEAD
                     <Route path="/main" element={<PrivateRoute element={<Mainpage fetchWithLanguage={fetchWithLanguage} />} />} />
                     <Route path="/user/:userId" element={<PrivateRoute element={<UserPage fetchWithLanguage={fetchWithLanguage} />} />} />
                     <Route path="/user/:userId/edit" element={<PrivateRoute element={<EditPage fetchWithLanguage={fetchWithLanguage} />} />} />
@@ -98,16 +97,6 @@ function App() {
                     <Route path="/matching-list" element={<PrivateRoute element={<MatchingStatus fetchWithLanguage={fetchWithLanguage} />} />} />
                     <Route path="/chat-list" element={<PrivateRoute element={<ChatList fetchWithLanguage={fetchWithLanguage} />} />} />
                     <Route path="/review/:matchingId" element={<PrivateRoute element={<Review fetchWithLanguage={fetchWithLanguage} />} />} />
-=======
-                    <Route path="/main" element={<Mainpage fetchWithLanguage={fetchWithLanguage} />} />
-                    <Route path="/user/:userId" element={<UserPage fetchWithLanguage={fetchWithLanguage} />} />
-                    <Route path="/user/:userId/edit" element={<EditPage fetchWithLanguage={fetchWithLanguage} />} />
-                    <Route path="/chat/:roomId" element={<ChatPage fetchWithLanguage={fetchWithLanguage} changeAlarm={changeAlarm} />} />
-                    <Route path="/admin" element={<Admin fetchWithLanguage={fetchWithLanguage} />} />
-                    <Route path="/matching-list" element={<MatchingStatus fetchWithLanguage={fetchWithLanguage} />} />
-                    <Route path="/chat-list" element={<ChatList fetchWithLanguage={fetchWithLanguage} />} />
-                    <Route path="/review/:matchingId" element={<Review fetchWithLanguage={fetchWithLanguage} />} />
->>>>>>> fc862546d09f593091b7634bc969f5951f191820
                 </Route>
             </Routes>
         </Router>

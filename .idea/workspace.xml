@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7141e09f-2a8e-40b4-9e35-8450a5e64986" name="Changes" comment="[HOTFIX] 카테고리 번역 키 추가 작성" />
+    <list default="true" id="7141e09f-2a8e-40b4-9e35-8450a5e64986" name="Changes" comment="[HOTFIX] 카테고리 번역 키 추가 작성">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/admin.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/admin.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/mainpage.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/mainpage.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -150,7 +155,7 @@
       <workItem from="1733043819136" duration="7515000" />
       <workItem from="1733135106582" duration="2722000" />
       <workItem from="1733226472059" duration="22730000" />
-      <workItem from="1733273602364" duration="729000" />
+      <workItem from="1733273602364" duration="2103000" />
     </task>
     <servers />
   </component>

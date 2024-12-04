@@ -123,25 +123,19 @@
     font-size: 14px;
 }
 
-<<<<<<< HEAD
-.ad-form button {
-    background-color: #FFBA00;
-=======
+
 .user-management .table-container {
     margin-top: 15px;
 }
 
 .user-management .actions button {
     background-color: #E9AE58;
->>>>>>> fc862546d09f593091b7634bc969f5951f191820
     color: white;
     border: none;
     padding: 10px 15px;
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s;
-<<<<<<< HEAD
-=======
 }
 
 .user-management .actions button:hover {
@@ -169,14 +163,9 @@
 
 /* 펼쳐진 신고 내역 테이블 스타일 */
 .nested-table {
->>>>>>> fc862546d09f593091b7634bc969f5951f191820
     width: 100%;
 }
 
-<<<<<<< HEAD
-.ad-form button:hover {
-    background-color: #E0A800;
-=======
 .nested-table th,
 .nested-table td {
     border: 1px solid #ddd;
@@ -222,7 +211,6 @@
     padding: 5px;
     border: 1px solid #ddd;
     border-radius: 4px;
->>>>>>> fc862546d09f593091b7634bc969f5951f191820
 }
 
 /* 페이지네이션 스타일 */
@@ -249,9 +237,6 @@
 }
 
 .pagination button:hover {
-<<<<<<< HEAD
-    background-color: #E0A800;
-=======
     background-color: #cd900b;
     color: white;
 }
@@ -281,7 +266,6 @@
     font-weight: bold;
     color: #6AB24F;
     margin: 0;
->>>>>>> fc862546d09f593091b7634bc969f5951f191820
 }
 
 /* 반응형 스타일 */
