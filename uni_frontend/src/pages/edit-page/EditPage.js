@@ -6,6 +6,7 @@ import GoogleMap from "../../components/GoogleMap";
 import {useTranslation} from "react-i18next";
 import EditModal from "../../components/modal/EditModal.js";
 import Cookies from "js-cookie";
+import HashtagsX from "../../components/hashtag/HashtagsX";
 
 const EditPage = () => {
     const basicProfileImage = '/profile-image.png'
@@ -16,6 +17,7 @@ const EditPage = () => {
     const [isOpenImage, setIsOpenImage] = useState(false);
     const [isOpenMap, setIsOpenMap] = useState(false);
     const [hashtag, setHashtag] = useState("");
+    const [hashtags, setHashtags] = useState([]);
     const [profileImage, setProfileImage] = useState(null);
     const [backgroundImage, setBackgroundImage] = useState(null);
     const [profileImagePreview, setProfileImagePreview] = useState(null);
@@ -67,21 +69,15 @@ const EditPage = () => {
         }
     };
     const appendHashtag = (hashtag) => {
-        if (user.hashtags.includes(hashtag))
+        if (hashtags.includes(hashtag))
             alert(t('editPage.duplicate_hash'));
         else {
-            setUser((prev) => ({
-                ...prev,
-                hashtags: [...prev.hashtags, hashtag]
-            }));
+            setHashtags(prev => [...prev, hashtag]);
             setHashtag("");
         }
     };
     const deleteHashtag = (hashtag) => {
-        setUser((prev) => ({
-            ...prev,
-            hashtags: prev.hashtags.filter(word => word !== hashtag)
-        }));
+        setHashtags(prev => prev.filter(word => word !== hashtag));
     }
 
     const handleClickComplete = () => {
@@ -246,7 +242,7 @@ const EditPage = () => {
 
     const BasicHashtag = (props) => {
         const handleClickBasicHashtag = () => {
-            if (user.hashtags.includes(props.basicHashtag)) {
+            if (hashtags.includes(props.basicHashtag)) {
                 deleteHashtag(props.basicHashtag);
             } else {
                 appendHashtag(props.basicHashtag);
@@ -274,6 +270,7 @@ const EditPage = () => {
                 .then(response => response.json())
                 .then((data) => {
                     setUser(() => data);
+                    setHashtags(() => data.hashtags);
                 })
                 .catch((err) => {
                     console.log(err);
@@ -351,16 +348,7 @@ const EditPage = () => {
                                 );
                             })}
                         </div>
-                        <div className="Hashtag-section">
-                            {user.hashtags && user.hashtags.map((hashtag, i) => {
-                                return (
-                                    <div className="Hashtag" key={`hashtag-${i}`}>
-                                        <span>#{hashtag}</span>
-                                        <button onClick={() => deleteHashtag(hashtag)}>X</button>
-                                    </div>
-                                )
-                            })}
-                        </div>
+                        <HashtagsX hashtags={hashtags} setHashtags={setHashtags}/>
                         <input
                             type="text"
                             value={hashtag}
