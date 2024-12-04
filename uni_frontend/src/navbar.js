@@ -18,36 +18,26 @@ function Navbar({ selectedLanguage, fetchWithLanguage }) {
     const navigate = useNavigate();
     const menuRef = useRef(null);
 
-    useEffect(() => {
-        const cookieUsername = Cookies.get('userName');
-        const cookieUserId = Cookies.get('userId');
-        if (cookieUsername) {
-            setUsername(cookieUsername);
-        }
-        if (cookieUserId) {
-            setUserId(cookieUserId);
-        }
-    }, []);
 
     useEffect(() => {
-        if (userId) {
-            const fetchProfileImage = async () => {
-                try {
-                    const response = await fetch(`/api/users/${userId}/profile-image`);
-                    if (response.ok) {
-                        const data = await response.json();
-                        setProfileImage(data.imageUrl || '/path/to/default-image.jpg');
-                    } else {
-                        console.error('Failed to fetch profile image');
-                    }
-                } catch (error) {
-                    console.error('Error fetching profile image:', error);
+        const fetchProfileImage = async () => {
+            try {
+                const response = await fetch('/api/user/me');
+                if (response.ok) {
+                    const data = await response.json();
+                    setUserId(data.userId);
+                    setUsername(data.name);
+                    setProfileImage(data.imgProf || '/default-image.jpg');
+                } else {
+                    console.error('Failed to fetch profile image');
                 }
-            };
+            } catch (error) {
+                console.error('Error fetching profile image:', error);
+            }
+        };
 
-            fetchProfileImage();
-        }
-    }, [userId]);
+        fetchProfileImage();
+    }, []);
 
     const toggleMenu = () => {
         setMenuOpen((prevState) => !prevState);
