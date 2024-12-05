@@ -37,6 +37,7 @@ const PrivateRoute = ({ element }) => {
 function App() {
     const notification = usePushNotification();
     const [alarm, setAlarm] = useState(true);
+    const [chatRooms, setChatRooms] = useState([]); // chatRooms 상태 추가
     const userId = Cookies.get('userId');
 
     const changeAlarm = (b) => {
@@ -58,6 +59,18 @@ function App() {
                         const newMessage = JSON.parse(msg.body);
                         console.log("Received message:", newMessage);
                         notification.fireNotification('new message', newMessage.content);
+                        // 새로운 메시지가 도착했을 때 읽지 않은 메시지 수 갱신
+                        setChatRooms((prevRooms) => {
+                            return prevRooms.map((room) => {
+                                if (room.chatRoomId === newMessage.roomId) {
+                                    return {
+                                        ...room,
+                                        unreadCount: room.unreadCount + 1,
+                                    };
+                                }
+                                return room;
+                            });
+                        });
                     }
                 });
             }, (error) => {
@@ -93,7 +106,7 @@ function App() {
                 <Route element={<Layout />}>
                     <Route path="/main" element={<PrivateRoute element={<Mainpage fetchWithLanguage={fetchWithLanguage} />} />} />
                     <Route path="/user/:userId" element={<PrivateRoute element={<UserPage fetchWithLanguage={fetchWithLanguage} />} />} />
-                    <Route path="/user/:userId/edit" element={<PrivateRoute element={<EditPage fetchWithLanguage={fetchWithLanguage} />} />} />
+                    <Route path="/user/edit" element={<PrivateRoute element={<EditPage fetchWithLanguage={fetchWithLanguage} />} />} />
                     <Route path="/chat/:roomId" element={<PrivateRoute element={<ChatPage fetchWithLanguage={fetchWithLanguage} changeAlarm={changeAlarm} />} />} />
                     <Route path="/admin" element={<PrivateRoute element={<Admin fetchWithLanguage={fetchWithLanguage} />} />} />
                     <Route path="/matching-list" element={<PrivateRoute element={<MatchingStatus fetchWithLanguage={fetchWithLanguage} />} />} />
