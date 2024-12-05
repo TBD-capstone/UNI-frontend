@@ -1,17 +1,138 @@
 import "./EditPage.css";
 import "../user-page/UserPage.css";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import GoogleMap from "../../components/GoogleMap";
 import {useTranslation} from "react-i18next";
 import EditModal from "../../components/modal/EditModal.js";
-import Cookies from "js-cookie";
+import TimeSelector from "../../components/TimeSelector";
+
+const EditMarkerInput = (props) => {
+    const t = useTranslation();
+    const [markerName, setMarkerName] = useState("");
+    const [markerDescription, setMarkerDescription] = useState("");
+    const [markerAction, setMarkerAction] = useState('add');
+    const handleClickMarkerAdd = () => {
+        setMarkerAction(() => 'add');
+    };
+    const handleClickMarkerDelete = () => {
+        setMarkerAction(() => 'delete');
+    };
+
+    const handleChangeMarkerName = (e) => {
+        setMarkerName(() => e.target.value);
+    }
+    const handleChangeMarkerDescription = (e) => {
+        setMarkerDescription(() => e.target.value);
+    }
+
+    const handleClickAdd = () => {
+        if (!props.position || markerName.trim() === "" || markerDescription.trim() === "") {
+            alert(t('editPage.no_marker_data'));
+            return;
+        }
+        if (props.markers.some((e) => e.name === markerName)) {
+            alert(t('editPage.duplicated_title'));
+            return;
+        }
+        fetch(`/api/markers/add/${props.userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                latitude: props.position.latitude,
+                longitude: props.position.longitude,
+                name: markerName,
+                description: markerDescription
+            })
+        })
+            .then((response) => {
+                console.log(response.json());
+                props.mapClose();
+                // alert("Marker add Success!");
+            })
+            .catch((err) => {
+                console.log(err);
+                alert('error: fetch fail');
+            });
+    }
+    const handleClickDelete = () => {
+        if (markerName.trim() === "") {
+            alert(t('editPage.no_title'));
+            return;
+        }
+        const i = props.markers.findIndex((e) => e.name === markerName);
+        if (i < 0) {
+            alert(t('editPage.no_target_marker'));
+            return;
+        }
+        const result = fetch(`/api/markers/delete/${props.markers[i].id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then((response) => {
+                console.log(response.json());
+                props.mapClose();
+                // alert("Marker delete Success!");
+            })
+            .catch((err) => {
+                console.log(err);
+                alert('error: fetch fail');
+            });
+    }
+
+    return <>
+        <div className={"edit-select"}>
+            <button className={"edit-select"}
+                    onClick={handleClickMarkerAdd}>{props.t}</button>
+            <button className={"edit-select"}
+                    onClick={handleClickMarkerDelete}>{props.t1}</button>
+        </div>
+        {/*<button className={'edit-select'} onClick={handleClickMarkerUpdate}>Marker Update</button>*/}
+        {markerAction === "add" &&
+            <>
+                <p>{props.t2}</p>
+                <input
+                    type="text"
+                    placeholder={props.placeholder}
+                    value={markerName}
+                    onChange={handleChangeMarkerName}
+                />
+                <input
+                    type="text"
+                    placeholder={props.placeholder1}
+                    value={props.value1}
+                    onChange={handleChangeMarkerDescription}
+                />
+                <button className={"edit-button"} onClick={handleClickAdd}>{props.t3}</button>
+            </>
+        }
+        {markerAction === "delete" &&
+            <>
+                <p>{props.t4}</p>
+                <input
+                    type="text"
+                    placeholder={props.placeholder}
+                    value={markerName}
+                    onChange={handleChangeMarkerName}
+                />
+                <button className={"edit-button"}
+                        onClick={handleClickDelete}>{props.t5}</button>
+            </>
+        }
+        {/*{markerUpdate && <button onClick={handleClickUpdate}>Update</button>}*/}
+    </>;
+}
 
 const EditPage = () => {
     const basicProfileImage = '/profile-image.png'
     const {t} = useTranslation();
-    const {userId} = useParams();
+    const [userId, setUserId] = useState(null);
     const [user, setUser] = useState(null);
+    const [time, setTime] = useState([]);
     const [isOpenBasic, setIsOpenBasic] = useState(false);
     const [isOpenImage, setIsOpenImage] = useState(false);
     const [isOpenMap, setIsOpenMap] = useState(false);
@@ -21,11 +142,9 @@ const EditPage = () => {
     const [profileImagePreview, setProfileImagePreview] = useState(null);
     const [backgroundImagePreview, setBackgroundImagePreview] = useState(null);
     const [position, setPosition] = useState(null);
-    const [markerName, setMarkerName] = useState("");
-    const [markerDescription, setMarkerDescription] = useState("");
-    const [markerAction, setMarkerAction] = useState('add');
     const [markers, setMarkers] = useState([]);
-    const basicHashtags = ["여행",
+    const basicHashtags = [
+        "여행",
         "행정",
         "부동산",
         "은행",
@@ -34,7 +153,8 @@ const EditPage = () => {
         "대학 생활",
         "맛집",
         "게임",
-        "쇼핑"];
+        "쇼핑"
+    ];
     const navigate = useNavigate();
 
     const handleChangeRegion = (e) => {
@@ -43,10 +163,11 @@ const EditPage = () => {
             region: e.target.value
         }));
     };
-    const handleChangeTime = (e) => {
+    const handleChangeTime = (value) => {
+        setTime(value);
         setUser((prev) => ({
             ...prev,
-            time: e.target.value
+            time: `${time[0]} ${time[1]} - ${time[2]} ${time[3]}`
         }));
     };
 
@@ -66,7 +187,13 @@ const EditPage = () => {
             appendHashtag(hashtag);
         }
     };
+    const handleClickTag = () => {
+        appendHashtag(hashtag);
+    }
     const appendHashtag = (hashtag) => {
+        if (hashtag.length === 0) {
+            return;
+        }
         if (user.hashtags.includes(hashtag))
             alert(t('editPage.duplicate_hash'));
         else {
@@ -102,23 +229,30 @@ const EditPage = () => {
             })
             .catch((err) => {
                 console.log(err);
-                alert('error: fetch fail');
             });
     };
 
 
     const handleChangeProfileImage = (e) => {
-        setProfileImage(e.target.files[0]);
+        const file = e.target.files[0];
+        if (!file) {
+            return;
+        }
+        setProfileImage(file);
         const fileReader = new FileReader();
-        fileReader.readAsDataURL(e.target.files[0]);
+        fileReader.readAsDataURL(file);
         fileReader.onloadend = () => {
             setProfileImagePreview(() => fileReader.result);
         }
     }
     const handleChangeBackgroundImage = (e) => {
-        setBackgroundImage(e.target.files[0]);
+        const file = e.target.files[0];
+        if (!file) {
+            return;
+        }
+        setBackgroundImage(file);
         const fileReader = new FileReader();
-        fileReader.readAsDataURL(e.target.files[0]);
+        fileReader.readAsDataURL(file);
         fileReader.onloadend = () => {
             setBackgroundImagePreview(() => fileReader.result);
         }
@@ -142,13 +276,11 @@ const EditPage = () => {
         }).then(response => response.json())
             .then((data) => {
                 setUser((prev) => ({...prev, imgBack: data.imgBack, imgProf: data.imgProf}));
-                Cookies.set('imgProf', data.imgProf, { expires: 1, path: '/' });
                 setIsOpenImage(() => false);
                 alert('Upload Success!');
             })
             .catch((err) => {
                 console.log(err);
-                alert('error: fetch fail');
             });
     };
 
@@ -159,72 +291,8 @@ const EditPage = () => {
         }));
     }
 
-    const handleChangeMarkerName = (e) => {
-        setMarkerName(() => e.target.value);
-    }
-    const handleChangeMarkerDescription = (e) => {
-        setMarkerDescription(() => e.target.value);
-    }
-
     const mapClose = () => {
         setIsOpenMap(() => false);
-    }
-    const handleClickAdd = () => {
-        if (!position || markerName.trim() === "" || markerDescription.trim() === "") {
-            alert(t('editPage.no_marker_data'));
-            return;
-        }
-        if (markers.some((e) => e.name === markerName)) {
-            alert(t('editPage.duplicated_title'));
-            return;
-        }
-        fetch(`/api/markers/add/${userId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                latitude: position.latitude,
-                longitude: position.longitude,
-                name: markerName,
-                description: markerDescription
-            })
-        })
-            .then((response) => {
-                console.log(response.json());
-                mapClose();
-                // alert("Marker add Success!");
-            })
-            .catch((err) => {
-                console.log(err);
-                alert('error: fetch fail');
-            });
-    }
-    const handleClickDelete = () => {
-        if (markerName.trim() === "") {
-            alert(t('editPage.no_title'));
-            return;
-        }
-        const i = markers.findIndex((e) => e.name === markerName);
-        if (i < 0) {
-            alert(t('editPage.no_target_marker'));
-            return;
-        }
-        const result = fetch(`/api/markers/delete/${markers[i].id}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then((response) => {
-                console.log(response.json());
-                mapClose();
-                // alert("Marker delete Success!");
-            })
-            .catch((err) => {
-                console.log(err);
-                alert('error: fetch fail');
-            });
     }
     // const handleClickUpdate = () => {
     //     if (!position || markerName.trim() === "" || markerDescription.trim() === "") {
@@ -253,7 +321,7 @@ const EditPage = () => {
             }
         }
         return (
-            <div className="Hashtag Basic" onClick={handleClickBasicHashtag}>
+            <div className="hashtag-item basic-hashtag" onClick={handleClickBasicHashtag}>
                 <span>#{props.basicHashtag}</span>
             </div>
         );
@@ -261,7 +329,19 @@ const EditPage = () => {
 
     useEffect(() => {
         (async () => {
-            await fetch(`/api/user/${userId}`, {
+            const result = await fetch('api/user/me', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .catch((err) => {
+                    console.log(err);
+                    alert('error: fetch fail');
+                })
+                .then(response => response.json());
+            setUserId(() => result.userId);
+            await fetch(`/api/user/${result.userId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -274,6 +354,11 @@ const EditPage = () => {
                 .then(response => response.json())
                 .then((data) => {
                     setUser(() => data);
+                    if (data.time) {
+                        setTime(() => data.time.split('-'));
+                    } else {
+                        setTime(['12', 'am', '12', 'am']);
+                    }
                 })
                 .catch((err) => {
                     console.log(err);
@@ -296,18 +381,11 @@ const EditPage = () => {
                     console.log(err);
                 });
         })();
-
     }, [userId]);
 
-    const handleClickMarkerAdd = () => {
-        setMarkerAction(() => 'add');
-    };
-    const handleClickMarkerDelete = () => {
-        setMarkerAction(() => 'delete');
-    };
-    const handleClickMarkerUpdate = () => {
-        setMarkerAction(() => 'update');
-    };
+    // const handleClickMarkerUpdate = () => {
+    //     setMarkerAction(() => 'update');
+    // };
 
     return (
         user ? (
@@ -316,7 +394,8 @@ const EditPage = () => {
                     <img className="Image-back" src={user.imgBack ? user.imgBack : '/basic_background.png'} alt="배경사진"/>
                 </div>
                 <div className={'button-section'}>
-                    <button className="Complete" onClick={handleClickComplete}>{t("editPage.edit_complete")}</button>
+                    <button className="complete-button"
+                            onClick={handleClickComplete}>{t("editPage.edit_complete")}</button>
                 </div>
                 <div>
                 </div>
@@ -338,42 +417,42 @@ const EditPage = () => {
                             onChange={handleChangeRegion}
                         />
                         <h3>{t("editPage.time")}</h3>
-                        <input
-                            type="text"
-                            value={user.time}
-                            onChange={handleChangeTime}
-                        />
+                        <TimeSelector onChange={handleChangeTime}/>
                         <h3>{t("editPage.basic_hashtag")}</h3>
-                        <div className="Hashtag-section">
+                        <div className="hashtag-section">
                             {basicHashtags.map((basicHashtag, i) => {
                                 return (
                                     <BasicHashtag basicHashtag={basicHashtag} key={`basicHashtag-${i}`}/>
                                 );
                             })}
                         </div>
-                        <div className="Hashtag-section">
+                        <div className="hashtag-section">
                             {user.hashtags && user.hashtags.map((hashtag, i) => {
                                 return (
-                                    <div className="Hashtag" key={`hashtag-${i}`}>
+                                    <div className="hashtag-item" key={`hashtag-${i}`}>
                                         <span>#{hashtag}</span>
                                         <button onClick={() => deleteHashtag(hashtag)}>X</button>
                                     </div>
                                 )
                             })}
                         </div>
-                        <input
-                            type="text"
-                            value={hashtag}
-                            placeholder="hashtag"
-                            onKeyDown={(e) => handleKeyDownHashtag(e)}
-                            onChange={handleChangeHashtag}
-                        />
+                        <div className="hashtag-input">
+                            <input
+                                type="text"
+                                value={hashtag}
+                                placeholder="hashtag"
+                                onKeyDown={(e) => handleKeyDownHashtag(e)}
+                                onChange={handleChangeHashtag}
+                                maxLength={25}
+                            />
+                            <button onClick={handleClickTag}>Tag!</button>
+                        </div>
                         <h3>{t("editPage.self_pr")}</h3>
                         <textarea
                             className="selfPR"
                             value={user.description}
                             onChange={handleChangeDescription}
-                            maxLength={100}
+                            maxLength={1000}
                         />
                         <button className={'edit-button'} onClick={handleClickEdit}>{t("editPage.edit")}</button>
                     </EditModal>
@@ -382,7 +461,7 @@ const EditPage = () => {
                         <label htmlFor='profile'>
                             <div className="image-edit-prof-container">
                                 <img className="image-prof"
-                                     src={profileImagePreview || user.imgProf || basicProfileImage}
+                                     src={profileImagePreview || user.imgProf}
                                      alt="profile"/>
                             </div>
                         </label>
@@ -392,7 +471,7 @@ const EditPage = () => {
                         <label htmlFor='background'>
                             <div className="image-edit-back-container">
                                 <img className="image-prof"
-                                     src={backgroundImagePreview || user.imgBack || '/basic_background.png'}
+                                     src={backgroundImagePreview || user.imgBack}
                                      alt="background"/>
                             </div>
                         </label>
@@ -407,45 +486,16 @@ const EditPage = () => {
                                 <GoogleMap markers={markers} setting={setting}/>
                             </div>
                         </div>
-                        <div className={'edit-select'}>
-                            <button className={'edit-select'}
-                                    onClick={handleClickMarkerAdd}>{t("editPage.marker_add")}</button>
-                            <button className={'edit-select'}
-                                    onClick={handleClickMarkerDelete}>{t("editPage.marker_delete")}</button>
-                        </div>
-                        {/*<button className={'edit-select'} onClick={handleClickMarkerUpdate}>Marker Update</button>*/}
-                        {markerAction === 'add' &&
-                            <>
-                                <p>{t('editPage.marker_add_explain')}</p>
-                                <input
-                                    type="text"
-                                    placeholder={t("editPage.marker_title_placeholder")}
-                                    value={markerName}
-                                    onChange={handleChangeMarkerName}
-                                />
-                                <input
-                                    type="text"
-                                    placeholder={t("editPage.marker_description_placeholder")}
-                                    value={markerDescription}
-                                    onChange={handleChangeMarkerDescription}
-                                />
-                                <button className={'edit-button'} onClick={handleClickAdd}>{t("editPage.add")}</button>
-                            </>
-                        }
-                        {markerAction === 'delete' &&
-                            <>
-                                <p>{t('editPage.marker_delete_explain')}</p>
-                                <input
-                                    type="text"
-                                    placeholder={t("editPage.marker_title_placeholder")}
-                                    value={markerName}
-                                    onChange={handleChangeMarkerName}
-                                />
-                                <button className={'edit-button'}
-                                        onClick={handleClickDelete}>{t("editPage.delete")}</button>
-                            </>
-                        }
-                        {/*{markerUpdate && <button onClick={handleClickUpdate}>Update</button>}*/}
+                        <EditMarkerInput markers={markers} mapClose={mapClose} position={position}
+                                         userId={userId}
+                                         t={t("editPage.marker_add")}
+                                         t1={t("editPage.marker_delete")}
+                                         t2={t('editPage.marker_add_explain')}
+                                         placeholder={t("editPage.marker_title_placeholder")}
+                                         placeholder1={t("editPage.marker_description_placeholder")}
+                                         t3={t("editPage.add")}
+                                         t4={t('editPage.marker_delete_explain')}
+                                         t5={t("editPage.delete")}/>
                     </EditModal>
                 </div>
             </div>) : null

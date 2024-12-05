@@ -3,20 +3,42 @@
     align-content: center;
     margin: auto auto 50px;
 }
-.Complete {
+.complete-button {
     color: #ffffff;
     background-color: #a0886b;
     cursor: pointer;
 }
-.Complete:hover {
+.complete-button:hover {
     background-color: #70583b;
 }
 
-.Hashtag-section {
+.hashtag-section {
     display: flex; /* 아이템을 가로로 정렬 */
     flex-wrap: wrap;
 }
-.Hashtag {
+.hashtag-input {
+    border: 1px solid #505050;
+    display: flex;
+    border-radius: 3px;
+}
+.hashtag-input input{
+    border: none;
+    width: auto;
+    margin: auto;
+    box-sizing: border-box;
+}
+.hashtag-input button{
+    background-color: #6AB24F;
+    color: #FFFFFF;
+    font-size: 12px;
+    padding: 1px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    margin: 2px;
+}
+.hashtag-item {
     display: inline-block;
     max-width: max-content;
     margin: 2px;
@@ -25,11 +47,11 @@
     border-color: #4CAF50;
     word-break:break-all;
 }
-.Basic {
+.basic-hashtag {
     background-color: #4CCF90;
     cursor: pointer;
 }
-.Hashtag button {
+.hashtag-item button {
     border: none;
     cursor: pointer;
     background-color: inherit;

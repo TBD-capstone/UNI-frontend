@@ -102,7 +102,7 @@ function Login() {
             <button className="login-button" onClick={handleLogin}>{t("loginPage.login_button")}</button>
 
             <div className="bottom-link">
-                <a href="/forgot-password">{t("loginPage.forgot_password")}</a>
+                <Link to="/forget">{t("loginPage.forgot_password")}</Link>
                 <br />
                 <Link to="/register">{t("loginPage.sign_up")}</Link>
             </div>

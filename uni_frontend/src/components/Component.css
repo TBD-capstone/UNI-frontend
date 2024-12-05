@@ -1,0 +1,13 @@
+.time-section {
+    display: flex;
+    align-items: center;
+}
+.auto-margin {
+    margin: auto;
+}
+.time-box {
+    display: flex;
+}
+.time-select {
+    display: flex;
+}
