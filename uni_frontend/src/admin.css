@@ -20,13 +20,27 @@
     cursor: pointer;
     font-weight: bold;
     color: #666;
-    transition: color 0.3s;
+    transition: color 0.3s, border-bottom 0.3s;
+    border-bottom: 3px solid transparent;
 }
 
 .tab.active {
     color: #E9AE58;
     border-bottom: 3px solid #E9AE58;
 }
+
+/* 기존 스타일 유지, 충돌 가능성 점검 */
+.tab-content {
+    display: none; /* 기본적으로 숨김 */
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.tab-content.active {
+    display: block; /* 활성 탭만 표시 */
+}
+
 
 /* 방문자 수 섹션 */
 .visitor-stats {
@@ -41,6 +55,7 @@
     border-radius: 8px;
     width: 48%;
     text-align: center;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .visitor-card h2 {
@@ -55,7 +70,7 @@
     font-weight: bold;
 }
 
-/* 신고확인, 광고관리, 유저관리 테이블 스타일 */
+/* 테이블 스타일 */
 .table-container {
     background-color: #ffffff;
     border-radius: 8px;
@@ -82,34 +97,32 @@
     font-weight: bold;
 }
 
-.table .status {
-    color: #6AB24F;
+/* 광고 등록 폼 스타일 */
+.ad-form {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.ad-form label {
+    display: block;
+    margin-bottom: 10px;
     font-weight: bold;
-}
-
-/* 유저관리 스타일 */
-.user-management {
-    margin-bottom: 20px;
-}
-
-.user-management .filter {
-    display: flex;
-    justify-content: flex-start;
-    margin-bottom: 15px;
-}
-
-.user-management .filter label {
-    font-weight: bold;
-    margin-right: 10px;
     color: #333;
 }
 
-.user-management .filter select {
-    padding: 5px;
+.ad-form input[type="text"],
+.ad-form input[type="date"],
+.ad-form input[type="url"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 14px;
 }
+
 
 .user-management .table-container {
     margin-top: 15px;
@@ -119,7 +132,7 @@
     background-color: #E9AE58;
     color: white;
     border: none;
-    padding: 8px 12px;
+    padding: 10px 15px;
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s;
@@ -151,9 +164,6 @@
 /* 펼쳐진 신고 내역 테이블 스타일 */
 .nested-table {
     width: 100%;
-    margin-top: 10px;
-    border-collapse: collapse;
-    background-color: #f9f9f9;
 }
 
 .nested-table th,
@@ -260,6 +270,11 @@
 
 /* 반응형 스타일 */
 @media (max-width: 768px) {
+    .tabs {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
     .visitor-stats {
         flex-direction: column;
         align-items: center;
@@ -270,12 +285,20 @@
         margin-bottom: 20px;
     }
 
-    .user-management .filter {
-        flex-direction: column;
-        align-items: flex-start;
+    .ad-form button {
+        width: auto;
+        padding: 10px;
     }
+}
 
-    .user-management .filter label {
-        margin-bottom: 10px;
+/* 애니메이션 효과 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
