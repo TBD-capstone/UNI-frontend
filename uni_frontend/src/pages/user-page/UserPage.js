@@ -30,7 +30,7 @@ const UserPage = () => {
     }, []);
     const MoveButton = (props) => {
         const handleClickEdit = () => {
-            navigate('/edit');
+            navigate('/user/edit');
         };
         const handleClickChat = () => {
             fetch("/api/chat/request", {

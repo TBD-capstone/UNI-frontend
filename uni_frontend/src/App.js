@@ -106,7 +106,7 @@ function App() {
                 <Route element={<Layout />}>
                     <Route path="/main" element={<PrivateRoute element={<Mainpage fetchWithLanguage={fetchWithLanguage} />} />} />
                     <Route path="/user/:userId" element={<PrivateRoute element={<UserPage fetchWithLanguage={fetchWithLanguage} />} />} />
-                    <Route path="/user/:userId/edit" element={<PrivateRoute element={<EditPage fetchWithLanguage={fetchWithLanguage} />} />} />
+                    <Route path="/user/edit" element={<PrivateRoute element={<EditPage fetchWithLanguage={fetchWithLanguage} />} />} />
                     <Route path="/chat/:roomId" element={<PrivateRoute element={<ChatPage fetchWithLanguage={fetchWithLanguage} changeAlarm={changeAlarm} />} />} />
                     <Route path="/admin" element={<PrivateRoute element={<Admin fetchWithLanguage={fetchWithLanguage} />} />} />
                     <Route path="/matching-list" element={<PrivateRoute element={<MatchingStatus fetchWithLanguage={fetchWithLanguage} />} />} />

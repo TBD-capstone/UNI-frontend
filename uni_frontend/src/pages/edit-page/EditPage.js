@@ -142,7 +142,7 @@ const EditPage = () => {
     const [profileImagePreview, setProfileImagePreview] = useState(null);
     const [backgroundImagePreview, setBackgroundImagePreview] = useState(null);
     const [position, setPosition] = useState(null);
-    const [markers, setMarkers] = useState([]);
+    const [markers, setMarkers] = useState(null);
     const basicHashtags = [
         "여행",
         "행정",
@@ -329,7 +329,7 @@ const EditPage = () => {
 
     useEffect(() => {
         (async () => {
-            const result = await fetch('api/user/me', {
+            const result = await fetch('/api/user/me', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -375,6 +375,7 @@ const EditPage = () => {
                 })
                 .then(response => response.json())
                 .then((data) => {
+                    console.log(data);
                     setMarkers(() => data);
                 })
                 .catch((err) => {
