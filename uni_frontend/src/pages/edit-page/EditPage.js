@@ -1,12 +1,131 @@
 import "./EditPage.css";
 import "../user-page/UserPage.css";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import GoogleMap from "../../components/GoogleMap";
 import {useTranslation} from "react-i18next";
 import EditModal from "../../components/modal/EditModal.js";
-import Cookies from "js-cookie";
 import TimeSelector from "../../components/TimeSelector";
+
+const EditMarkerInput = (props) => {
+    const t = useTranslation();
+    const [markerName, setMarkerName] = useState("");
+    const [markerDescription, setMarkerDescription] = useState("");
+    const [markerAction, setMarkerAction] = useState('add');
+    const handleClickMarkerAdd = () => {
+        setMarkerAction(() => 'add');
+    };
+    const handleClickMarkerDelete = () => {
+        setMarkerAction(() => 'delete');
+    };
+
+    const handleChangeMarkerName = (e) => {
+        setMarkerName(() => e.target.value);
+    }
+    const handleChangeMarkerDescription = (e) => {
+        setMarkerDescription(() => e.target.value);
+    }
+
+    const handleClickAdd = () => {
+        if (!props.position || markerName.trim() === "" || markerDescription.trim() === "") {
+            alert(t('editPage.no_marker_data'));
+            return;
+        }
+        if (props.markers.some((e) => e.name === markerName)) {
+            alert(t('editPage.duplicated_title'));
+            return;
+        }
+        fetch(`/api/markers/add/${props.userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                latitude: props.position.latitude,
+                longitude: props.position.longitude,
+                name: markerName,
+                description: markerDescription
+            })
+        })
+            .then((response) => {
+                console.log(response.json());
+                props.mapClose();
+                // alert("Marker add Success!");
+            })
+            .catch((err) => {
+                console.log(err);
+                alert('error: fetch fail');
+            });
+    }
+    const handleClickDelete = () => {
+        if (markerName.trim() === "") {
+            alert(t('editPage.no_title'));
+            return;
+        }
+        const i = props.markers.findIndex((e) => e.name === markerName);
+        if (i < 0) {
+            alert(t('editPage.no_target_marker'));
+            return;
+        }
+        const result = fetch(`/api/markers/delete/${props.markers[i].id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then((response) => {
+                console.log(response.json());
+                props.mapClose();
+                // alert("Marker delete Success!");
+            })
+            .catch((err) => {
+                console.log(err);
+                alert('error: fetch fail');
+            });
+    }
+
+    return <>
+        <div className={"edit-select"}>
+            <button className={"edit-select"}
+                    onClick={handleClickMarkerAdd}>{props.t}</button>
+            <button className={"edit-select"}
+                    onClick={handleClickMarkerDelete}>{props.t1}</button>
+        </div>
+        {/*<button className={'edit-select'} onClick={handleClickMarkerUpdate}>Marker Update</button>*/}
+        {markerAction === "add" &&
+            <>
+                <p>{props.t2}</p>
+                <input
+                    type="text"
+                    placeholder={props.placeholder}
+                    value={markerName}
+                    onChange={handleChangeMarkerName}
+                />
+                <input
+                    type="text"
+                    placeholder={props.placeholder1}
+                    value={props.value1}
+                    onChange={handleChangeMarkerDescription}
+                />
+                <button className={"edit-button"} onClick={handleClickAdd}>{props.t3}</button>
+            </>
+        }
+        {markerAction === "delete" &&
+            <>
+                <p>{props.t4}</p>
+                <input
+                    type="text"
+                    placeholder={props.placeholder}
+                    value={markerName}
+                    onChange={handleChangeMarkerName}
+                />
+                <button className={"edit-button"}
+                        onClick={handleClickDelete}>{props.t5}</button>
+            </>
+        }
+        {/*{markerUpdate && <button onClick={handleClickUpdate}>Update</button>}*/}
+    </>;
+}
 
 const EditPage = () => {
     const basicProfileImage = '/profile-image.png'
@@ -23,9 +142,6 @@ const EditPage = () => {
     const [profileImagePreview, setProfileImagePreview] = useState(null);
     const [backgroundImagePreview, setBackgroundImagePreview] = useState(null);
     const [position, setPosition] = useState(null);
-    const [markerName, setMarkerName] = useState("");
-    const [markerDescription, setMarkerDescription] = useState("");
-    const [markerAction, setMarkerAction] = useState('add');
     const [markers, setMarkers] = useState([]);
     const basicHashtags = [
         "여행",
@@ -119,7 +235,7 @@ const EditPage = () => {
 
     const handleChangeProfileImage = (e) => {
         const file = e.target.files[0];
-        if(!file){
+        if (!file) {
             return;
         }
         setProfileImage(file);
@@ -131,7 +247,7 @@ const EditPage = () => {
     }
     const handleChangeBackgroundImage = (e) => {
         const file = e.target.files[0];
-        if(!file){
+        if (!file) {
             return;
         }
         setBackgroundImage(file);
@@ -175,72 +291,8 @@ const EditPage = () => {
         }));
     }
 
-    const handleChangeMarkerName = (e) => {
-        setMarkerName(() => e.target.value);
-    }
-    const handleChangeMarkerDescription = (e) => {
-        setMarkerDescription(() => e.target.value);
-    }
-
     const mapClose = () => {
         setIsOpenMap(() => false);
-    }
-    const handleClickAdd = () => {
-        if (!position || markerName.trim() === "" || markerDescription.trim() === "") {
-            alert(t('editPage.no_marker_data'));
-            return;
-        }
-        if (markers.some((e) => e.name === markerName)) {
-            alert(t('editPage.duplicated_title'));
-            return;
-        }
-        fetch(`/api/markers/add/${userId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                latitude: position.latitude,
-                longitude: position.longitude,
-                name: markerName,
-                description: markerDescription
-            })
-        })
-            .then((response) => {
-                console.log(response.json());
-                mapClose();
-                // alert("Marker add Success!");
-            })
-            .catch((err) => {
-                console.log(err);
-                alert('error: fetch fail');
-            });
-    }
-    const handleClickDelete = () => {
-        if (markerName.trim() === "") {
-            alert(t('editPage.no_title'));
-            return;
-        }
-        const i = markers.findIndex((e) => e.name === markerName);
-        if (i < 0) {
-            alert(t('editPage.no_target_marker'));
-            return;
-        }
-        const result = fetch(`/api/markers/delete/${markers[i].id}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then((response) => {
-                console.log(response.json());
-                mapClose();
-                // alert("Marker delete Success!");
-            })
-            .catch((err) => {
-                console.log(err);
-                alert('error: fetch fail');
-            });
     }
     // const handleClickUpdate = () => {
     //     if (!position || markerName.trim() === "" || markerDescription.trim() === "") {
@@ -331,12 +383,6 @@ const EditPage = () => {
         })();
     }, [userId]);
 
-    const handleClickMarkerAdd = () => {
-        setMarkerAction(() => 'add');
-    };
-    const handleClickMarkerDelete = () => {
-        setMarkerAction(() => 'delete');
-    };
     // const handleClickMarkerUpdate = () => {
     //     setMarkerAction(() => 'update');
     // };
@@ -348,7 +394,8 @@ const EditPage = () => {
                     <img className="Image-back" src={user.imgBack ? user.imgBack : '/basic_background.png'} alt="배경사진"/>
                 </div>
                 <div className={'button-section'}>
-                    <button className="complete-button" onClick={handleClickComplete}>{t("editPage.edit_complete")}</button>
+                    <button className="complete-button"
+                            onClick={handleClickComplete}>{t("editPage.edit_complete")}</button>
                 </div>
                 <div>
                 </div>
@@ -439,45 +486,16 @@ const EditPage = () => {
                                 <GoogleMap markers={markers} setting={setting}/>
                             </div>
                         </div>
-                        <div className={'edit-select'}>
-                            <button className={'edit-select'}
-                                    onClick={handleClickMarkerAdd}>{t("editPage.marker_add")}</button>
-                            <button className={'edit-select'}
-                                    onClick={handleClickMarkerDelete}>{t("editPage.marker_delete")}</button>
-                        </div>
-                        {/*<button className={'edit-select'} onClick={handleClickMarkerUpdate}>Marker Update</button>*/}
-                        {markerAction === 'add' &&
-                            <>
-                                <p>{t('editPage.marker_add_explain')}</p>
-                                <input
-                                    type="text"
-                                    placeholder={t("editPage.marker_title_placeholder")}
-                                    value={markerName}
-                                    onChange={handleChangeMarkerName}
-                                />
-                                <input
-                                    type="text"
-                                    placeholder={t("editPage.marker_description_placeholder")}
-                                    value={markerDescription}
-                                    onChange={handleChangeMarkerDescription}
-                                />
-                                <button className={'edit-button'} onClick={handleClickAdd}>{t("editPage.add")}</button>
-                            </>
-                        }
-                        {markerAction === 'delete' &&
-                            <>
-                                <p>{t('editPage.marker_delete_explain')}</p>
-                                <input
-                                    type="text"
-                                    placeholder={t("editPage.marker_title_placeholder")}
-                                    value={markerName}
-                                    onChange={handleChangeMarkerName}
-                                />
-                                <button className={'edit-button'}
-                                        onClick={handleClickDelete}>{t("editPage.delete")}</button>
-                            </>
-                        }
-                        {/*{markerUpdate && <button onClick={handleClickUpdate}>Update</button>}*/}
+                        <EditMarkerInput markers={markers} mapClose={mapClose} position={position}
+                                         userId={userId}
+                                         t={t("editPage.marker_add")}
+                                         t1={t("editPage.marker_delete")}
+                                         t2={t('editPage.marker_add_explain')}
+                                         placeholder={t("editPage.marker_title_placeholder")}
+                                         placeholder1={t("editPage.marker_description_placeholder")}
+                                         t3={t("editPage.add")}
+                                         t4={t('editPage.marker_delete_explain')}
+                                         t5={t("editPage.delete")}/>
                     </EditModal>
                 </div>
             </div>) : null
