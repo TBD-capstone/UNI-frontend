@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {BrowserRouter as Router, Route, Routes, Navigate} from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Layout from './layout';
 import Mainpage from './mainpage';
 import Register from './Register';
@@ -15,7 +15,7 @@ import Review from './review';
 import Forget from "./Forgat";
 import usePushNotification from "./Alarm";
 import SockJS from "sockjs-client";
-import {Stomp} from "@stomp/stompjs";
+import { Stomp } from "@stomp/stompjs";
 
 
 // fetchWithLanguage 함수 정의
@@ -42,7 +42,7 @@ function App() {
     useEffect(() => {
 
         if (userId) {
-            const socketChat = new SockJS('http://localhost:8080/ws/chat');
+            const socketChat = new SockJS(`${process.env.REACT_APP_API_URL}/ws/chat`);
             const stompClientInstance = Stomp.over(socketChat);
 
             stompClientInstance.debug = (str) => console.log(str);
@@ -51,7 +51,7 @@ function App() {
                 console.log("Connected to WebSocket");
 
                 stompClientInstance.subscribe(`/sub/user/${userId}`, (msg) => {
-                    if(alarm){
+                    if (alarm) {
                         const newMessage = JSON.parse(msg.body);
                         console.log("Received message:", newMessage);
                         notification.fireNotification('new message', newMessage.content);
