@@ -9,7 +9,6 @@ function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [statusMessage, setStatusMessage] = useState('');
     const navigate = useNavigate();
 
     const handleTogglePassword = () => {
@@ -55,13 +54,13 @@ function Login() {
                 console.log('프로필 이미지:', Cookies.get('imgProf'));
                 console.log('배경화면 이미지:', Cookies.get('imgBack'));
 
-                setStatusMessage(data.message || t("loginPage.status_messages.success"));
+                alert(data.message || t("loginPage.status_messages.success"));
                 navigate('/main'); // 메인 페이지로 이동
             } else {
-                setStatusMessage(data.message || t("loginPage.status_messages.fail"));
+                alert(data.message || t("loginPage.status_messages.fail"));
             }
         } catch (error) {
-            setStatusMessage(t("loginPage.status_messages.error"));
+            alert(t("loginPage.status_messages.error"));
             console.error('로그인 요청 중 오류:', error);
         }
     };
@@ -101,8 +100,6 @@ function Login() {
             </div>
 
             <button className="login-button" onClick={handleLogin}>{t("loginPage.login_button")}</button>
-
-            <div className="status-message">{statusMessage}</div>
 
             <div className="bottom-link">
                 <Link to="/forget">{t("loginPage.forgot_password")}</Link>

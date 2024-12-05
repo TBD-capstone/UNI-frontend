@@ -13,9 +13,6 @@ function Register() {
     const [nickname, setNickname] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [emailMessage, setEmailMessage] = useState({ message: '', isError: false });
-    const [codeMessage, setCodeMessage] = useState({ message: '', isError: false });
-    const [signupMessage, setSignupMessage] = useState({ message: '', isError: false });
     const [emailVerified, setEmailVerified] = useState(false);
     const [verificationCode, setVerificationCode] = useState('');
     const [codeVerified, setCodeVerified] = useState(false);
@@ -36,10 +33,10 @@ function Register() {
                         label: university.univName
                     })));
                 } else {
-                    setSignupMessage({ message: t("registerPage.status_messages.fetch_university_list_fail"), isError: true });
+                    alert(t("registerPage.status_messages.fetch_university_list_fail"));
                 }
             } catch (error) {
-                setSignupMessage({ message: t("registerPage.status_messages.fetch_university_list_error"), isError: true });
+                alert(t("registerPage.status_messages.fetch_university_list_error"));
             }
         };
 
@@ -52,7 +49,7 @@ function Register() {
 
     const handleEmailVerification = async () => {
         if (!email.trim()) {
-            setEmailMessage({ message: "이메일을 입력해주세요.", isError: true });
+            alert("이메일을 입력해주세요.");
             return;
         }
         try {
@@ -64,18 +61,18 @@ function Register() {
             const data = await response.json();
             if (data.status === 'success') {
                 setEmailVerified(true);
-                setEmailMessage({ message: "이메일 인증 요청 성공!", isError: false });
+                alert("이메일 인증 요청 성공!");
             } else {
-                setEmailMessage({ message: data.message || "이메일 인증 요청 실패.", isError: true });
+                alert(data.message || "이메일 인증 요청 실패.");
             }
         } catch (error) {
-            setEmailMessage({ message: "이메일 인증 요청 중 오류가 발생했습니다.", isError: true });
+            alert("이메일 인증 요청 중 오류가 발생했습니다.");
         }
     };
 
     const handleCodeVerification = async () => {
         if (!verificationCode.trim()) {
-            setCodeMessage({ message: "인증 코드를 입력해주세요.", isError: true });
+            alert("인증 코드를 입력해주세요.");
             return;
         }
         try {
@@ -90,18 +87,28 @@ function Register() {
             const data = await response.json();
             if (data.status === 'success') {
                 setCodeVerified(true);
-                setCodeMessage({ message: "인증 확인 성공!", isError: false });
+                alert("인증 확인 성공!");
             } else {
-                setCodeMessage({ message: data.message || "인증 확인 실패.", isError: true });
+                alert(data.message || "인증 확인 실패.");
             }
         } catch (error) {
-            setCodeMessage({ message: "인증 확인 중 오류가 발생했습니다.", isError: true });
+            alert("인증 확인 중 오류가 발생했습니다.");
         }
+    };
+
+    const validateNickname = (nickname) => {
+        const nicknameRegex = /^[a-z0-9]+$/; // 영어 소문자와 숫자만 허용
+        return nicknameRegex.test(nickname);
     };
 
     const handleSubmit = async () => {
         if (!codeVerified || password !== confirmPassword) {
-            setSignupMessage({ message: "입력값이 유효하지 않습니다.", isError: true });
+            alert("입력값이 유효하지 않습니다.");
+            return;
+        }
+
+        if (!validateNickname(nickname)) {
+            alert("닉네임은 영어 소문자와 숫자만 포함해야 합니다.");
             return;
         }
 
@@ -119,14 +126,13 @@ function Register() {
             });
             const data = await response.json();
             if (data.status === 'success') {
-                setSignupMessage({ message: "", isError: false });
-                alert("Signup successful! Redirecting to login page.");
+                alert("회원가입 성공! 로그인 페이지로 이동합니다.");
                 navigate('/login');
             } else {
-                setSignupMessage({ message: data.message || "회원가입 실패.", isError: true });
+                alert(data.message || "회원가입 실패.");
             }
         } catch (error) {
-            setSignupMessage({ message: "회원가입 중 오류가 발생했습니다.", isError: true });
+            alert("회원가입 중 오류가 발생했습니다.");
         }
     };
 
@@ -162,7 +168,7 @@ function Register() {
                 <input
                     type="email"
                     className="input-field"
-                    placeholder="e-mail"
+                    placeholder={t("대학교 이메일을 입력해주세요")}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
@@ -170,15 +176,12 @@ function Register() {
                     {t("registerPage.verify_email_button")}
                 </button>
             </div>
-            <div className="field-message" style={{ color: emailMessage.isError ? 'red' : 'blue' }}>
-                {emailMessage.message}
-            </div>
 
             <div className="input-field-container">
                 <input
                     type="text"
                     className="input-field"
-                    placeholder="code"
+                    placeholder={t("인증 코드")}
                     value={verificationCode}
                     onChange={(e) => setVerificationCode(e.target.value)}
                 />
@@ -186,14 +189,11 @@ function Register() {
                     {t("registerPage.verify_code_button")}
                 </button>
             </div>
-            <div className="field-message" style={{ color: codeMessage.isError ? 'red' : 'blue' }}>
-                {codeMessage.message}
-            </div>
 
             <input
                 type="text"
                 className="input-field"
-                placeholder={t("registerPage.name_placeholder")}
+                placeholder={t("닉네임(숫자와 영어만 사용해주세요)")}
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
             />
@@ -201,7 +201,7 @@ function Register() {
             <input
                 type="password"
                 className="input-field"
-                placeholder={t("registerPage.password_placeholder")}
+                placeholder={t("비밀번호")}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
             />
@@ -209,7 +209,7 @@ function Register() {
             <input
                 type="password"
                 className="input-field"
-                placeholder={t("registerPage.confirm_password_placeholder")}
+                placeholder={t("비밀번호 확인")}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
             />
@@ -217,9 +217,6 @@ function Register() {
             <button className="signup-button" onClick={handleSubmit}>
                 {t("registerPage.signup_button")}
             </button>
-            <div className="field-message" style={{ color: signupMessage.isError ? 'red' : 'blue' }}>
-                {signupMessage.message}
-            </div>
 
             <div className="bottom-link">
                 <Link to="/login">{t("registerPage.already_member")}</Link>
