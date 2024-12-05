@@ -27,6 +27,86 @@ const ChatPage = (props) => {
     const location = useLocation();
     const navigate = useNavigate();
 
+    const leaveChatRoom = async () => {
+        const apiURL = `${process.env.REACT_APP_API_URL}/api/chat/room/${roomId}/leave`;
+        console.log("Attempting to leave chat room with roomId:", roomId);
+
+        try {
+            const response = await fetch(apiURL, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (response.ok) {
+                console.log("Successfully left the chat room.");
+            } else {
+                console.error("Failed to leave the chat room. Response:", response.status, response.statusText);
+            }
+        } catch (error) {
+            console.error("Error while leaving the chat room:", error);
+        }
+    };
+
+    useEffect(() => {
+        const handleLeave = async () => {
+            console.log("Handling leave chat room...");
+            await leaveChatRoom();
+        };
+
+        const handlePageHide = () => {
+            console.log("Pagehide detected. Leaving chat room...");
+            handleLeave();
+        };
+
+        const handleBeforeUnload = (event) => {
+            console.log("Beforeunload detected. Leaving chat room...");
+            handleLeave();
+            event.preventDefault(); // 기본 동작 방지
+            event.returnValue = ""; // 일부 브라우저에서 필요
+        };
+
+        const handlePopState = () => {
+            console.log("Popstate detected. Leaving chat room...");
+            handleLeave();
+        };
+
+        // 브라우저 이벤트 리스너 등록
+        window.addEventListener("pagehide", handlePageHide);
+        window.addEventListener("beforeunload", handleBeforeUnload);
+        window.addEventListener("popstate", handlePopState);
+
+        return () => {
+            // 리스너 제거
+            window.removeEventListener("pagehide", handlePageHide);
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+            window.removeEventListener("popstate", handlePopState);
+        };
+    }, [roomId, navigate]);
+
+    useEffect(() => {
+        const handlePageHide = () => {
+            console.log("Pagehide detected. Leaving chat room...");
+            leaveChatRoom();
+        };
+
+        const handleBackNavigation = () => {
+            leaveChatRoom().then(() => {
+                navigate(-1); // 뒤로가기 실행
+            });
+        };
+
+        // 브라우저 이벤트 리스너 등록
+        window.addEventListener("pagehide", handlePageHide);
+
+        return () => {
+            // 리스너 제거
+            window.removeEventListener("pagehide", handlePageHide);
+        };
+    }, [roomId, navigate]);
+
     useEffect(() => {
         // 상태가 변경될 때마다 ref에 최신 값 저장
         unreadMessageIdsRef.current = unreadMessageIds;
@@ -172,168 +252,7 @@ const ChatPage = (props) => {
     };
 
     useEffect(() => {
-        console.log("Unread message IDs on update:", unreadMessageIds);
 
-        return () => {
-            console.log("Unread message IDs on cleanup:", unreadMessageIds);
-        };
-    }, [unreadMessageIds]);
-
-    useEffect(() => {
-        console.log("WebSocket connection status:", stompClient?.connected);
-
-        return () => {
-            console.log("WebSocket connection status on cleanup:", stompClient?.connected);
-        };
-    }, [stompClient]);
-
-    useEffect(() => {
-        console.log("Unread message IDs updated:", unreadMessageIds);
-        console.log("Unread message IDs reference:", unreadMessageIdsRef.current);
-
-        return () => {
-            console.log("Cleanup triggered with unreadMessageIds:", unreadMessageIdsRef.current);
-        };
-    }, [unreadMessageIds]);
-
-    useEffect(() => {
-        // 읽지 않은 메시지 ID 상태 업데이트
-        unreadMessageIdsRef.current = unreadMessageIds;
-
-        const sendBulkReadRequest = () => {
-            const unreadMessagesCopy = [...unreadMessageIdsRef.current];
-
-            if (unreadMessagesCopy.length > 0) {
-                const payload = JSON.stringify({
-                    roomId: roomId,
-                    messageIds: unreadMessagesCopy,
-                });
-
-                // RESTful API 호출
-                if (navigator.sendBeacon) {
-                    try {
-                        navigator.sendBeacon(
-                            `${process.env.REACT_APP_API_URL}/read/bulk`,
-                            new Blob([payload], { type: "application/json" })
-                        );
-                        console.log("Successfully sent bulk read status using sendBeacon:", unreadMessagesCopy);
-                    } catch (error) {
-                        console.error("Error sending bulk read status using sendBeacon:", error);
-                    }
-                } else {
-                    fetch(`${process.env.REACT_APP_API_URL}/read/bulk`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: payload,
-                    }).then((response) => {
-                        if (response.ok) {
-                            console.log("Successfully sent bulk read status using fetch.");
-                        } else {
-                            console.error("Failed to mark messages as read using fetch.");
-                        }
-                    }).catch((error) => {
-                        console.error("Error sending bulk read status using fetch:", error);
-                    });
-                }
-            } else {
-                console.log("No unread messages to mark as read.");
-            }
-        };
-
-        const handlePageHide = () => {
-            console.log("Pagehide detected. Processing bulk read request...");
-            sendBulkReadRequest();
-        };
-
-        // 브라우저 이벤트 리스너 등록
-        window.addEventListener("pagehide", handlePageHide);
-
-        return () => {
-            // 리스너 제거
-            window.removeEventListener("pagehide", handlePageHide);
-        };
-    }, [roomId, unreadMessageIds]);
-
-    useEffect(() => {
-        const handlePageHide = (event) => {
-            console.log("Pagehide detected. Processing cleanup...");
-
-            const unreadMessagesCopy = [...unreadMessageIdsRef.current];
-            if (unreadMessagesCopy.length > 0) {
-                const payload = JSON.stringify({
-                    roomId: roomId,
-                    messageIds: unreadMessagesCopy,
-                });
-
-                if (navigator.sendBeacon) {
-                    try {
-                        navigator.sendBeacon(
-                            `${process.env.REACT_APP_API_URL}/read/bulk`,
-                            new Blob([payload], { type: 'application/json' })
-                        );
-                        console.log("Successfully sent bulk read status using sendBeacon.");
-                    } catch (error) {
-                        console.error("Error sending bulk read status using sendBeacon:", error);
-                    }
-                } else {
-                    fetch(`${process.env.REACT_APP_API_URL}/read/bulk`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: payload,
-                    }).then((response) => {
-                        if (response.ok) {
-                            console.log("Successfully sent bulk read status using fetch.");
-                        } else {
-                            console.error("Failed to mark messages as read using fetch.");
-                        }
-                    }).catch((error) => {
-                        console.error("Error sending bulk read status using fetch:", error);
-                    });
-                }
-            }
-
-            if (stompClientInstance) {
-                stompClientInstance.disconnect(() => {
-                    console.log("Disconnected from WebSocket: Chat");
-                });
-            }
-
-            props.changeAlarm(true);
-        };
-
-        window.addEventListener("pagehide", handlePageHide);
-
-        return () => {
-            window.removeEventListener("pagehide", handlePageHide);
-        };
-    }, [roomId, unreadMessageIdsRef, stompClientInstance]);
-
-    useEffect(() => {
-        // (async () => {
-        //     const result = fetch(`/api/chat/room/${roomId}`, {
-        //         method: 'GET',
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         }
-        //     })
-        //         .catch((err) => {
-        //             console.log(err);
-        //             alert('error: fetch fail');
-        //             setMessages(dummy_chat);
-        //         })
-        //         .then(response => response.json())
-        //         .then((data) => {
-        //             setMessages(() => data);
-        //         })
-        //         .catch((err) => {
-        //             console.log(err);
-        //
-        //         });
-        // })();
         if (!state || !state.chatMessages) {
             console.error("No initial chat messages provided. Defaulting to empty array.");
             setMessages([]);
@@ -385,46 +304,9 @@ const ChatPage = (props) => {
         setStompClient(stompClientInstance);
 
         return () => {
-            const unreadMessagesCopy = [...unreadMessageIdsRef.current]; // 최신 상태 복사
 
-            if (unreadMessagesCopy.length > 0) {
-                console.log("Unread messages to mark as read:", unreadMessagesCopy);
-
-                const payload = JSON.stringify({
-                    roomId: roomId,
-                    messageIds: unreadMessagesCopy,
-                });
-
-                if (navigator.sendBeacon) {
-                    try {
-                        navigator.sendBeacon(
-                            `${process.env.REACT_APP_API_URL}/read/bulk`,
-                            new Blob([payload], { type: 'application/json' })
-                        );
-                        console.log("Successfully sent bulk read status using sendBeacon.");
-                    } catch (error) {
-                        console.error("Error sending bulk read status using sendBeacon:", error);
-                    }
-                } else {
-                    fetch(`${process.env.REACT_APP_API_URL}/read/bulk`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: payload,
-                    }).then((response) => {
-                        if (response.ok) {
-                            console.log("Successfully sent bulk read status using fetch.");
-                        } else {
-                            console.error("Failed to mark messages as read using fetch.");
-                        }
-                    }).catch((error) => {
-                        console.error("Error sending bulk read status using fetch:", error);
-                    });
-                }
-            } else {
-                console.log("No unread messages to mark as read.");
-            }
+            console.log("WebSocket disconnect detected. Sending leave API request...");
+            leaveChatRoom();
 
             if (stompClientInstance) {
                 stompClientInstance.disconnect(() => {
@@ -434,7 +316,7 @@ const ChatPage = (props) => {
 
             props.changeAlarm(true);
         };
-    }, [roomId, state, props, unreadMessageIds]);
+    }, [roomId, state, props, navigate]);
 
     return (
         messages ? (
