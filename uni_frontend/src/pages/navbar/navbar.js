@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import './navbar.css';
 
-import languageIcon from './language-icon.png'; // 언어 아이콘 이미지 경로
+import languageIcon from '../../../public/language-icon.png'; // 언어 아이콘 이미지 경로
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
 
