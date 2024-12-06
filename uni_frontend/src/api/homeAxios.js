@@ -9,7 +9,7 @@ if(language) {
     homeInstance.defaults.headers.common['Accept-language'] = language;
 }
 
-const getSearch = async ({params}) => {
+const getSearch = async (params) => {
     const response = await homeInstance.get(`/api/home?${params}`);
     return response.data;
 };

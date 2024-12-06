@@ -23,10 +23,16 @@ const postQnaLike = async ({userId, qnaId}) => {
     return response.data;
 };
 
+const deleteReply = async ({replyId}) => {
+    const response = await instance.delete(`/api/replies/${replyId}`);
+    return response.data;
+};
+
 export {
     getQna,
     postQna,
     postQnaReply,
     deleteQna,
-    postQnaLike
+    postQnaLike,
+    deleteReply
 }

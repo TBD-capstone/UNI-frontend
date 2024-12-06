@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { useTranslation } from 'react-i18next';
 import './mainpage.css';
+import {getSearch} from "../../api/homeAxios";
 
 const categories = [
     { icon: './icons/travel-guide.png', label: 'trip' },
@@ -52,9 +53,13 @@ const ProfileGrid = () => {
             if (hashtags.length > 0) {
                 params.append('hashtags', hashtags.join(','));
             }
+            const profileParams = `${params.toString()}`;
+            console.log(profileParams);
 
-            const profileUrl = `/api/home?${params.toString()}`;
-            const profileData = await fetchWithLanguage(profileUrl);
+            const profileData = await getSearch(profileParams);
+
+            // const profileUrl = `/api/home?${params.toString()}`;
+            // const profileData = await fetchWithLanguage(profileUrl);
 
             const fetchedProfiles = profileData.content || [];
             setProfiles(fetchedProfiles);

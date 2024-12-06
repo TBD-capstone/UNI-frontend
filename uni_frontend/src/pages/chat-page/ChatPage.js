@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { IoIosArrowDropupCircle } from "react-icons/io";
 import { MdGTranslate } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import {getChatTranslate, postChatRoomLeave} from "../../api/chatAxios";
 
 
 const ChatPage = (props) => {
@@ -32,15 +33,9 @@ const ChatPage = (props) => {
         console.log("Attempting to leave chat room with roomId:", roomId);
 
         try {
-            const response = await fetch(apiURL, {
-                method: "POST",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
+            const response = await postChatRoomLeave(roomId);
 
-            if (response.ok) {
+            if (response.status === 200) {
                 console.log("Successfully left the chat room.");
             } else {
                 console.error("Failed to leave the chat room. Response:", response.status, response.statusText);
@@ -138,30 +133,8 @@ const ChatPage = (props) => {
                 setShowTranslate(() => true);
                 if (!translatedChat) {
                     (async () => {
-                        fetch(`/api/chat/translate/${props.messageId}`, {
-                            method: 'GET',
-                            headers: language ?
-                                {
-                                    'Content-Type': 'application/json',
-                                    'Accept-language': language
-                                } :
-                                {
-                                    'Content-Type': 'application/json'
-
-                                }
-                        })
-                            .catch((err) => {
-                                console.log(err);
-                                alert('error: fetch fail');
-                            })
-                            .then((response) => response.text())
-                            .then((data) => {
-                                console.log(data);
-                                setTranslatedChat(() => data);
-                            })
-                            .catch((err) => {
-                                console.log(err);
-                            });
+                        const data = getChatTranslate(props.messageId);
+                        setTranslatedChat(() => data);
                     })();
                 }
             }
@@ -269,7 +242,7 @@ const ChatPage = (props) => {
 
         props.changeAlarm(false);
 
-        stompClientInstance.connect({}, () => {
+        stompClientInstance.connect({Authorization: `Bearer ${localStorage.getItem('accessToken')}`}, () => {
 
             // 메시지 읽음 처리 WebSocket 메시지 전송
             stompClientInstance.send("/pub/enter", {}, roomId);

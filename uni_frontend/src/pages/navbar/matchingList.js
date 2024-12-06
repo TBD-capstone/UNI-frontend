@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import './matchingList.css';
+import {getMyData} from "../../api/userAxios";
+import {getReceiveMatchList, getRequestMatchList} from "../../api/matchAxios";
 
 function MatchingStatus() {
     const { userId: paramUserId } = useParams(); // URL에서 userId 가져오기
@@ -16,7 +18,7 @@ function MatchingStatus() {
     useEffect(() => {
         const fetchMatches = async () => {
             try {
-                const koreanStatus = Cookies.get('isKorean') === 'true'; // 쿠키에서 한국인 여부 확인
+                const koreanStatus = getMyData().isKorean; // 쿠키에서 한국인 여부 확인
                 setIsKorean(koreanStatus);
 
                 if (!userId) {
@@ -24,14 +26,16 @@ function MatchingStatus() {
                     return;
                 }
 
-                const apiUrl = koreanStatus
+                const apiParams = koreanStatus
                     ? `/api/match/list/receiver/${userId}` // 한국인일 경우 수신자로 검색
                     : `/api/match/list/requester/${userId}`; // 외국인일 경우 요청자로 검색
 
-                const response = await fetch(apiUrl);
-                const data = await response.json();
+                const response = koreanStatus
+                    ? await getReceiveMatchList(userId)
+                    : await getRequestMatchList(userId);
+                const data = await response.data;
 
-                if (response.ok) {
+                if (response.status === 200) {
                     // 매칭 데이터를 시간 기준으로 내림차순 정렬
                     const sortedMatches = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                     setMatches(sortedMatches);

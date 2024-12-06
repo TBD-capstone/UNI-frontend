@@ -1,6 +1,7 @@
 import {useTranslation} from "react-i18next";
 import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
+import {postForgotPassword, postResetPassword} from "../../api/authAxios";
 
 const Forget = () => {
     const {t} = useTranslation();
@@ -10,51 +11,22 @@ const Forget = () => {
     const [newPassword, setNewPassword] = useState('');
     const [emailVerification, setEmailVerification] = useState('pending');
 
-    const handleVerification = () => {
-        fetch('/api/auth/forgot-password', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({email: email})
-        })
-            .catch((err) => {
-                console.log(err);
-                alert('error: fetch fail');
-            })
-            .then((response) => response.json())
-            .then((data) => {
-                setEmailVerification(() => data.status);
-            }).catch((err) => {
-            console.log(err);
-            alert('error: fetch fail');
+    const handleVerification = async () => {
+        const data = await postForgotPassword({email: email});
+        setEmailVerification(() => data.status);
+    };
+    const handleEdit = async () => {
+        const data = await postResetPassword({
+            email: email,
+            code: verificationCode,
+            newPassword: newPassword
         });
-    }
-    const handleEdit = () => {
-        fetch('/api/auth/reset-password', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                email: email,
-                code: verificationCode,
-                newPassword: newPassword
-            })
-        })
-            .catch((err) => {
-                console.log(err);
-                alert('error: fetch fail');
-            })
-            .then((response) => response.json())
-            .then((data) => {
-                if(data.status === 'success') {
-                    alert('비밀번호 초기화 성공, 로그인 페이지로 넘어갑니다.');
-                    navigate('/login');
-                }
-                else {
-                    alert('초기화 실패, 코드를 다시 확인해주세요.');
-                }
-            }).catch((err) => {
-            console.log(err);
-            alert('error: fetch fail');
-        });
+        if (data.status === 'success') {
+            alert('비밀번호 초기화 성공, 로그인 페이지로 넘어갑니다.');
+            navigate('/login');
+        } else {
+            alert('초기화 실패, 코드를 다시 확인해주세요.');
+        }
     }
     return (
         <div className="login-page">

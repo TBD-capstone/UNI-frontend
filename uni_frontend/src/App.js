@@ -13,7 +13,7 @@ import MatchingStatus from './pages/navbar/matchingList';
 import ChatList from './pages/navbar/chatList';
 import Review from './pages/review-page/review';
 import Forget from "./pages/login-page/Forgat";
-import usePushNotification from "./Alarm";
+import usePushNotification from "./hooks/usePushNotification";
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
 

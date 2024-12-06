@@ -2,9 +2,13 @@ import axios from "axios";
 
 const authInstance = axios.create();
 authInstance.defaults.baseURL = process.env.REACT_APP_API_URL;
+authInstance.defaults.headers.common['Content-Type'] = 'application/json';
 
-const postLogin = async ({loginData}) => {
-    const response = await authInstance.post('/api/auth/login', loginData);
+const postLogin = async ({email, password}) => {
+    const response = await authInstance.post('/api/auth/login', {
+        email: email,
+        password: password,
+    });
     return response.data;
 };
 const postLogout = async () => {
@@ -31,12 +35,18 @@ const postVerify = async ({data}) => {
     return response.data;
 };
 
-const postForgotPassword = async ({data}) => {
-    const response = await authInstance.post('/api/auth/forgot-password', data);
+const postForgotPassword = async ({email}) => {
+    const response = await authInstance.post('/api/auth/forgot-password', {
+        email
+    });
     return response.data;
 };
-const postResetPassword = async ({data}) => {
-    const response = await authInstance.post('/api/auth/reset-password', data);
+const postResetPassword = async ({email, code, newPassword}) => {
+    const response = await authInstance.post('/api/auth/reset-password', {
+        email,
+        code,
+        newPassword
+    });
     return response.data;
 };
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // useNavigate 사용
 import Cookies from 'js-cookie';
 import './chatList.css';
+import {getChatRoom} from "../../api/chatAxios";
 
 function ChatList() {
     const [chatRooms, setChatRooms] = useState([]); // 채팅 목록
@@ -21,10 +22,10 @@ function ChatList() {
                     return;
                 }
 
-                const response = await fetch(`/api/chat/rooms`);
-                const data = await response.json();
+                const response = await getChatRoom();
+                const data = await response.data;
 
-                if (response.ok) {
+                if (response.status === 200) {
                     // 채팅방 데이터를 최신 메시지를 기준으로 내림차순 정렬
                     const sortedChatRooms = data.sort((a, b) => {
                         const lastMessageA = a.chatMessages[a.chatMessages.length - 1];

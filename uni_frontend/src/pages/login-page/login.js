@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import './login.css';
 import { useTranslation } from "react-i18next";
+import {postLogin} from "../../api/authAxios";
 
 function Login() {
     const { t } = useTranslation();
@@ -19,40 +20,52 @@ function Login() {
         e.preventDefault();
 
         try {
-            const response = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email: email,
-                    password: password,
-                }),
+            console.log({
+                email: email,
+                password: password,
             });
+            const data = await postLogin({
+                email: email,
+                password: password,
+            });
+            console.log(data);
 
-            const data = await response.json();
-            console.log('로그인 응답 데이터:', data); // 응답 데이터 확인
+            // const response = await fetch('/api/auth/login', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify({
+            //         email: email,
+            //         password: password,
+            //     }),
+            // });
+            //
+            // const data = await response.json();
+            // console.log('로그인 응답 데이터:', data); // 응답 데이터 확인
 
             if (data.status === 'success') {
+                localStorage.setItem('accessToken', data.accessToken);
+                localStorage.setItem('refreshToken', data.refreshToken);
                 // 이전에 저장된 쿠키 제거
                 Cookies.remove('userName', { path: '/' });
                 Cookies.remove('userId', { path: '/' });
-                Cookies.remove('isKorean', { path: '/' });
-                Cookies.remove('imgProf',  { path: '/' });
-                Cookies.remove('imgBack',  { path: '/' });
-
-                // 새 로그인 정보 저장
+                // Cookies.remove('isKorean', { path: '/' });
+                // Cookies.remove('imgProf',  { path: '/' });
+                // Cookies.remove('imgBack',  { path: '/' });
+                //
+                // // 새 로그인 정보 저장
                 Cookies.set('userName', data.userName, { expires: 1, path: '/' });
                 Cookies.set('userId', data.userId, { expires: 1, path: '/' });
-                Cookies.set('isKorean', data.isKorean, { expires: 1, path: '/' });
-                Cookies.set('imgProf', data.imgProf, { expires: 1, path: '/' });
-                Cookies.set('imgBack', data.imgBack, { expires: 1, path: '/' });
-
+                // Cookies.set('isKorean', data.isKorean, { expires: 1, path: '/' });
+                // Cookies.set('imgProf', data.imgProf, { expires: 1, path: '/' });
+                // Cookies.set('imgBack', data.imgBack, { expires: 1, path: '/' });
+                //
                 console.log('유저 이름:', Cookies.get('userName'));
                 console.log('유저 ID:', Cookies.get('userId'));
-                console.log('한국인 여부:', Cookies.get('isKorean'));
-                console.log('프로필 이미지:', Cookies.get('imgProf'));
-                console.log('배경화면 이미지:', Cookies.get('imgBack'));
+                // console.log('한국인 여부:', Cookies.get('isKorean'));
+                // console.log('프로필 이미지:', Cookies.get('imgProf'));
+                // console.log('배경화면 이미지:', Cookies.get('imgBack'));
 
                 alert(data.message || t("loginPage.status_messages.success"));
                 navigate('/main'); // 메인 페이지로 이동

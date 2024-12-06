@@ -6,6 +6,11 @@ import Cookies from "js-cookie";
 import {useTranslation} from "react-i18next";
 import ReportModal from "../../components/modal/ReportModal";
 import {FaStar} from "react-icons/fa6";
+import {postRequestChat} from "../../api/chatAxios";
+import {deleteQna, deleteReply, getQna, postQnaReply} from "../../api/qnaAxios";
+import {getReview} from "../../api/reviewAxios";
+import {getUserData} from "../../api/userAxios";
+import {getMarkers} from "../../api/markerAxios";
 
 const UserPage = () => {
     const basicProfileImage = '/profile-image.png'
@@ -33,28 +38,11 @@ const UserPage = () => {
             navigate('/user/edit');
         };
         const handleClickChat = () => {
-            fetch("/api/chat/request", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({"receiverId": userId})
-            })
-                .catch((err) => {
-                    console.log(err);
-                    alert(t("userPage.chat_error"));
-                })
-                .then(response => response.json())
-                .then((data) => {
-                    navigate(`/chat/${data.chatRoomId}`, {
-                        state: data
-                    });
-                    console.log(data);
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        }
+            (async () => {
+                const data = await postRequestChat({receiverId: userId});
+                navigate(`/chat/${data.chatRoomId}`, {state: data});
+            })();
+        };
         return (
             <div className="button-section">
                 {props.owner ?
@@ -79,32 +67,19 @@ const UserPage = () => {
     const QnaSection = (props) => {
         const handleDeleteQna = (qnaId) => {
             return () => {
-                fetch(`/api/qnas/${qnaId}`, {
-                    method: "DELETE",
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
-                })
-                    .catch((err) => {
-                        console.log(err);
-                        alert(t("userPage.delete_error"));
-                    });
+                deleteQna(qnaId).catch((err) => {
+                    console.log(err);
+                    alert(t("userPage.delete_error"));
+                });
             };
         };
 
         const handleDeleteReply = (replyId) => {
             return () => {
-                fetch(`/api/replies/${replyId}`, {
-                    method: "DELETE",
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
-                })
-                    .then((response) => console.log(response))
-                    .catch((err) => {
-                        console.log(err);
-                        alert(t("userPage.delete_error"));
-                    });
+                deleteReply(replyId).catch((err) => {
+                    console.log(err);
+                    alert(t("userPage.delete_error"));
+                });
             };
         };
 
@@ -258,13 +233,7 @@ const UserPage = () => {
             }
             const handleClickPost = async () => {
                 const fetchPOST = () => {
-                    fetch(`/api/review/${props.reviewId}/reply/${props.commenterId}`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({"content": content})
-                    })
+                    postQnaReply({reviewId: props.reviewId, commenterId: props.commenterId})
                         .catch((err) => {
                             console.log(err);
                             alert(t("userPage.chat_error"));
@@ -326,23 +295,7 @@ const UserPage = () => {
     }
 
     function fetchGetQnas(userId) {
-        return fetch(`/api/user/${userId}/qnas`, {
-            method: 'GET',
-            headers: language ?
-                {
-                    'Content-Type': 'application/json',
-                    'Accept-language': language
-                } :
-                {
-                    'Content-Type': 'application/json'
-                }
-        })
-            .catch((err) => {
-                console.log(err);
-                // alert('loading fail');
-            })
-            .then(response => response.json())
-            .then((data) => {
+        return getQna({userId}).then((data) => {
                 setQnas((prev) => {
                     if (prev !== data) {
                         return data;
@@ -357,23 +310,7 @@ const UserPage = () => {
     }
 
     function fetchGetReivews(userId) {
-        return fetch(`/api/review/${userId}`, {
-            method: 'GET',
-            headers: language ?
-                {
-                    'Content-Type': 'application/json',
-                    'Accept-language': language
-                } :
-                {
-                    'Content-Type': 'application/json'
-                }
-        })
-            .catch((err) => {
-                console.log(err);
-                alert('error: review fetch fail');
-            })
-            .then(response => response.json())
-            .then((data) => {
+        return getReview({userId}).then((data) => {
                 setReviews(() => data);
                 // console.log(data); // for debug
             })
@@ -386,50 +323,14 @@ const UserPage = () => {
         (async () => {
             if (!userId)
                 return;
-            await fetch(`/api/user/${userId}`, {
-                method: 'GET',
-                headers: language ?
-                    {
-                        'Content-Type': 'application/json',
-                        'Accept-language': language
-                    } :
-                    {
-                        'Content-Type': 'application/json'
-                    }
-            })
-                .catch((err) => {
-                    console.log(err);
-                    // alert('error: user fetch fail');
-                })
-                .then(response => {
-                    if (!response.ok)
-                        throw new Error('GET fail');
-                    return response.json();
-                })
-                .then((data) => {
+            await getUserData({userId}).then((data) => {
                     setUser(() => data);
                     console.log(data); // for debug
                 })
                 .catch((err) => {
                     console.error(err);
                 });
-            await fetch(`/api/markers/user/${userId}`, {
-                method: 'GET',
-                headers: language ?
-                    {
-                        'Content-Type': 'application/json',
-                        'Accept-language': language
-                    } :
-                    {
-                        'Content-Type': 'application/json'
-                    }
-            })
-                .catch((err) => {
-                    console.log(err);
-                    // alert('error: markers fetch fail');
-                })
-                .then(response => response.json())
-                .then((data) => {
+            await getMarkers({userId}).then((data) => {
                     setMarkers(() => data);
                 })
                 .catch((err) => {

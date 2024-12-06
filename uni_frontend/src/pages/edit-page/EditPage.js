@@ -6,6 +6,8 @@ import GoogleMap from "../../components/GoogleMap";
 import {useTranslation} from "react-i18next";
 import EditModal from "../../components/modal/EditModal.js";
 import TimeSelector from "../../components/TimeSelector";
+import {getMyData, getUserData, postUserData, postUserImage} from "../../api/userAxios";
+import {deleteMarker, getMarkers, postAddMarker} from "../../api/markerAxios";
 
 const EditMarkerInput = (props) => {
     const t = useTranslation();
@@ -26,7 +28,7 @@ const EditMarkerInput = (props) => {
         setMarkerDescription(() => e.target.value);
     }
 
-    const handleClickAdd = () => {
+    const handleClickAdd = async () => {
         if (!props.position || markerName.trim() === "" || markerDescription.trim() === "") {
             alert(t('editPage.no_marker_data'));
             return;
@@ -35,29 +37,18 @@ const EditMarkerInput = (props) => {
             alert(t('editPage.duplicated_title'));
             return;
         }
-        fetch(`/api/markers/add/${props.userId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
+        await postAddMarker({
+            userId: props.userId, data: {
                 latitude: props.position.latitude,
                 longitude: props.position.longitude,
                 name: markerName,
                 description: markerDescription
-            })
-        })
-            .then((response) => {
-                console.log(response.json());
-                props.mapClose();
-                // alert("Marker add Success!");
-            })
-            .catch((err) => {
-                console.log(err);
-                alert('error: fetch fail');
-            });
+            }
+        });
+
+        props.mapClose();
     }
-    const handleClickDelete = () => {
+    const handleClickDelete = async () => {
         if (markerName.trim() === "") {
             alert(t('editPage.no_title'));
             return;
@@ -67,21 +58,8 @@ const EditMarkerInput = (props) => {
             alert(t('editPage.no_target_marker'));
             return;
         }
-        const result = fetch(`/api/markers/delete/${props.markers[i].id}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then((response) => {
-                console.log(response.json());
-                props.mapClose();
-                // alert("Marker delete Success!");
-            })
-            .catch((err) => {
-                console.log(err);
-                alert('error: fetch fail');
-            });
+        await deleteMarker(props.markers[i].id);
+        props.mapClose();
     }
 
     return <>
@@ -214,22 +192,10 @@ const EditPage = () => {
     const handleClickComplete = () => {
         navigate(`/user/${user.userId}`);
     };
-    const handleClickEdit = () => {
-        fetch(`/api/user/${userId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify
-            (user)
-        })
-            .then(() => {
-                setIsOpenBasic(() => false);
-                //     alert("Success");
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+    const handleClickEdit = async () => {
+        await postUserData({userId, user});
+
+        setIsOpenBasic(() => false);
     };
 
 
@@ -258,7 +224,7 @@ const EditPage = () => {
         }
     }
 
-    const handleClickSubmit = (e) => {
+    const handleClickSubmit = async (e) => {
         e.preventDefault();
 
         if (!profileImage && !backgroundImage)
@@ -270,18 +236,10 @@ const EditPage = () => {
         if (backgroundImage)
             formData.append('backgroundImage', backgroundImage);
 
-        fetch(`/api/user/${userId}/update-profile`, {
-            method: 'POST',
-            body: formData
-        }).then(response => response.json())
-            .then((data) => {
-                setUser((prev) => ({...prev, imgBack: data.imgBack, imgProf: data.imgProf}));
-                setIsOpenImage(() => false);
-                alert('Upload Success!');
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        const data = await postUserImage({userId, formData});
+
+        setUser((prev) => ({...prev, imgBack: data.imgBack, imgProf: data.imgProf}));
+        setIsOpenImage(() => false);
     };
 
     const setting = (latLng) => {
@@ -329,58 +287,19 @@ const EditPage = () => {
 
     useEffect(() => {
         (async () => {
-            const result = await fetch('/api/user/me', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .catch((err) => {
-                    console.log(err);
-                    alert('error: fetch fail');
-                })
-                .then(response => response.json());
+            const result = await getMyData();
             setUserId(() => result.userId);
-            await fetch(`/api/user/${result.userId}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .catch((err) => {
-                    console.log(err);
-                    alert('error: fetch fail');
-                })
-                .then(response => response.json())
-                .then((data) => {
-                    setUser(() => data);
-                    if (data.time) {
-                        setTime(() => data.time.split('-'));
-                    } else {
-                        setTime(['12', 'am', '12', 'am']);
-                    }
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-            await fetch(`/api/markers/user/${userId}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .catch((err) => {
-                    console.log(err);
-                    alert('error: fetch fail');
-                })
-                .then(response => response.json())
-                .then((data) => {
-                    console.log(data);
-                    setMarkers(() => data);
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
+            const userData = await getUserData(result.userId);
+
+            setUser(() => userData);
+            if (userData.time) {
+                setTime(() => userData.time.split('-'));
+            } else {
+                setTime(['12', 'am', '12', 'am']);
+            }
+
+            const markerData = await getMarkers(userId);
+            setMarkers(() => markerData);
         })();
     }, [userId]);
 
