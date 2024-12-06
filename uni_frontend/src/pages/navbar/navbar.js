@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import './navbar.css';
-
-import languageIcon from '../../../public/language-icon.png'; // 언어 아이콘 이미지 경로
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
 
@@ -81,7 +79,7 @@ function Navbar({ selectedLanguage, fetchWithLanguage }) {
             <div className="menu-icons">
                 <div className="language-icon-container">
                     <img
-                        src={languageIcon}
+                        src='/language-icon.png'
                         alt="언어 변경"
                         className="language-icon"
                         onClick={toggleLanguageMenu}
