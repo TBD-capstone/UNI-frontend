@@ -1,21 +1,28 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 
-// 기본 axios 인스턴스
-export const basicAxios = axios.create({
-    baseURL: process.env.REACT_APP_REQ_URL,
-    headers: {
-        "Content-Type": "application/json",
 
-    },
-});
-// API 호출 함수
-// export const apiClient = (method, url, data = null, params = null) => {
-//     const client = basicAxios;
-//
-//     return client({
-//         method,
-//         url,
-//         data: method === "get" ? null : data, // GET 요청 시 data를 제외
-//         params: method === "get" ? params : null, // GET 요청 시 params 전달
-//     });
-// };
+const language = Cookies.get('language');
+const instance = axios.create();
+
+instance.defaults.baseURL = process.env.REACT_APP_API_URL;
+if(language) {
+    instance.defaults.headers.common['Accept-language'] = language;
+}
+
+// 요청 인터셉터
+// instance.interceptors.request.use(
+//     (config) => {
+//         // 헤더에 엑세스 토큰 담기
+//         const accessToken= localStorage.getItem('accessToken');
+//         if (accessToken) {
+//             config.headers.Authorization = `Bearer ${accessToken}`;
+//         }
+//         return config;
+//     },
+//     (error) => {
+//         return Promise.reject(error);
+//     },
+// );
+
+export default instance;
