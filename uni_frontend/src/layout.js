@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import Navbar from './navbar'; // 상단바 컴포넌트
+import Navbar from './pages/navbar/navbar'; // 상단바 컴포넌트
 
 function Layout() {
     return (

@@ -4,7 +4,31 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7141e09f-2a8e-40b4-9e35-8450a5e64986" name="Changes" comment="[HOTFIX] 카테고리 번역 키 추가 작성" />
+    <list default="true" id="7141e09f-2a8e-40b4-9e35-8450a5e64986" name="Changes" comment="[HOTFIX] 카테고리 번역 키 추가 작성">
+      <change afterPath="$PROJECT_DIR$/1" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/Register.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/pages/register-page/Register.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/Register.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/pages/register-page/Register.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/admin.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/pages/admin-page/admin.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/pages/admin-page/admin.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/chatList.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/pages/navbar/chatList.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/chatList.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/pages/navbar/chatList.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/language-icon.png" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/public/language-icon.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/layout.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/layout.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/login.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/pages/login-page/login.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/login.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/pages/login-page/login.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/logo.svg" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/public/logo.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/mainpage.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/pages/main-page/mainpage.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/mainpage.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/pages/main-page/mainpage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/matchingList.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/pages/navbar/matchingList.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/matchingList.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/pages/navbar/matchingList.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/navbar.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/pages/navbar/navbar.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/navbar.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/pages/navbar/navbar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/review(ver.1).js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/review.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/pages/review-page/review.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/review.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/pages/review-page/review.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -21,7 +45,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="029aaec88ed2c21ddcded04f2a262e9ff59e0247" />
+        <entry key="$PROJECT_DIR$" value="dev" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -66,7 +90,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "53-mainpage__hashtag__search",
+    "git-widget-placeholder": "68-fix-dir-structure",
     "last_opened_file_path": "C:/Users/asdf9/OneDrive/바탕 화면/School/4-2/캡스톤/frontend",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
@@ -81,8 +105,11 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\asdf9\OneDrive\바탕 화면\School\4-2\캡스톤\frontend\UNI-frontend\uni_frontend\src\pages\review-page" />
       <recent name="C:\Users\asdf9\OneDrive\바탕 화면\School\4-2\캡스톤\frontend\UNI-frontend\uni_frontend\public" />
-      <recent name="C:\Users\asdf9\OneDrive\바탕 화면\School\4-2\캡스톤\frontend\UNI-frontend\uni_frontend\src" />
+      <recent name="C:\Users\asdf9\OneDrive\바탕 화면\School\4-2\캡스톤\frontend\UNI-frontend\uni_frontend\src\pages\signup-page" />
+      <recent name="C:\Users\asdf9\OneDrive\바탕 화면\School\4-2\캡스톤\frontend\UNI-frontend\uni_frontend\src\pages\login-page" />
+      <recent name="C:\Users\asdf9\OneDrive\바탕 화면\School\4-2\캡스톤\frontend\UNI-frontend\uni_frontend\src\pages\navbar" />
     </key>
   </component>
   <component name="RunManager" selected="Node.js.App.js">
@@ -95,10 +122,10 @@
       <test-file value="$PROJECT_DIR$/uni_frontend/src/App.test.js" />
       <method v="2" />
     </configuration>
-    <configuration name="App.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/uni_frontend/src/App.js" working-dir="$PROJECT_DIR$/uni_frontend/src">
+    <configuration name="App.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/uni_frontend/src/pages/style/App.js" working-dir="$PROJECT_DIR$/uni_frontend/src">
       <method v="2" />
     </configuration>
-    <configuration name="Register.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/uni_frontend/src/Register.js" working-dir="$PROJECT_DIR$/uni_frontend/src">
+    <configuration name="Register.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/uni_frontend/src/pages/register-page/Register.js" working-dir="$PROJECT_DIR$/uni_frontend/src">
       <method v="2" />
     </configuration>
     <recent_temporary>
@@ -151,6 +178,7 @@
       <workItem from="1733135106582" duration="2722000" />
       <workItem from="1733226472059" duration="22730000" />
       <workItem from="1733273602364" duration="2103000" />
+      <workItem from="1733479556205" duration="866000" />
     </task>
     <servers />
   </component>

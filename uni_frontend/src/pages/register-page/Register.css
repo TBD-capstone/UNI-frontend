@@ -14,7 +14,7 @@
 .main-logo {
     width: 150px;
     height: 150px;
-    background-image: url('../public/UNI_Logo.png');
+    background-image: url('../../../public/UNI_Logo.png');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
