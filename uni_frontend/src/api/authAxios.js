@@ -3,15 +3,15 @@ import axios from "axios";
 const authInstance = axios.create();
 authInstance.defaults.baseURL = process.env.REACT_APP_API_URL;
 
-const login = async ({loginData}) => {
+const postLogin = async ({loginData}) => {
     const response = await authInstance.post('/api/auth/login', loginData);
     return response.data;
 };
-const logout = async () => {
+const postLogout = async () => {
     const response = await authInstance.post('/api/auth/logout');
     return response.data;
 };
-const signup = async ({signupData}) => {
+const postSignup = async ({signupData}) => {
     const response = await authInstance.post('/api/user/signup', signupData);
     return response.data;
 };
@@ -41,9 +41,9 @@ const postResetPassword = async ({data}) => {
 };
 
 export {
-    login,
-    logout,
-    signup,
+    postLogin,
+    postLogout,
+    postSignup,
     getUniv,
     postVerify,
     postValidate,
