@@ -164,6 +164,7 @@ const ProfileGrid = () => {
                         onChange={(selectedOption) => setSelectedUniversity(selectedOption?.value || '')} // 값 선택 핸들러
                         placeholder={t('대학교 선택')} // 기본 안내 문구
                         isSearchable // 검색 가능 여부 추가
+                        isClearable // 선택 취소 가능하도록 추가
                     />
                     <input
                         type="text"
