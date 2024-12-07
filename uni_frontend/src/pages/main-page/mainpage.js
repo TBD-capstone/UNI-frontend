@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { useTranslation } from 'react-i18next';
 import './mainpage.css';
+import Select from "react-select";
 
 const categories = [
     { icon: './icons/travel-guide.png', label: 'trip' },
@@ -33,6 +34,8 @@ const ProfileGrid = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isProfilesEmpty, setIsProfilesEmpty] = useState(false);
     const [totalPages, setTotalPages] = useState(1); // 페이지 수 상태 추가
+    const [univList, setUnivList] = useState([]); // 대학 리스트 상태
+    const [selectedUniversity, setSelectedUniversity] = useState(''); // 선택된 대학 상태
 
 
     const fetchWithLanguage = async (url, options = {}) => {
@@ -55,6 +58,9 @@ const ProfileGrid = () => {
             if (hashtags.length > 0) {
                 params.append('hashtags', hashtags.join(','));
             }
+            if (selectedUniversity) {
+                params.append('univName', selectedUniversity); // 대학 필터 추가 (univName 사용)
+            }
 
             const profileUrl = `/api/home?${params.toString()}`;
             const profileData = await fetchWithLanguage(profileUrl);
@@ -72,6 +78,32 @@ const ProfileGrid = () => {
             setIsLoading(false);
         }
     };
+    useEffect(() => {
+        const fetchUnivList = async () => {
+            try {
+                const response = await fetch(`/api/auth/univ`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await response.json();
+
+                if (Array.isArray(data)) {
+                    setUnivList(
+                        data.map((university) => ({
+                            value: university.univName, // react-select에 사용할 값
+                            label: university.univName // react-select에 표시할 라벨
+                        }))
+                    );
+                } else {
+                    console.error("대학 리스트를 가져오지 못했습니다.");
+                }
+            } catch (error) {
+                console.error("대학 리스트를 가져오는 중 오류가 발생했습니다:", error);
+            }
+        };
+
+        fetchUnivList();
+    }, []);
 
 
     useEffect(() => {
@@ -82,24 +114,17 @@ const ProfileGrid = () => {
         setCurrentPage(page); // 페이지 상태 업데이트
     };
 
-    const updateSearchQuery = (updatedHashtags) => {
-        setSearchQuery(updatedHashtags.map(tag => `#${tag}`).join(' ')); // 검색창 값 업데이트
-    };
-
     const handleCategoryClick = (label) => {
         const categoryHashtag = t(`mainpage.categories.${label}`);
         if (hashtags.includes(categoryHashtag)) {
             // 해시태그 제거
-            const updatedHashtags = hashtags.filter((tag) => tag !== categoryHashtag);
-            setHashtags(updatedHashtags);
-            updateSearchQuery(updatedHashtags);
+            setHashtags(hashtags.filter((tag) => tag !== categoryHashtag));
         } else {
             // 해시태그 추가
-            const updatedHashtags = [...hashtags, categoryHashtag];
-            setHashtags(updatedHashtags);
-            updateSearchQuery(updatedHashtags);
+            setHashtags([...hashtags, categoryHashtag]);
         }
     };
+
 
     const handleSearchInputChange = (e) => {
         const input = e.target.value;
@@ -133,6 +158,13 @@ const ProfileGrid = () => {
 
             <div className="header">
                 <div className="search-bar">
+                    <Select
+                        className="university-dropdown"
+                        options={univList} // 대학 리스트
+                        onChange={(selectedOption) => setSelectedUniversity(selectedOption?.value || '')} // 값 선택 핸들러
+                        placeholder={t('대학교 선택')} // 기본 안내 문구
+                        isSearchable // 검색 가능 여부 추가
+                    />
                     <input
                         type="text"
                         placeholder={t('mainpage.search_placeholder')}
