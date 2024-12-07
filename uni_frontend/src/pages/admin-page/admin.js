@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './admin.css';
 import { useNavigate } from 'react-router-dom';
+import Modal from "../../components/modal/Modal";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -17,6 +18,8 @@ function AdminPage() {
     const [banDays, setBanDays] = useState({});
     const [adForm, setAdForm] = useState({ advertiser: '', title: '', startDate: '', endDate: '' });
     const [adImage, setAdImage] = useState(null);
+    const [selectedReportedUser, setSelectedReportedUser] = useState(null); // 선택된 신고 유저
+
 
     const navigate = useNavigate();
 
@@ -78,11 +81,59 @@ function AdminPage() {
         }
     };
 
+    const handleReportClick = (user) => {
+        setSelectedReportedUser(user); // 선택된 유저 저장
+    };
+
+    const handleCloseModal = () => {
+        setSelectedReportedUser(null); // 모달 닫기
+    };
+
+    const handleBanUser = () => {
+        if (selectedReportedUser) {
+            updateUserStatus(selectedReportedUser.userId, 'BANNED');
+            handleCloseModal(); // 모달 닫기
+        }
+    };
+
+
     const toggleAdDetails = (adId) => {
         if (expandedAdId === adId) {
             setExpandedAdId(null);
         } else {
             setExpandedAdId(adId);
+        }
+    };
+    const toggleAdStatus = async (adId, currentStatus) => {
+        const newStatus = currentStatus === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+        console.log('현재 상태:', currentStatus);
+        console.log('변경할 상태:', newStatus);
+        console.log('전송 데이터:', { adId, status: newStatus });
+
+        const url = `/api/admin/ad`;
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ adId, status: newStatus }),
+            });
+            const result = await response.json();
+
+            if (result.message) {
+                alert(result.message);
+
+                // 상태 변경 후 UI 업데이트
+                setAdData((prevAdData) =>
+                    prevAdData.map((ad) =>
+                        ad.adId === adId ? { ...ad, adStatus: newStatus } : ad
+                    )
+                );
+            } else {
+                console.error('광고 상태 변경 실패:', result);
+            }
+        } catch (error) {
+            console.error('광고 상태 변경 중 오류 발생:', error);
         }
     };
 
@@ -193,30 +244,37 @@ function AdminPage() {
                         </thead>
                         <tbody>
                         {reportedUsers.map((user) => (
-                            <React.Fragment key={user.userId}>
-                                <tr onClick={() => toggleUserDetails(user.userId)}>
-                                    <td>{user.userId}</td>
-                                    <td>{user.email}</td>
-                                    <td>{user.reportCount}</td>
-                                </tr>
-                                {expandedUserId === user.userId && (
-                                    <tr>
-                                        <td colSpan="3">
-                                            {user.reports.map((report, index) => (
-                                                <div key={index}>
-                                                    <p><strong>카테고리:</strong> {report.category}</p>
-                                                    <p><strong>이유:</strong> {report.reason}</p>
-                                                    <p><strong>상세 내용:</strong> {report.detailedReason}</p>
-                                                </div>
-                                            ))}
-                                        </td>
-                                    </tr>
-                                )}
-                            </React.Fragment>
+                            <tr key={user.userId} onClick={() => handleReportClick(user)}>
+                                <td>{user.userId}</td>
+                                <td>{user.email}</td>
+                                <td>{user.reportCount}</td>
+                            </tr>
                         ))}
                         </tbody>
                     </table>
                     {renderPagination()}
+
+                    {selectedReportedUser && (
+                        <Modal isOpen={!!selectedReportedUser} handleClose={handleCloseModal}>
+                            <div>
+                                <h4>신고 상세 정보</h4>
+                                <p><strong>ID:</strong> {selectedReportedUser.userId}</p>
+                                <p><strong>Email:</strong> {selectedReportedUser.email}</p>
+                                <p><strong>신고 이유:</strong> {selectedReportedUser.reason}</p>
+                                <label>
+                                    밴 일수:
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        placeholder="일수를 입력하세요"
+                                        value={banDays[selectedReportedUser.userId] || ''}
+                                        onChange={(e) => handleBanDaysChange(e.target.value)}
+                                    />
+                                </label>
+                                <button onClick={handleBanUser}>밴 처리</button>
+                            </div>
+                        </Modal>
+                    )}
                 </div>
             )}
 
@@ -244,6 +302,10 @@ function AdminPage() {
                                         <td colSpan="3">
                                             <p><strong>상세 설명:</strong> {ad.description}</p>
                                             <p><strong>이미지:</strong> <img src={ad.imageUrl} alt="광고 이미지" /></p>
+                                            <p><strong>현재 상태:</strong> {ad.adStatus === 'ACTIVE' ? '게시 중' : '게시 안됨'}</p>
+                                            <button onClick={() => toggleAdStatus(ad.adId, ad.adStatus)}>
+                                                {ad.adStatus === 'ACTIVE' ? '게시 중지' : '게시하기'}
+                                            </button>
                                         </td>
                                     </tr>
                                 )}
