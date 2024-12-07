@@ -193,7 +193,13 @@ const EditPage = () => {
         navigate(`/user/${user.userId}`);
     };
     const handleClickEdit = async () => {
-        await postUserData({userId, user});
+        await postUserData({
+            userId: userId,
+            region: user.region,
+            description: user.description,
+            time: user.time,
+            hashtags: user.hashtags
+        });
 
         setIsOpenBasic(() => false);
     };
@@ -288,8 +294,9 @@ const EditPage = () => {
     useEffect(() => {
         (async () => {
             const result = await getMyData();
-            setUserId(() => result.userId);
-            const userData = await getUserData(result.userId);
+            const userId = result.userId;
+            setUserId(() => userId);
+            const userData = await getUserData({userId});
 
             setUser(() => userData);
             if (userData.time) {
@@ -298,10 +305,10 @@ const EditPage = () => {
                 setTime(['12', 'am', '12', 'am']);
             }
 
-            const markerData = await getMarkers(userId);
+            const markerData = await getMarkers({userId});
             setMarkers(() => markerData);
         })();
-    }, [userId]);
+    }, []);
 
     // const handleClickMarkerUpdate = () => {
     //     setMarkerAction(() => 'update');
