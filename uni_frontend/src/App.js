@@ -51,7 +51,7 @@ function App() {
 
             stompClientInstance.debug = (str) => console.log(str);
 
-            stompClientInstance.connect({}, () => {
+            stompClientInstance.connect({Authorization: `Bearer ${localStorage.getItem('accessToken')}`}, () => {
                 console.log("Connected to WebSocket");
 
                 stompClientInstance.subscribe(`/sub/user/${userId}`, (msg) => {

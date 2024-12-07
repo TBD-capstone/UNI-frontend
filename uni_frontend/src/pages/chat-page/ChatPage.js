@@ -1,27 +1,31 @@
-import { useEffect, useRef, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import "./ChatPage.css";
-import { useLocation, useParams } from "react-router-dom";
-import { Stomp } from '@stomp/stompjs';
+import {useLocation, useParams} from "react-router-dom";
+import {Stomp} from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
-import Cookies from "js-cookie";
-import { useTranslation } from "react-i18next";
-import { IoIosArrowDropupCircle } from "react-icons/io";
-import { MdGTranslate } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
-import {getChatTranslate, postChatRoomLeave} from "../../api/chatAxios";
+import {useTranslation} from "react-i18next";
+import {IoIosArrowDropupCircle} from "react-icons/io";
+import {MdGTranslate} from "react-icons/md";
+import {useNavigate} from "react-router-dom";
+import {getChatRoomMessage, postChatRoomLeave} from "../../api/chatAxios";
+import {getMyData} from "../../api/userAxios";
+import {getPendingMatch} from "../../api/matchAxios";
+import {getChatTranslate} from "../../api/translateAxios";
 
 
 const ChatPage = (props) => {
     const basicProfileImage = '/profile-image.png'
-    const { t } = useTranslation();
-    const { roomId } = useParams();
-    const { state } = useLocation();
+    const {t} = useTranslation();
+    const {roomId} = useParams();
+    const {state} = useLocation();
+    const [userId, setUserId] = useState(null);
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState("");
     const [matchingId, setMatchingId] = useState(null);
     const [stompClient, setStompClient] = useState(null);
-    const isKorean = Cookies.get('isKorean') === 'true';
-    const language = Cookies.get('language');
+    const [isKorean, setIsKorean] = useState(null);
+    // const isKorean = Cookies.get('isKorean') === 'true';
+    // const language = Cookies.get('language');
     const [unreadMessageIds, setUnreadMessageIds] = useState([]);
     const unreadMessageIdsRef = useRef(unreadMessageIds);
     const [stompClientInstance, setStompClientInstance] = useState(null);
@@ -33,7 +37,7 @@ const ChatPage = (props) => {
         console.log("Attempting to leave chat room with roomId:", roomId);
 
         try {
-            const response = await postChatRoomLeave(roomId);
+            const response = await postChatRoomLeave({roomId});
 
             if (response.status === 200) {
                 console.log("Successfully left the chat room.");
@@ -133,7 +137,7 @@ const ChatPage = (props) => {
                 setShowTranslate(() => true);
                 if (!translatedChat) {
                     (async () => {
-                        const data = getChatTranslate(props.messageId);
+                        const data = getChatTranslate({messageId: props.messageId});
                         setTranslatedChat(() => data);
                     })();
                 }
@@ -146,11 +150,12 @@ const ChatPage = (props) => {
                 <div className="chat">
                     <div className={props.owner ? "Mine" : "Them"}>
                         <span>{props.text}</span>
-                        {showTranslate && <><br /><span className="translate-text">{translatedChat}</span></>}
+                        {showTranslate && <><br/><span className="translate-text">{translatedChat}</span></>}
                     </div>
                     {!props.owner &&
-                        (showTranslate ? <IoIosArrowDropupCircle className={'translate-open'} onClick={handleClickDropUp} /> :
-                            <MdGTranslate className={'translate-open'} onClick={handleClickTranslate} />)
+                        (showTranslate ?
+                            <IoIosArrowDropupCircle className={'translate-open'} onClick={handleClickDropUp}/> :
+                            <MdGTranslate className={'translate-open'} onClick={handleClickTranslate}/>)
                     }
                 </div>
             )
@@ -178,9 +183,9 @@ const ChatPage = (props) => {
             stompClient.send(
                 `/pub/match/request`,
                 {},
-                JSON.stringify({ requesterId: state.myId, receiverId: state.otherId })
+                JSON.stringify({requesterId: state.myId, receiverId: state.otherId})
             );
-            console.log({ requesterId: state.myId, receiverId: state.otherId })
+            console.log({requesterId: state.myId, receiverId: state.otherId})
         } else {
             alert(t("chatPage.match_request_error"));
         }
@@ -190,7 +195,7 @@ const ChatPage = (props) => {
             stompClient.send(
                 `/pub/match/respond`,
                 {},
-                JSON.stringify({ matchingId: matchingId, accepted: true })  // requestId -> matchingId로 수정 예정
+                JSON.stringify({matchingId: matchingId, accepted: true})  // requestId -> matchingId로 수정 예정
             );
             alert(t("chatPage.match_accepted"));
             setMatchingId(() => null);
@@ -215,7 +220,7 @@ const ChatPage = (props) => {
             stompClient.send(
                 `/pub/message`,
                 {},
-                JSON.stringify({ roomId: roomId, content: message })
+                JSON.stringify({roomId: roomId, content: message})
             );
 
             setMessage(""); // 입력 필드 초기화
@@ -225,15 +230,26 @@ const ChatPage = (props) => {
     };
 
     useEffect(() => {
+        const initChat = async () => {
+            const meData = await getMyData();
+            const isKorean = meData.role !== 'EXCHANGE'
+            setIsKorean(isKorean);
 
-        if (!state || !state.chatMessages) {
-            console.error("No initial chat messages provided. Defaulting to empty array.");
-            setMessages([]);
-            return;
-        }
+            if (!state || !roomId) {
+                console.error("No initial chat messages provided. Defaulting to empty array.");
+                setMessages([]);
+                return;
+            }
+            // const receiverId = isKorean ? state.otherId : state.myId;
+            // const requesterId = isKorean ? state.myId : state.otherId;
+            //
+            // const matchingResult = await getPendingMatch({requesterId, receiverId});
+            const messagesResult = await getChatRoomMessage({roomId});
 
-        console.log("Setting initial messages:", state.chatMessages);
-        setMessages(() => state.chatMessages)
+            console.log("Setting initial messages:", messagesResult);
+            setMessages(() => messagesResult);
+        };
+        initChat();
 
         console.log("Initializing WebSocket connection...");
 
@@ -275,7 +291,6 @@ const ChatPage = (props) => {
         });
 
         setStompClient(stompClientInstance);
-
         return () => {
 
             console.log("WebSocket disconnect detected. Sending leave API request...");
@@ -289,29 +304,31 @@ const ChatPage = (props) => {
 
             props.changeAlarm(true);
         };
-    }, [roomId, state, props, navigate]);
+    }, [roomId, state, props]);
 
     return (
         messages ? (
             <div className="chat-page">
                 <div className="match-section">
                     <div className="chat-profile">
-                        <img src={state.otherImgProf || basicProfileImage} alt="Profile" />
+                        <img src={state.otherImgProf || basicProfileImage} alt="Profile"/>
                         <div className="Profile-name">{state.otherName}</div>
                     </div>
                     <div className="Match-button">
                         {isKorean ?
                             (matchingId ?
-                                <button className="Activated-button" onClick={handleClickAccept}>{t("chatPage.accept")}</button>
+                                <button className="Activated-button"
+                                        onClick={handleClickAccept}>{t("chatPage.accept")}</button>
                                 :
                                 <button className="Unactivated-button">{t("chatPage.accept")}</button>)
                             :
-                            <button className="Activated-button" onClick={handleClickMatch}>{t("chatPage.match")}</button>
+                            <button className="Activated-button"
+                                    onClick={handleClickMatch}>{t("chatPage.match")}</button>
                         }
 
                     </div>
                 </div>
-                <ChatBox chatList={messages} userId={state.myId} />
+                <ChatBox chatList={messages} userId={state.myId}/>
                 <div className="input-section">
                     <div className='input-content'>
                         <input
@@ -319,7 +336,7 @@ const ChatPage = (props) => {
                             value={message}
                             onChange={handleChangeMessage}
                             onKeyDown={(e) => handleKeyDownMessage(e)}
-                            placeholder={t("chatPage.input_message_placeholder")} />
+                            placeholder={t("chatPage.input_message_placeholder")}/>
                         <button onClick={handleClickSend}>{t("chatPage.send")}</button>
                     </div>
                 </div>

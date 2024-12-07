@@ -5,6 +5,7 @@ const language = Cookies.get('language');
 
 const homeInstance = axios.create();
 
+homeInstance.defaults.baseURL = process.env.REACT_APP_API_URL;
 if(language) {
     homeInstance.defaults.headers.common['Accept-language'] = language;
 }
@@ -14,4 +15,9 @@ const getSearch = async (params) => {
     return response.data;
 };
 
-export {getSearch}
+const getAd = async () => {
+    const response = await homeInstance.get(`/api/ad`);
+    return response.data;
+}
+
+export {getSearch, getAd}

@@ -13,6 +13,8 @@ if(language) {
 
 const logout = () => {
     console.log('logout');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
 }
 
 // 요청 인터셉터

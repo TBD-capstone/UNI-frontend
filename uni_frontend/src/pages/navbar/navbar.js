@@ -45,6 +45,8 @@ function Navbar({selectedLanguage, fetchWithLanguage}) {
     const handleLogout = () => {
         document.cookie = 'userName=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         document.cookie = 'userId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
         setMenuOpen(false);
         navigate('/login');
     };
