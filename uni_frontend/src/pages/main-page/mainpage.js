@@ -32,6 +32,8 @@ const ProfileGrid = () => {
     const [sortOrder, setSortOrder] = useState('highest_rating');
     const [isLoading, setIsLoading] = useState(false);
     const [isProfilesEmpty, setIsProfilesEmpty] = useState(false);
+    const [totalPages, setTotalPages] = useState(1); // 페이지 수 상태 추가
+
 
     const fetchWithLanguage = async (url, options = {}) => {
         const headers = {
@@ -46,7 +48,8 @@ const ProfileGrid = () => {
         setIsLoading(true);
         try {
             const params = new URLSearchParams();
-            params.append('page', currentPage - 1);
+            params.append('page', currentPage - 1); // 0-based page index
+            params.append('size', ITEMS_PER_PAGE); // 페이지 크기 설정
             params.append('sort', sortOrder);
 
             if (hashtags.length > 0) {
@@ -56,17 +59,13 @@ const ProfileGrid = () => {
             const profileUrl = `/api/home?${params.toString()}`;
             const profileData = await fetchWithLanguage(profileUrl);
 
+            // API 응답 데이터 매핑
             const fetchedProfiles = profileData.content || [];
-            setProfiles(fetchedProfiles);
-            setFilteredProfiles(fetchedProfiles);
+            setProfiles(fetchedProfiles); // 현재 페이지 데이터만 설정
+            setFilteredProfiles(fetchedProfiles); // 같은 데이터를 filteredProfiles에 설정
+            setTotalPages(profileData.totalPages || 1); // totalPages 값을 설정
+
             setIsProfilesEmpty(fetchedProfiles.length === 0);
-
-            const adsResponse = await fetch('/api/ads');
-            const adData = await adsResponse.json();
-            const activeAds = adData.filter(ad => ad.status === t('mainpage.active_ad_status'));
-
-            setAds(activeAds);
-            setCurrentAd(activeAds.length > 0 ? activeAds[0] : null);
         } catch (error) {
             console.error(t('mainpage.fetch_error'), error);
         } finally {
@@ -74,11 +73,14 @@ const ProfileGrid = () => {
         }
     };
 
+
     useEffect(() => {
         fetchData();
     }, [language, t, currentPage, sortOrder, hashtags]);
 
-    const handlePageChange = (page) => setCurrentPage(page);
+    const handlePageChange = (page) => {
+        setCurrentPage(page); // 페이지 상태 업데이트
+    };
 
     const updateSearchQuery = (updatedHashtags) => {
         setSearchQuery(updatedHashtags.map(tag => `#${tag}`).join(' ')); // 검색창 값 업데이트
@@ -120,7 +122,6 @@ const ProfileGrid = () => {
         (currentPage - 1) * ITEMS_PER_PAGE,
         currentPage * ITEMS_PER_PAGE
     );
-    const totalPages = Math.ceil(filteredProfiles.length / ITEMS_PER_PAGE);
 
     return (
         <div className="container">
