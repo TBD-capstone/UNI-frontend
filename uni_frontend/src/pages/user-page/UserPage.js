@@ -1,5 +1,5 @@
 import "./UserPage.css";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import React, {useCallback, useEffect, useState} from "react";
 import GoogleMap from "../../components/GoogleMap";
 import Cookies from "js-cookie";
@@ -7,25 +7,25 @@ import {useTranslation} from "react-i18next";
 import ReportModal from "../../components/modal/ReportModal";
 import {FaStar} from "react-icons/fa6";
 import {postRequestChat} from "../../api/chatAxios";
-import {deleteQna, deleteReply, getQna, postQnaReply} from "../../api/qnaAxios";
-import {getReview} from "../../api/reviewAxios";
-import {getUserData} from "../../api/userAxios";
+import {deleteQna, deleteReply, getQna, postQna, postQnaReply} from "../../api/qnaAxios";
+import {getReview, postReviewReply} from "../../api/reviewAxios";
+import {getMyData, getUserData} from "../../api/userAxios";
 import {getMarkers} from "../../api/markerAxios";
 
 const UserPage = () => {
     const basicProfileImage = '/profile-image.png'
     const {t} = useTranslation();
+    const navigate = useNavigate();
     const {userId} = useParams();
     const [user, setUser] = useState(null);
-    const navigate = useNavigate();
     const [markers, setMarkers] = useState(null);
     const [activeTab, setActiveTab] = useState('Qna');
     const [report, setReport] = useState(false);
     const [qnas, setQnas] = useState([]);
     const [reviews, setReviews] = useState([]);
-    const commenterId = Cookies.get('userId');
-    const language = Cookies.get('language');
+    const [commenterId, setCommenterId] = useState(null);
     const [reportedId, setReportedId] = useState(null);
+    const language = Cookies.get('language');
 
     const handleClickReport = useCallback((reportedId) => {
         return () => {
@@ -83,7 +83,7 @@ const UserPage = () => {
             };
         };
 
-        const InputBox = (props) => {
+        const QnaInputBox = (props) => {
             const [content, setContent] = useState("");
 
             const handleChangeContent = (e) => {
@@ -91,20 +91,26 @@ const UserPage = () => {
             }
             const handleClickPost = async () => {
                 const fetchPOST = () => {
-                    return fetch(`${props.url}`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({"content": content})
-                    })
-                        .catch((err) => {
-                            console.log(err);
-                            alert(t("userPage.chat_error"));
+                    if (props.type === 'qna') {
+                        return postQna({
+                            userId: props.userId,
+                            commenterId: props.commenterId,
+                            content
                         });
+                    } else {
+                        return postQnaReply({
+                            userId: props.userId,
+                            qnaId: props.qnaId,
+                            commenterId: props.commenterId,
+                            content
+                        });
+                    }
                 };
-                await fetchPOST();
-                await fetchGetQnas(props.userId)
+                await fetchPOST().catch((err) => {
+                    console.log(err);
+                    alert(t("userPage.chat_error"));
+                });
+                await fetchGetQnas(userId)
                 setContent(() => "");
             };
             const handleKeyDownPost = (e) => {
@@ -163,51 +169,29 @@ const UserPage = () => {
             return (
                 <>
                     {replyShow &&
-                        <div className={'reply-container'}><InputBox userId={props.userId} url={props.url}/></div>}
+                        <div className={'reply-container'}>
+                            <QnaInputBox userId={props.userId} qnaId={props.qnaId} commenterId={props.commenterId}
+                                         type={'reply'}/>
+                        </div>}
                     <div className="qna-options">
                         <button onClick={handleClickReply}>{t("userPage.reply")}</button>
                     </div>
                 </>
             )
         }
-        // useEffect(() => {
-        //     fetch(`/api/user/${props.userId}/qnas`, {
-        //         method: 'GET',
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         }
-        //     })
-        //         .catch((err) => {
-        //             console.log(err);
-        //             alert('error: fetch fail');
-        //         })
-        //         .then(response => response.json())
-        //         .then((data) => {
-        //             setQnas((prev) => {
-        //                 if (prev !== data) {
-        //                     return data;
-        //                 }
-        //                 return prev; // 데이터가 같다면 업데이트하지 않음
-        //             });
-        //             console.log(data); // for debug
-        //         })
-        //         .catch((err) => {
-        //             console.log(err);
-        //         });
-        // }, []);
 
         return (
             <div className="qna-container">
-                <InputBox
+                <QnaInputBox
                     userId={props.userId}
-                    url={`/api/user/${props.userId}/qnas/${props.commenterId}`}
+                    commenterId={props.commenterId}
                     type={'qna'}
                 />
                 {qnas.length > 0 ? qnas.map((data, i) => {
                     return (
                         <div key={`Qna-${i}`}>
                             <Qna data={data}
-                                 owner={data.userId === props.commenterId}
+                                 owner={data.commentAuthor.userId === props.commenterId}
                                  handleDelete={handleDeleteQna(data.qnaId)}
                                  handleReport={props.handleReport}/>
                             <div className="qna-box" key={`replySection-${i}`}>
@@ -215,14 +199,15 @@ const UserPage = () => {
                                         handleDelete={handleDeleteReply} handleReport={props.handleReport}/>
                                 <ReplyInput
                                     userId={props.userId}
-                                    url={`/api/user/${props.userId}/qnas/${data.qnaId}/replies/${props.commenterId}`}
+                                    qnaId={data.qnaId}
+                                    commenterId={props.commenterId}
                                 />
                             </div>
                         </div>
                     );
                 }) : <p>{t('userPage.no_qna')}</p>}
             </div>
-        )
+        );
     };
     const ReviewSection = ({userId, commenterId, reviews, owner}) => {
         const ReviewInputBox = (props) => {
@@ -233,7 +218,7 @@ const UserPage = () => {
             }
             const handleClickPost = async () => {
                 const fetchPOST = () => {
-                    postQnaReply({reviewId: props.reviewId, commenterId: props.commenterId})
+                    postReviewReply({reviewId: props.reviewId, commenterId: props.commenterId})
                         .catch((err) => {
                             console.log(err);
                             alert(t("userPage.chat_error"));
@@ -296,14 +281,14 @@ const UserPage = () => {
 
     function fetchGetQnas(userId) {
         return getQna({userId}).then((data) => {
-                setQnas((prev) => {
-                    if (prev !== data) {
-                        return data;
-                    }
-                    return prev;
-                });
-                // console.log(data); // for debug
-            })
+            setQnas((prev) => {
+                if (prev !== data) {
+                    return data;
+                }
+                return prev;
+            });
+            // console.log(data); // for debug
+        })
             .catch((err) => {
                 console.log(err);
             });
@@ -311,9 +296,9 @@ const UserPage = () => {
 
     function fetchGetReivews(userId) {
         return getReview({userId}).then((data) => {
-                setReviews(() => data);
-                // console.log(data); // for debug
-            })
+            setReviews(() => data);
+            // console.log(data); // for debug
+        })
             .catch((err) => {
                 console.log(err);
             });
@@ -323,16 +308,20 @@ const UserPage = () => {
         (async () => {
             if (!userId)
                 return;
+            await getMyData().then((data) => {
+                setCommenterId(() => data.userId);
+                console.log(data);
+            })
             await getUserData({userId}).then((data) => {
-                    setUser(() => data);
-                    console.log(data); // for debug
-                })
+                setUser(() => data);
+                console.log(data); // for debug
+            })
                 .catch((err) => {
                     console.error(err);
                 });
             await getMarkers({userId}).then((data) => {
-                    setMarkers(() => data);
-                })
+                setMarkers(() => data);
+            })
                 .catch((err) => {
                     console.log(err);
                 });
@@ -342,7 +331,7 @@ const UserPage = () => {
     }, [userId, language]);
 
     return (
-        user ? (
+        (user && user.visible) ? (
             <div className='user-container'>
                 <ReportModal isOpen={report} handleClose={() => setReport(false)} reporterId={Number(commenterId)}
                              reportedId={reportedId}/>
@@ -392,7 +381,7 @@ const UserPage = () => {
                     </div>
                     {activeTab === 'Qna' &&
                         <QnaSection
-                            userId={userId} commenterId={Number(commenterId)}
+                            userId={userId} commenterId={commenterId}
                             handleReport={handleClickReport}/>}
                     {activeTab === 'Review' &&
                         <ReviewSection
