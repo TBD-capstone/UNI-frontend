@@ -112,37 +112,35 @@ function AdminPage() {
         }
     };
     const toggleAdStatus = async (adId, currentStatus) => {
-        const newStatus = currentStatus === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
-        console.log('현재 상태:', currentStatus);
-        console.log('변경할 상태:', newStatus);
-        console.log('전송 데이터:', { adId, status: newStatus });
-
-        const url = `/api/admin/ad`;
+        const newStatus = currentStatus === 'ACTIVE' ? 'BEFORE' : 'ACTIVE';
+        const formData = new FormData();
+        formData.append('adId', adId);
+        formData.append('status', newStatus);
 
         try {
-            const response = await fetch(url, {
+            const response = await fetch('/api/admin/ad', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ adId, status: newStatus }),
+                body: formData,
             });
-            const result = await response.json();
 
-            if (result.message) {
-                alert(result.message);
-
-                // 상태 변경 후 UI 업데이트
-                setAdData((prevAdData) =>
-                    prevAdData.map((ad) =>
-                        ad.adId === adId ? { ...ad, adStatus: newStatus } : ad
-                    )
-                );
+            if (response.ok) {
+                const result = await response.json();
+                if (result.message) {
+                    alert(result.message);
+                    setAdData((prevAdData) =>
+                        prevAdData.map((ad) =>
+                            ad.adId === adId ? { ...ad, adStatus: newStatus } : ad
+                        )
+                    );
+                }
             } else {
-                console.error('광고 상태 변경 실패:', result);
+                console.error('HTTP 에러:', response.statusText);
             }
         } catch (error) {
             console.error('광고 상태 변경 중 오류 발생:', error);
         }
     };
+
 
     const handleBanDaysChange = (userId, days) => {
         setBanDays((prev) => ({ ...prev, [userId]: days }));
@@ -176,11 +174,15 @@ function AdminPage() {
 
     const handleAdSubmit = async (e) => {
         e.preventDefault();
+
+        // FormData 생성
         const formData = new FormData();
         formData.append('advertiser', adForm.advertiser);
         formData.append('title', adForm.title);
         formData.append('startDate', adForm.startDate);
         formData.append('endDate', adForm.endDate);
+
+        // 이미지 파일이 있을 경우 추가
         if (adImage) {
             formData.append('image', adImage);
         }
@@ -188,20 +190,27 @@ function AdminPage() {
         try {
             const response = await fetch('/api/admin/ad/new', {
                 method: 'POST',
-                body: formData,
+                body: formData, // FormData 사용
             });
-            const result = await response.json();
-            if (result.status === 'success') {
-                alert('광고가 성공적으로 등록되었습니다.');
-                setAdForm({ advertiser: '', title: '', startDate: '', endDate: '' });
-                setAdImage(null);
+
+            // 응답 확인
+            if (response.ok) {
+                const result = await response.json();
+                if (result.status === 'success') {
+                    alert('광고가 성공적으로 등록되었습니다.');
+                    setAdForm({ advertiser: '', title: '', startDate: '', endDate: '' });
+                    setAdImage(null);
+                } else {
+                    console.error('광고 등록 실패:', result.message);
+                }
             } else {
-                console.error('광고 등록 실패:', result.message);
+                console.error('HTTP 에러:', response.statusText);
             }
         } catch (error) {
             console.error('광고 등록 중 오류가 발생했습니다:', error);
         }
     };
+
 
     const handlePageChange = (page) => {
         setCurrentPage(page);

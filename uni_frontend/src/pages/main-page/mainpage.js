@@ -47,6 +47,23 @@ const ProfileGrid = () => {
         return response.json();
     };
 
+    const fetchAds = async () => {
+        try {
+            const response = await fetch('/api/ads', {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+            });
+            const data = await response.json();
+            setAds(data.ads || []); // 광고 데이터를 상태에 저장
+        } catch (error) {
+            console.error('광고 데이터 가져오기 실패:', error);
+        }
+    };
+    useEffect(() => {
+        fetchAds(); // 광고 데이터 가져오기
+    }, []);
+
+
     const fetchData = async () => {
         setIsLoading(true);
         try {
@@ -150,11 +167,22 @@ const ProfileGrid = () => {
 
     return (
         <div className="container">
-            {currentAd && (
-                <div className="ad-banner">
-                    <img src={currentAd.imageUrl} alt={t('mainpage.ad_banner_alt')} />
-                </div>
-            )}
+            <div className="ads-section">
+                {ads.length > 0 ? (
+                    ads.map((ad) => (
+                        <div key={ad.adId} className="ad-card">
+                            <img src={ad.imageUrl} alt={ad.title} className="ad-image" />
+                            <div className="ad-details">
+                                <h4>{ad.title}</h4>
+                                <p>{ad.advertiser}</p>
+                                <p>{`${ad.startDate} ~ ${ad.endDate}`}</p>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <img src= '/default-ad-image.png' alt= "광고가 없습니다" className="default-ad-image"/>
+                )}
+            </div>
 
             <div className="header">
                 <div className="search-bar">
@@ -195,9 +223,9 @@ const ProfileGrid = () => {
 
             <div className="profile-grid">
                 {isLoading ? (
-                    <div className="loading-message">{t('mainpage.loading')}</div>
+                    <div className="loading-message">{t('')}</div>
                 ) : isProfilesEmpty ? (
-                    <div className="no-profiles">{t('mainpage.no_profiles')}</div>
+                    <div className="no-profiles">{t('')}</div>
                 ) : (
                     currentProfiles.map((user) => (
                         <Link to={`/user/${user.userId}`} key={user.userId} className="profile-card">
