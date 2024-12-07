@@ -15,8 +15,14 @@ const postLogout = async () => {
     const response = await authInstance.post('/api/auth/logout');
     return response.data;
 };
-const postSignup = async ({signupData}) => {
-    const response = await authInstance.post('/api/user/signup', signupData);
+const postSignup = async ({isKorean, email, univName, name, password}) => {
+    const response = await authInstance.post('/api/user/signup', {
+        isKorean,
+        email,
+        univName,
+        name,
+        password
+    });
     return response.data;
 };
 
@@ -25,13 +31,19 @@ const getUniv = async () => {
     return response.data;
 };
 
-const postValidate = async ({data}) => {
-    const response = await authInstance.post('/api/auth/validate', data);
+const postValidate = async ({email, univName}) => {
+    const response = await authInstance.post('/api/auth/validate', {
+        email,
+        univName
+    });
     return response.data;
 };
 
-const postVerify = async ({data}) => {
-    const response = await authInstance.post('/api/auth/verify', data);
+const postVerify = async ({email, code}) => {
+    const response = await authInstance.post('/api/auth/verify', {
+        email,
+        code
+    });
     return response.data;
 };
 
