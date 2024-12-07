@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'; // useNavigate 사용
 import Cookies from 'js-cookie';
 import './chatList.css';
 import {getChatRoom} from "../../api/chatAxios";
+import {getMyData} from "../../api/userAxios";
 
 function ChatList() {
     const [chatRooms, setChatRooms] = useState([]); // 채팅 목록
@@ -15,7 +16,8 @@ function ChatList() {
     useEffect(() => {
         const fetchChatRooms = async () => {
             try {
-                const userId = Cookies.get('userId'); // 로그인된 유저 ID 가져오기
+                const result = await getMyData();
+                const userId = result.userId;
 
                 if (!userId) {
                     setError('로그인 정보가 없습니다.');
@@ -31,7 +33,11 @@ function ChatList() {
                         const lastMessageA = a.chatMessages[a.chatMessages.length - 1];
                         const lastMessageB = b.chatMessages[b.chatMessages.length - 1];
 
-                        return new Date(lastMessageB.sendAt) - new Date(lastMessageA.sendAt);
+                        if(lastMessageA && lastMessageB)
+                            return new Date(lastMessageB.sendAt) - new Date(lastMessageA.sendAt);
+                        // 채팅이 존재하지 않는 채팅방의 경우 원리를 몰라 일단 1 return
+                        else
+                            return 1;
                     });
                     setChatRooms(sortedChatRooms);
                 } else {
