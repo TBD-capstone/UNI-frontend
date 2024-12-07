@@ -82,8 +82,15 @@ function AdminPage() {
     };
 
     const handleReportClick = (user) => {
-        setSelectedReportedUser(user); // 선택된 유저 저장
+        const reportDetails = user.reports[0]; // 첫 번째 신고 정보 가져오기
+        setSelectedReportedUser({
+            ...user,
+            title: reportDetails.title,
+            category: reportDetails.category,
+            detailedReason: reportDetails.detailedReason,
+        });
     };
+
 
     const handleCloseModal = () => {
         setSelectedReportedUser(null); // 모달 닫기
@@ -260,7 +267,9 @@ function AdminPage() {
                                 <h4>신고 상세 정보</h4>
                                 <p><strong>ID:</strong> {selectedReportedUser.userId}</p>
                                 <p><strong>Email:</strong> {selectedReportedUser.email}</p>
-                                <p><strong>신고 이유:</strong> {selectedReportedUser.reason}</p>
+                                <p><strong>제목:</strong> {selectedReportedUser.title}</p>
+                                <p><strong>카테고리:</strong> {selectedReportedUser.category}</p>
+                                <p><strong>상세 사유:</strong> {selectedReportedUser.detailedReason}</p>
                                 <label>
                                     밴 일수:
                                     <input
@@ -268,13 +277,14 @@ function AdminPage() {
                                         min="1"
                                         placeholder="일수를 입력하세요"
                                         value={banDays[selectedReportedUser.userId] || ''}
-                                        onChange={(e) => handleBanDaysChange(e.target.value)}
+                                        onChange={(e) => handleBanDaysChange(selectedReportedUser.userId, e.target.value)}
                                     />
                                 </label>
                                 <button onClick={handleBanUser}>밴 처리</button>
                             </div>
                         </Modal>
                     )}
+
                 </div>
             )}
 
