@@ -26,7 +26,7 @@ const patchUserStateByAdmin = async ({userStatus, banDays, data}) => {
 };
 
 const getReportedUserListByAdmin = async (params) => {
-    const response = await instance.get(`/api/admin/reported-users${params}`)
+    const response = await instance.get(`/api/admin/reported-users?${params}`)
         .catch((error) => console.error('신고된 유저 데이터 불러오기 실패:', error));
     return response.data;
 };

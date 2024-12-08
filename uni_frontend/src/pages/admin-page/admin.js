@@ -11,6 +11,7 @@ import {
 } from "../../api/adminAxios";
 
 
+
 const ITEMS_PER_PAGE = 5;
 
 function AdminPage() {
@@ -46,30 +47,27 @@ function AdminPage() {
                     const data = await getAdListByAdmin();
                     if (isMounted) setAdData(data.ads || []);
                 } else if (activeTab === '신고확인') {
-                    try {
-                        await fetchReportedUsers(currentPage - 1);
-                    } catch (error) {
-                        console.error('fetchReportedUsers 호출 중 오류:', error);
+                    const data = await getReportedUserListByAdmin(`page=${currentPage - 1}&size=${ITEMS_PER_PAGE}`);
+                    if (isMounted) {
+                        setReportedUsers(data.content || []);
+                        setTotalPages(data.totalPages || 0);
                     }
                 } else if (activeTab === '유저관리') {
-                    try {
-                        await fetchUsers(statusFilter, currentPage - 1);
-                    } catch (error) {
-                        console.error('fetchUsers 호출 중 오류:', error);
+                    const data = await getUserListByAdmin(`page=${currentPage - 1}&size=${ITEMS_PER_PAGE}&status=${statusFilter}`);
+                    if (isMounted) {
+                        setUsers(data.content || []);
+                        setTotalPages(data.totalPages || 0);
                     }
                 }
             } catch (error) {
                 console.error('데이터 가져오기 실패:', error);
             }
         };
-
         fetchData();
         return () => {
             isMounted = false;
         };
     }, [activeTab, statusFilter, currentPage]);
-
-
 
     const fetchReportedUsers = async (page = 0) => {
         try {
@@ -142,36 +140,24 @@ function AdminPage() {
     };
     const toggleAdStatus = async (adId, currentStatus) => {
         const newStatus = currentStatus === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
-        const formData = new FormData();
-        formData.append('adId', adId);
-        formData.append('status', newStatus);
-
         try {
-            const response = await fetch('/api/admin/ad/update-status', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ adId, newStatus }),
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                if (result.message) {
-                    alert(result.message);
-                    setAdData((prevAdData) =>
-                        prevAdData.map((ad) =>
-                            ad.adId === adId ? { ...ad, adStatus: newStatus } : ad
-                        )
-                    );
-                }
-            } else {
-                console.error('HTTP 에러:', response.statusText);
+            const result = await patchUserStateByAdmin({
+                adId,
+                newStatus,
+            }); // axios 함수 호출
+            if (result.message) {
+                alert(result.message);
+                setAdData((prevAdData) =>
+                    prevAdData.map((ad) =>
+                        ad.adId === adId ? { ...ad, adStatus: newStatus } : ad
+                    )
+                );
             }
         } catch (error) {
-            console.error('광고 상태 변경 중 오류 발생:', error);
+            console.error('toggleAdStatus 실패:', error);
         }
     };
+
 
 
     const handleBanDaysChange = (userId, days) => {
@@ -234,7 +220,6 @@ function AdminPage() {
             alert('광고 등록 실패. 다시 시도하세요.');
         }
     };
-
 
 
     const handlePageChange = (page) => {
