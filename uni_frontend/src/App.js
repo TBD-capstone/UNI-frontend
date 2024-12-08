@@ -30,7 +30,7 @@ import { Stomp } from "@stomp/stompjs";
 
 // PrivateRoute 컴포넌트: 로그인 확인 후 보호된 라우트로 이동
 const PrivateRoute = ({ element }) => {
-    const isLoggedIn = !!Cookies.get('userName'); // 로그인 여부 확인
+    const isLoggedIn = !!localStorage.getItem('accessToken') // 로그인 여부 확인
     return isLoggedIn ? element : <Navigate to="/login" replace />;
 };
 
