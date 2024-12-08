@@ -10,7 +10,7 @@ import {getMyData, getUserData, postUserData, postUserImage} from "../../api/use
 import {deleteMarker, getMarkers, postAddMarker} from "../../api/markerAxios";
 
 const EditMarkerInput = (props) => {
-    const t = useTranslation();
+    const {t} = useTranslation();
     const [markerName, setMarkerName] = useState("");
     const [markerDescription, setMarkerDescription] = useState("");
     const [markerAction, setMarkerAction] = useState('add');
@@ -46,6 +46,8 @@ const EditMarkerInput = (props) => {
             }
         });
 
+        props.initMarker();
+
         props.mapClose();
     }
     const handleClickDelete = async () => {
@@ -58,7 +60,10 @@ const EditMarkerInput = (props) => {
             alert(t('editPage.no_target_marker'));
             return;
         }
-        await deleteMarker(props.markers[i].id);
+        await deleteMarker({markerId: props.markers[i].id});
+
+        props.initMarker();
+
         props.mapClose();
     }
 
@@ -110,7 +115,7 @@ const EditPage = () => {
     const {t} = useTranslation();
     const [userId, setUserId] = useState(null);
     const [user, setUser] = useState(null);
-    const [time, setTime] = useState([]);
+    const [time, setTime] = useState(['12', 'am', '12', 'am']);
     const [isOpenBasic, setIsOpenBasic] = useState(false);
     const [isOpenImage, setIsOpenImage] = useState(false);
     const [isOpenMap, setIsOpenMap] = useState(false);
@@ -291,6 +296,11 @@ const EditPage = () => {
         );
     }
 
+    const initMarker = async () => {
+        const markerData = await getMarkers({userId});
+        setMarkers(() => markerData);
+    }
+
     useEffect(() => {
         (async () => {
             const result = await getMyData();
@@ -300,7 +310,7 @@ const EditPage = () => {
 
             setUser(() => userData);
             if (userData.time) {
-                setTime(() => userData.time.split('-'));
+                setTime(() => userData.time.split(/[\s-]+/));
             } else {
                 setTime(['12', 'am', '12', 'am']);
             }
@@ -344,7 +354,7 @@ const EditPage = () => {
                             onChange={handleChangeRegion}
                         />
                         <h3>{t("editPage.time")}</h3>
-                        <TimeSelector onChange={handleChangeTime}/>
+                        <TimeSelector onChange={handleChangeTime} initTime={time}/>
                         <h3>{t("editPage.basic_hashtag")}</h3>
                         <div className="hashtag-section">
                             {basicHashtags.map((basicHashtag, i) => {
@@ -414,7 +424,7 @@ const EditPage = () => {
                             </div>
                         </div>
                         <EditMarkerInput markers={markers} mapClose={mapClose} position={position}
-                                         userId={userId}
+                                         userId={userId} initMarker={initMarker}
                                          t={t("editPage.marker_add")}
                                          t1={t("editPage.marker_delete")}
                                          t2={t('editPage.marker_add_explain')}
