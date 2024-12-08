@@ -196,7 +196,7 @@ function AdminPage() {
                 setAdForm({ advertiser: '', title: '', startDate: '', endDate: '' });
                 setAdImage(null);
             } else {
-                console.error('HTTP 에러:', response.statusText);
+                console.error('HTTP 에러');
             }
         } catch (error) {
             console.error('광고 등록 중 오류가 발생했습니다:', error);
