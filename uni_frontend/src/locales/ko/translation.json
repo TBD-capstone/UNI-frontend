@@ -153,8 +153,10 @@
     "already_member": "이미 회원이신가요? 로그인"
   },
   "reportModal": {
+    "category": "카테고리",
+    "reason": "사유",
     "report": "신고",
-    "report_reason": "신고 사유",
+    "report_reason": "상세 사유",
     "profile": "프로필",
     "chat": "채팅",
     "review": "후기",
@@ -168,6 +170,6 @@
     "detail_placeholder": "신고 내용을 작성해주세요.",
     "select_none": "신고 대상과 신고 분류를 선택해주세요.",
     "title_none": "신고 제목은 최소 5자 이상이어야 합니다.",
-    "detail_none": "신고 사유는 최소 10자 이상이어야 합니다."
+    "detail_none": "상세 사유는 최소 10자 이상이어야 합니다."
   }
 }

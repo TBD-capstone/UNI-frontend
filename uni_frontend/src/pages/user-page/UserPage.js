@@ -33,7 +33,7 @@ const UserPage = () => {
 
     const handleClickReport = useCallback((reportedId) => {
         return () => {
-            setReportedId(() => reportedId);
+            setReportedId(() => Number(reportedId));
             setReport(() => true);
         }
     }, []);
@@ -144,7 +144,7 @@ const UserPage = () => {
                     {props.owner ?
                         <button className={'qna-button'} onClick={props.handleDelete}>{t('userPage.delete')}</button> :
                         <button className={'qna-button'}
-                                onClick={props.handleReport(props.data.commenterAuthor ? props.data.commenterAuthor.userId : props.data.commenterId)}>{t('userPage.report')}</button>
+                                onClick={props.handleReport(props.data.commentAuthor ? props.data.commentAuthor.userId : props.data.commenterId)}>{t('userPage.report')}</button>
                     }
                 </div>
             );

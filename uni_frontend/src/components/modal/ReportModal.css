@@ -12,6 +12,10 @@
     border-color: #4CAF50;
     outline: none;
 }
+.report-modal input[type='text'] {
+    width: 100%;
+    box-sizing: border-box;
+}
 .report-modal textarea {
     border-color: #505050;
     font: inherit;
@@ -24,20 +28,9 @@
     outline: none;
 }
 
-.report-purpose {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-}
-
-.report-radio {
-    width: 49%;
+.radio-container {
     display: flex;
     flex-direction: column;
-}
-
-.after {
-    margin-left: auto;
 }
 
 .report-modal-button {

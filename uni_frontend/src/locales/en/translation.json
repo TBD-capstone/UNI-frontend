@@ -153,10 +153,12 @@
     "already_member": "Already a member? Login"
   },
   "reportModal": {
+    "category": "Category",
+    "reason": "Reason",
     "report": "Report",
     "report_reason": "Reasons for reporting",
     "profile": "Profile",
-    "chat": "chat",
+    "chat": "Chat",
     "review": "Review",
     "abusive_language": "Swearing/Hate/Discrimination",
     "inappropriate_content": "inappropriate content",

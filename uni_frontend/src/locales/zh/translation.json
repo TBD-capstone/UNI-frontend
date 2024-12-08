@@ -151,6 +151,8 @@
     "already_member": "已经是会员？登录"
   },
   "reportModal": {
+    "category": "类别",
+    "reason": "原因",
     "report": "举报",
     "report_reason": "举报原因",
     "profile": "轮廓",
