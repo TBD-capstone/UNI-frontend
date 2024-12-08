@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import './admin.css';
 import { useNavigate } from 'react-router-dom';
+import {
+    getAdListByAdmin,
+    getReportedUserListByAdmin,
+    getUserListByAdmin,
+    patchUserStateByAdmin,
+    postAdNewByAdmin
+} from "../../api/adminAxios";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -27,12 +34,10 @@ function AdminPage() {
         }
     }, [navigate]);
 
-    useEffect(() => {
+    useEffect(async () => {
         if (activeTab === '광고게시') {
-            fetch('/api/admin/ad')
-                .then((response) => response.json())
-                .then((data) => setAdData(data.ads || []))
-                .catch((error) => console.error('광고 데이터 불러오기 실패:', error));
+            const data = await getAdListByAdmin();
+            setAdData(data.ads || []);
         } else if (activeTab === '신고확인') {
             fetchReportedUsers(currentPage - 1);
         } else if (activeTab === '유저관리') {
@@ -40,27 +45,20 @@ function AdminPage() {
         }
     }, [activeTab, statusFilter, currentPage]);
 
-    const fetchReportedUsers = (page = 0) => {
-        fetch(`/api/admin/reported-users?page=${page}&size=${ITEMS_PER_PAGE}`)
-            .then((response) => response.json())
-            .then((data) => {
-                setReportedUsers(data.content || []);
-                setTotalPages(data.totalPages || 0);
-            })
-            .catch((error) => console.error('신고된 유저 데이터 불러오기 실패:', error));
+    const fetchReportedUsers = async (page = 0) => {
+        const data = await getReportedUserListByAdmin(`page=${page}&size=${ITEMS_PER_PAGE}`);
+
+        setReportedUsers(data.content || []);
+        setTotalPages(data.totalPages || 0);
     };
 
-    const fetchUsers = (status = '', page = 0) => {
-        let url = `/api/admin/users?page=${page}&size=${ITEMS_PER_PAGE}`;
-        if (status) url += `&status=${status}`;
+    const fetchUsers = async (status = '', page = 0) => {
+        let params = `/api/admin/users?page=${page}&size=${ITEMS_PER_PAGE}`;
+        if (status) params += `&status=${status}`;
 
-        fetch(url)
-            .then((response) => response.json())
-            .then((data) => {
-                setUsers(data.content || []);
-                setTotalPages(data.totalPages || 0);
-            })
-            .catch((error) => console.error('유저 데이터 불러오기 실패:', error));
+        const data = await getUserListByAdmin(params);
+        setUsers(data.content || []);
+        setTotalPages(data.totalPages || 0);
     };
 
     const handleTabClick = (tab) => {
@@ -92,10 +90,9 @@ function AdminPage() {
 
     const updateUserStatus = async (userId, newStatus) => {
         const days = banDays[userId] || 0;
-        const url = `/api/admin/users/${userId}/status?status=${newStatus}&banDays=${days}`;
+        const params = `/${userId}/status?status=${newStatus}&banDays=${days}`;
         try {
-            const response = await fetch(url, { method: 'PATCH' });
-            const result = await response.json();
+            const result = await patchUserStateByAdmin(params);
             if (result.message) {
                 alert(result.message);
                 fetchUsers(statusFilter, currentPage - 1);
@@ -128,11 +125,7 @@ function AdminPage() {
         }
 
         try {
-            const response = await fetch('/api/admin/ad/new', {
-                method: 'POST',
-                body: formData,
-            });
-            const result = await response.json();
+            const result = await postAdNewByAdmin({formData});
             if (result.status === 'success') {
                 alert('광고가 성공적으로 등록되었습니다.');
                 setAdForm({ advertiser: '', title: '', startDate: '', endDate: '' });

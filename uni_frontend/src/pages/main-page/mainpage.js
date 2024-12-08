@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { useTranslation } from 'react-i18next';
 import './mainpage.css';
+import {getAd, getSearch} from "../../api/homeAxios";
 
 const categories = [
     { icon: './icons/travel-guide.png', label: 'trip' },
@@ -33,14 +34,14 @@ const ProfileGrid = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isProfilesEmpty, setIsProfilesEmpty] = useState(false);
 
-    const fetchWithLanguage = async (url, options = {}) => {
-        const headers = {
-            ...(options.headers || {}),
-            'Accept-Language': language,
-        };
-        const response = await fetch(url, { ...options, headers });
-        return response.json();
-    };
+    // const fetchWithLanguage = async (url, options = {}) => {
+    //     const headers = {
+    //         ...(options.headers || {}),
+    //         'Accept-Language': language,
+    //     };
+    //     const response = await fetch(url, { ...options, headers });
+    //     return response.json();
+    // };
 
     const fetchData = async () => {
         setIsLoading(true);
@@ -52,17 +53,20 @@ const ProfileGrid = () => {
             if (hashtags.length > 0) {
                 params.append('hashtags', hashtags.join(','));
             }
+            const profileParams = `${params.toString()}`;
+            console.log(profileParams);
 
-            const profileUrl = `/api/home?${params.toString()}`;
-            const profileData = await fetchWithLanguage(profileUrl);
+            const profileData = await getSearch(profileParams);
+
+            // const profileUrl = `/api/home?${params.toString()}`;
+            // const profileData = await fetchWithLanguage(profileUrl);
 
             const fetchedProfiles = profileData.content || [];
             setProfiles(fetchedProfiles);
             setFilteredProfiles(fetchedProfiles);
             setIsProfilesEmpty(fetchedProfiles.length === 0);
 
-            const adsResponse = await fetch('/api/ads');
-            const adData = await adsResponse.json();
+            const adData = await getAd();
             const activeAds = adData.filter(ad => ad.status === t('mainpage.active_ad_status'));
 
             setAds(activeAds);

@@ -9,8 +9,13 @@ const getUserData = async ({userId}) => {
     return response.data;
 };
 
-const postUserData = async ({userId, data}) => {
-    const response = await instance.post(`/api/user/${userId}`, data);
+const postUserData = async ({userId, region, description, time, hashtags}) => {
+    const response = await instance.post(`/api/user/${userId}`, {
+        region,
+        description,
+        time,
+        hashtags
+    });
     return response.data;
 };
 

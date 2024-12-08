@@ -1,22 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import Cookies from 'js-cookie';
+import { Link } from 'react-router-dom';
 import './matchingList.css';
+import {getMyData} from "../../api/userAxios";
+import {getReceiveMatchList, getRequestMatchList} from "../../api/matchAxios";
 
 function MatchingStatus() {
-    const { userId: paramUserId } = useParams(); // URL에서 userId 가져오기
     const [matches, setMatches] = useState([]); // 매칭 데이터
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isKorean, setIsKorean] = useState(false); // 한국인 여부
     const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
     const [matchesPerPage] = useState(5); // 한 페이지에 보일 매칭 수
-    const userId = paramUserId || Cookies.get('userId'); // URL에서 가져오지 못하면 쿠키에서 가져오기
 
     useEffect(() => {
         const fetchMatches = async () => {
             try {
-                const koreanStatus = Cookies.get('isKorean') === 'true'; // 쿠키에서 한국인 여부 확인
+                const result = await getMyData();
+                const koreanStatus = result.role !== 'EXCHANGE';
+                const userId = result.userId;
+
                 setIsKorean(koreanStatus);
 
                 if (!userId) {
@@ -24,14 +26,12 @@ function MatchingStatus() {
                     return;
                 }
 
-                const apiUrl = koreanStatus
-                    ? `/api/match/list/receiver/${userId}` // 한국인일 경우 수신자로 검색
-                    : `/api/match/list/requester/${userId}`; // 외국인일 경우 요청자로 검색
+                const response = koreanStatus
+                    ? await getReceiveMatchList({receiverId: userId})
+                    : await getRequestMatchList({requesterId: userId});
+                const data = await response.data;
 
-                const response = await fetch(apiUrl);
-                const data = await response.json();
-
-                if (response.ok) {
+                if (response.status === 200) {
                     // 매칭 데이터를 시간 기준으로 내림차순 정렬
                     const sortedMatches = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                     setMatches(sortedMatches);
@@ -47,7 +47,7 @@ function MatchingStatus() {
         };
 
         fetchMatches();
-    }, [userId]);
+    }, []);
 
     const getStatusClassName = (status) => {
         switch (status) {
