@@ -35,7 +35,6 @@ jobs:
       run: echo "${{ secrets.ENV }}" | base64 --decode > uni_frontend/.env
     
     - name: 종속 모듈들 설치
-      if: steps.cache.outputs.cache-hit != 'true'
       run: npm install --prefix uni_frontend
 
     - name: react 빌드
