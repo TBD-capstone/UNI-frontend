@@ -155,8 +155,8 @@ const ProfileGrid = () => {
         setSearchQuery(input); // 검색창 값 업데이트
 
         const inputHashtags = input
-            .split(' ')
-            .map(tag => tag.trim().replace('#'))
+            .split(',')
+            .map(tag => tag.trim())
             .filter(tag => tag !== '');
         setHashtags(Array.from(new Set(inputHashtags))); // 중복 제거 후 업데이트
     };
