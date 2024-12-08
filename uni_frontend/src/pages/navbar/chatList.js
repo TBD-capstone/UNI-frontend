@@ -103,7 +103,7 @@ function ChatList() {
                             onClick={() => handleChatClick(room)}
                         >
                             <img
-                                src={room.otherImgProf || '/default-profile.png'}
+                                src={room.otherImgProf}
                                 alt="프로필"
                                 className="profile-pic"
                             />
