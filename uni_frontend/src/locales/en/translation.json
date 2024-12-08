@@ -132,7 +132,7 @@
     "verify_email_button": "Verify E-mail",
     "verification_code_placeholder": "Verification code",
     "verify_code_button": "Verify Code",
-    "name_placeholder": "English Name",
+    "nickname_explaination": "Nickname to be seen by others.\nPlease make a careful decision",
     "password_placeholder": "Password",
     "confirm_password_placeholder": "Confirm Password",
     "signup_button": "Sign Up",

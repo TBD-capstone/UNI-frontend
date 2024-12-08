@@ -132,7 +132,7 @@
     "verify_email_button": "이메일 인증",
     "verification_code_placeholder": "인증 코드",
     "verify_code_button": "인증 확인",
-    "name_placeholder": "영문 이름",
+    "nickname_explaination": "다른 사람에게 보일 닉네임이에요.\n신중하게 결정해주세요",
     "password_placeholder": "비밀번호",
     "confirm_password_placeholder": "비밀번호 확인",
     "signup_button": "회원가입",

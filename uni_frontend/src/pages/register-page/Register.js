@@ -4,6 +4,7 @@ import Select from 'react-select';
 import './Register.css';
 import { useTranslation } from "react-i18next";
 import {getUniv, postSignup, postValidate, postVerify} from "../../api/authAxios";
+import TooltipCircle from "../../components/TooltipCircle"
 
 function Register() {
     const { t } = useTranslation();
@@ -18,6 +19,9 @@ function Register() {
     const [verificationCode, setVerificationCode] = useState('');
     const [codeVerified, setCodeVerified] = useState(false);
     const [univList, setUnivList] = useState([]);
+    const [rawUnivList, setRawUnivList] = useState([]);
+
+
 
     useEffect(() => {
         const fetchUnivList = async () => {
@@ -25,10 +29,7 @@ function Register() {
                 const data = await getUniv();
 
                 if (Array.isArray(data)) {
-                    setUnivList(data.map((university) => ({
-                        value: university.univName,
-                        label: university.univName
-                    })));
+                    setRawUnivList(data);
                 } else {
                     alert(t("registerPage.status_messages.fetch_university_list_fail"));
                 }
@@ -39,6 +40,16 @@ function Register() {
 
         fetchUnivList();
     }, [t]);
+
+    useEffect(() => {
+        // isKorean 값에 따라 동적으로 univList를 설정
+        const transformedList = rawUnivList.map((university) => ({
+          value: isKorean ? university.univName : university.enUnivName,
+          label: isKorean ? university.univName : university.enUnivName,
+        }));
+        setUnivList(transformedList);
+        
+      }, [isKorean, rawUnivList]);
 
     const handleUserTypeChange = (userType) => {
         setIsKorean(userType === 'korean');
@@ -128,7 +139,7 @@ function Register() {
                     className={`user-type-button ${isKorean ? 'selected' : ''}`}
                     onClick={() => handleUserTypeChange('korean')}
                 >
-                    {t("registerPage.user_type.korean")}
+                    한국 대학생
                 </button>
                 <button
                     className={`user-type-button ${!isKorean ? 'selected' : ''}`}
@@ -141,8 +152,13 @@ function Register() {
             <Select
                 className="select-field"
                 options={univList}
-                onChange={(selectedOption) => setUnivName(selectedOption.value)}
-                placeholder={t("registerPage.university_placeholder")}
+                value={univList.find((option) => option.value === univName) || null}
+                onChange={(selectedOption) => setUnivName(selectedOption?.value || null)}
+                placeholder={t(
+                    isKorean
+                      ? t("대학교")
+                      : t("University")
+                  )}
                 isSearchable
             />
 
@@ -150,12 +166,20 @@ function Register() {
                 <input
                     type="email"
                     className="input-field"
-                    placeholder={t("대학교 이메일을 입력해주세요")}
+                    placeholder={t(
+                        isKorean
+                          ? t("대학교 이메일을 입력해주세요")
+                          : t("Please enter korean university email")
+                      )}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
                 <button className="input-field-button" onClick={handleEmailVerification}>
-                    {t("registerPage.verify_email_button")}
+                    {t(
+                        isKorean
+                          ? t("메일 인증")
+                          : t("Verify Email")
+                    )}
                 </button>
             </div>
 
@@ -163,27 +187,49 @@ function Register() {
                 <input
                     type="text"
                     className="input-field"
-                    placeholder={t("인증 코드")}
+                    placeholder={t(
+                        isKorean
+                          ? t("인증 코드")
+                          : t("Verification code")
+                      )}
                     value={verificationCode}
                     onChange={(e) => setVerificationCode(e.target.value)}
                 />
                 <button className="input-field-button" onClick={handleCodeVerification}>
-                    {t("registerPage.verify_code_button")}
+                    {t(
+                        isKorean
+                          ? t("인증 코드 확인")
+                          : t("Verify Code")
+                    )}
                 </button>
             </div>
 
             <input
                 type="text"
                 className="input-field"
-                placeholder={t("닉네임(숫자와 영어만 사용해주세요)")}
+                placeholder={t(
+                    isKorean
+                      ? t("닉네임 (숫자와 영어만 사용해주세요)")
+                      : t("nickname (Alphanumeric only)")
+                  )}
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
             />
+            <TooltipCircle message={t(
+                isKorean
+                    ? t("다른 사람에게 보일 닉네임이에요.\n신중하게 결정해주세요")
+                    : t("Nickname to be seen by others.\nPlease make a careful decision")
+                )}>
+            </TooltipCircle>
 
             <input
                 type="password"
                 className="input-field"
-                placeholder={t("비밀번호")}
+                placeholder={t(
+                    isKorean
+                      ? t("비밀번호")
+                      : t("password")
+                  )}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
             />
@@ -191,17 +237,29 @@ function Register() {
             <input
                 type="password"
                 className="input-field"
-                placeholder={t("비밀번호 확인")}
+                placeholder={t(
+                    isKorean
+                      ? t("비밀번호 확인")
+                      : t("Verify code")
+                  )}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
             />
 
             <button className="signup-button" onClick={handleSubmit}>
-                {t("registerPage.signup_button")}
+                {t(
+                    isKorean
+                        ? t("회원가입")
+                        : t("Sign up")
+                )}
             </button>
 
             <div className="bottom-link">
-                <Link to="/login">{t("registerPage.already_member")}</Link>
+                <Link to="/login">{t(
+                    isKorean
+                        ? t("이미 계정이 있으신가요? 로그인하기")
+                        : t("Already have an account? Log in")
+                )}</Link>
             </div>
         </div>
     );
