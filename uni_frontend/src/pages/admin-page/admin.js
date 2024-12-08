@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import './admin.css';
 import { useNavigate } from 'react-router-dom';
+import Modal from "../../components/modal/Modal";
+import {
+    getAdListByAdmin,
+    getReportedUserListByAdmin,
+    getUserListByAdmin,
+    patchUserStateByAdmin,
+    postAdNewByAdmin
+} from "../../api/adminAxios";
+
+
 
 const ITEMS_PER_PAGE = 5;
 
@@ -17,6 +27,8 @@ function AdminPage() {
     const [banDays, setBanDays] = useState({});
     const [adForm, setAdForm] = useState({ advertiser: '', title: '', startDate: '', endDate: '' });
     const [adImage, setAdImage] = useState(null);
+    const [selectedReportedUser, setSelectedReportedUser] = useState(null); // 선택된 신고 유저
+
 
     const navigate = useNavigate();
 
@@ -28,40 +40,58 @@ function AdminPage() {
     }, [navigate]);
 
     useEffect(() => {
-        if (activeTab === '광고게시') {
-            fetch('/api/admin/ad')
-                .then((response) => response.json())
-                .then((data) => setAdData(data.ads || []))
-                .catch((error) => console.error('광고 데이터 불러오기 실패:', error));
-        } else if (activeTab === '신고확인') {
-            fetchReportedUsers(currentPage - 1);
-        } else if (activeTab === '유저관리') {
-            fetchUsers(statusFilter, currentPage - 1);
-        }
+        let isMounted = true;
+        const fetchData = async () => {
+            try {
+                if (activeTab === '광고게시') {
+                    const data = await getAdListByAdmin();
+                    if (isMounted) setAdData(data.ads || []);
+                } else if (activeTab === '신고확인') {
+                    const data = await getReportedUserListByAdmin(`page=${currentPage - 1}&size=${ITEMS_PER_PAGE}`);
+                    if (isMounted) {
+                        setReportedUsers(data.content || []);
+                        setTotalPages(data.totalPages || 0);
+                    }
+                } else if (activeTab === '유저관리') {
+                    const data = await getUserListByAdmin(`page=${currentPage - 1}&size=${ITEMS_PER_PAGE}&status=${statusFilter}`);
+                    if (isMounted) {
+                        setUsers(data.content || []);
+                        setTotalPages(data.totalPages || 0);
+                    }
+                }
+            } catch (error) {
+                console.error('데이터 가져오기 실패:', error);
+            }
+        };
+        fetchData();
+        return () => {
+            isMounted = false;
+        };
     }, [activeTab, statusFilter, currentPage]);
 
-    const fetchReportedUsers = (page = 0) => {
-        fetch(`/api/admin/reported-users?page=${page}&size=${ITEMS_PER_PAGE}`)
-            .then((response) => response.json())
-            .then((data) => {
-                setReportedUsers(data.content || []);
-                setTotalPages(data.totalPages || 0);
-            })
-            .catch((error) => console.error('신고된 유저 데이터 불러오기 실패:', error));
+    const fetchReportedUsers = async (page = 0) => {
+        try {
+            const data = await getReportedUserListByAdmin(`page=${page}&size=${ITEMS_PER_PAGE}`);
+            setReportedUsers(data.content || []);
+            setTotalPages(data.totalPages || 0);
+        } catch (error) {
+            console.error('fetchReportedUsers 실패:', error);
+            setReportedUsers([]); // 기본값으로 설정
+        }
     };
 
-    const fetchUsers = (status = '', page = 0) => {
-        let url = `/api/admin/users?page=${page}&size=${ITEMS_PER_PAGE}`;
-        if (status) url += `&status=${status}`;
-
-        fetch(url)
-            .then((response) => response.json())
-            .then((data) => {
-                setUsers(data.content || []);
-                setTotalPages(data.totalPages || 0);
-            })
-            .catch((error) => console.error('유저 데이터 불러오기 실패:', error));
+    const fetchUsers = async (status = '', page = 0) => {
+        try {
+            const params = `page=${page}&size=${ITEMS_PER_PAGE}${status ? `&status=${status}` : ''}`;
+            const data = await getUserListByAdmin(params);
+            setUsers(data.content || []);
+            setTotalPages(data.totalPages || 0);
+        } catch (error) {
+            console.error('fetchUsers 실패:', error);
+            setUsers([]); // 기본값으로 설정
+        }
     };
+
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -78,6 +108,29 @@ function AdminPage() {
         }
     };
 
+    const handleReportClick = (user) => {
+        const reportDetails = user.reports[0]; // 첫 번째 신고 정보 가져오기
+        setSelectedReportedUser({
+            ...user,
+            title: reportDetails.title,
+            category: reportDetails.category,
+            detailedReason: reportDetails.detailedReason,
+        });
+    };
+
+
+    const handleCloseModal = () => {
+        setSelectedReportedUser(null); // 모달 닫기
+    };
+
+    const handleBanUser = () => {
+        if (selectedReportedUser) {
+            updateUserStatus(selectedReportedUser.userId, 'BANNED');
+            handleCloseModal(); // 모달 닫기
+        }
+    };
+
+
     const toggleAdDetails = (adId) => {
         if (expandedAdId === adId) {
             setExpandedAdId(null);
@@ -85,6 +138,27 @@ function AdminPage() {
             setExpandedAdId(adId);
         }
     };
+    const toggleAdStatus = async (adId, currentStatus) => {
+        const newStatus = currentStatus === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+        try {
+            const result = await patchUserStateByAdmin({
+                adId,
+                newStatus,
+            }); // axios 함수 호출
+            if (result.message) {
+                alert(result.message);
+                setAdData((prevAdData) =>
+                    prevAdData.map((ad) =>
+                        ad.adId === adId ? { ...ad, adStatus: newStatus } : ad
+                    )
+                );
+            }
+        } catch (error) {
+            console.error('toggleAdStatus 실패:', error);
+        }
+    };
+
+
 
     const handleBanDaysChange = (userId, days) => {
         setBanDays((prev) => ({ ...prev, [userId]: days }));
@@ -92,10 +166,10 @@ function AdminPage() {
 
     const updateUserStatus = async (userId, newStatus) => {
         const days = banDays[userId] || 0;
-        const url = `/api/admin/users/${userId}/status?status=${newStatus}&banDays=${days}`;
+        const params = `${userId}/status?status=${newStatus}&banDays=${days}`;
+
         try {
-            const response = await fetch(url, { method: 'PATCH' });
-            const result = await response.json();
+            const result = await patchUserStateByAdmin(params);
             if (result.message) {
                 alert(result.message);
                 fetchUsers(statusFilter, currentPage - 1);
@@ -106,6 +180,7 @@ function AdminPage() {
             console.error('유저 상태 업데이트 중 오류가 발생했습니다:', error);
         }
     };
+
 
     const handleAdFormChange = (e) => {
         const { name, value } = e.target;
@@ -118,21 +193,21 @@ function AdminPage() {
 
     const handleAdSubmit = async (e) => {
         e.preventDefault();
-        const formData = new FormData();
-        formData.append('advertiser', adForm.advertiser);
-        formData.append('title', adForm.title);
-        formData.append('startDate', adForm.startDate);
-        formData.append('endDate', adForm.endDate);
-        if (adImage) {
-            formData.append('image', adImage);
-        }
 
         try {
-            const response = await fetch('/api/admin/ad/new', {
-                method: 'POST',
-                body: formData,
-            });
-            const result = await response.json();
+            const formData = new FormData();
+            formData.append('advertiser', adForm.advertiser);
+            formData.append('title', adForm.title);
+            formData.append('startDate', adForm.startDate);
+            formData.append('endDate', adForm.endDate);
+            formData.append('adStatus', adForm.adStatus || 'ACTIVE');
+
+            if (adImage) {
+                formData.append('image', adImage);
+            }
+
+            const result = await postAdNewByAdmin(formData);
+
             if (result.status === 'success') {
                 alert('광고가 성공적으로 등록되었습니다.');
                 setAdForm({ advertiser: '', title: '', startDate: '', endDate: '' });
@@ -142,8 +217,10 @@ function AdminPage() {
             }
         } catch (error) {
             console.error('광고 등록 중 오류가 발생했습니다:', error);
+            alert('광고 등록 실패. 다시 시도하세요.');
         }
     };
+
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -193,36 +270,54 @@ function AdminPage() {
                         </thead>
                         <tbody>
                         {reportedUsers.map((user) => (
-                            <React.Fragment key={user.userId}>
-                                <tr onClick={() => toggleUserDetails(user.userId)}>
-                                    <td>{user.userId}</td>
-                                    <td>{user.email}</td>
-                                    <td>{user.reportCount}</td>
-                                </tr>
-                                {expandedUserId === user.userId && (
-                                    <tr>
-                                        <td colSpan="3">
-                                            {user.reports.map((report, index) => (
-                                                <div key={index}>
-                                                    <p><strong>카테고리:</strong> {report.category}</p>
-                                                    <p><strong>이유:</strong> {report.reason}</p>
-                                                    <p><strong>상세 내용:</strong> {report.detailedReason}</p>
-                                                </div>
-                                            ))}
-                                        </td>
-                                    </tr>
-                                )}
-                            </React.Fragment>
+                            <tr key={user.userId} onClick={() => handleReportClick(user)}>
+                                <td>{user.userId}</td>
+                                <td>{user.email}</td>
+                                <td>{user.reportCount}</td>
+                            </tr>
                         ))}
                         </tbody>
                     </table>
                     {renderPagination()}
+
+                    {selectedReportedUser && (
+                        <Modal isOpen={!!selectedReportedUser} handleClose={handleCloseModal}>
+                            <div>
+                                <h4>신고 상세 정보</h4>
+                                <p><strong>ID:</strong> {selectedReportedUser.userId}</p>
+                                <p><strong>Email:</strong> {selectedReportedUser.email}</p>
+                                <p><strong>제목:</strong> {selectedReportedUser.title}</p>
+                                <p><strong>카테고리:</strong> {selectedReportedUser.category}</p>
+                                <p><strong>상세 사유:</strong> {selectedReportedUser.detailedReason}</p>
+                                <label>
+                                    밴 일수:
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        placeholder="일수를 입력하세요"
+                                        value={banDays[selectedReportedUser.userId] || ''}
+                                        onChange={(e) => handleBanDaysChange(selectedReportedUser.userId, e.target.value)}
+                                    />
+                                </label>
+                                <button onClick={handleBanUser}>밴 처리</button>
+                            </div>
+                        </Modal>
+                    )}
+
                 </div>
             )}
 
             {activeTab === '광고게시' && (
                 <div>
                     <h3>광고 리스트</h3>
+                    <div className="action-buttons">
+                        <button onClick={() => handleTabClick('광고등록')} className="btn-primary">
+                            광고 등록하기
+                        </button>
+                        <button onClick={() => fetchReportedUsers()} className="btn-secondary">
+                            새로고침
+                        </button>
+                    </div>
                     <table className="table">
                         <thead>
                         <tr>
@@ -244,6 +339,18 @@ function AdminPage() {
                                         <td colSpan="3">
                                             <p><strong>상세 설명:</strong> {ad.description}</p>
                                             <p><strong>이미지:</strong> <img src={ad.imageUrl} alt="광고 이미지" /></p>
+                                            <label>
+                                                광고 상태:
+                                                <select
+                                                    name="adStatus"
+                                                    value={adForm.adStatus || 'ACTIVE'}
+                                                    onChange={handleAdFormChange}
+                                                >
+                                                    <option value="ACTIVE">ACTIVE</option>
+                                                    <option value="INACTIVE">INACTIVE</option>
+                                                    <option value="ENDED">ENDED</option>
+                                                </select>
+                                            </label>
                                         </td>
                                     </tr>
                                 )}
@@ -251,6 +358,7 @@ function AdminPage() {
                         ))}
                         </tbody>
                     </table>
+                    {renderPagination()}
                 </div>
             )}
 

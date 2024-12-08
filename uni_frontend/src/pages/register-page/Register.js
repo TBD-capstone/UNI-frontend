@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import './Register.css';
 import { useTranslation } from "react-i18next";
+import {getUniv, postSignup, postValidate, postVerify} from "../../api/authAxios";
 
 function Register() {
     const { t } = useTranslation();
@@ -21,11 +22,7 @@ function Register() {
     useEffect(() => {
         const fetchUnivList = async () => {
             try {
-                const response = await fetch(`/api/auth/univ`, {
-                    method: 'GET',
-                    headers: { 'Content-Type': 'application/json' }
-                });
-                const data = await response.json();
+                const data = await getUniv();
 
                 if (Array.isArray(data)) {
                     setUnivList(data.map((university) => ({
@@ -53,12 +50,7 @@ function Register() {
             return;
         }
         try {
-            const response = await fetch('/api/auth/validate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, univName })
-            });
-            const data = await response.json();
+            const data = await postValidate({email, univName})
             if (data.status === 'success') {
                 setEmailVerified(true);
                 alert("이메일 인증 요청 성공!");
@@ -76,15 +68,11 @@ function Register() {
             return;
         }
         try {
-            const response = await fetch('/api/auth/verify', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email,
-                    code: parseInt(verificationCode)
-                })
+            const data = await postVerify({
+                email: email,
+                univName: univName,
+                code: parseInt(verificationCode)
             });
-            const data = await response.json();
             if (data.status === 'success') {
                 setCodeVerified(true);
                 alert("인증 확인 성공!");
@@ -113,18 +101,13 @@ function Register() {
         }
 
         try {
-            const response = await fetch('/api/auth/signup', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    isKorean,
-                    email,
-                    univName,
-                    name: nickname,
-                    password
-                })
-            });
-            const data = await response.json();
+            const data = await postSignup({
+                isKorean,
+                email,
+                univName,
+                name: nickname,
+                password
+            })
             if (data.status === 'success') {
                 alert("회원가입 성공! 로그인 페이지로 이동합니다.");
                 navigate('/login');

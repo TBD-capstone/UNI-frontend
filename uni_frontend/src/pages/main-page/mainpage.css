@@ -3,23 +3,58 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 16px;
     padding: 20px;
     font-family: Arial, sans-serif;
 }
 
-/* 광고 배너 */
-.ad-banner {
+.ads-section {
+    display: flex;
+    flex-wrap: wrap; /* 여러 줄로 광고 카드 배치 */
+    gap: 16px;
+    justify-content: center; /* 광고 카드 중앙 정렬 */
+    align-items: center;
     width: 100%;
-    max-width: 1200px;
-    margin-bottom: 10px;
+    max-width: 600px; /* 섹션 최대 너비 제한 */
+    max-height: 120px; /* 섹션 최대 높이 제한 */
+    overflow-y: auto; /* 세로 스크롤 활성화 */
+    overflow-x: hidden; /* 가로 스크롤 비활성화 */
+    margin-bottom: 16px; /* 검색창과의 간격 */
+    border: 1px solid #ddd; /* 시각적 구분을 위한 경계선 */
+    padding: 10px; /* 내부 여백 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 약간의 그림자 */
+    border-radius: 8px; /* 둥근 모서리 */
+}
+
+.ad-card {
+    width: 100px; /* 광고 카드의 최대 너비 */
+    height: auto; /* 높이는 자동 조정 */
+    display: flex;
+    flex-direction: column; /* 이미지를 위에 배치 */
+    align-items: center; /* 중앙 정렬 */
+    justify-content: center; /* 수직 중앙 정렬 */
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
 
-.ad-banner img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
+.ad-image {
+    max-width: 80px; /* 광고 이미지 최대 너비 */
+    max-height: 50px; /* 광고 이미지 최대 높이 */
+    width: auto; /* 비율 유지하면서 너비 조정 */
+    height: auto; /* 비율 유지하면서 높이 조정 */
+    object-fit: contain; /* 이미지 비율 유지 및 컨테이너에 맞춤 */
+    border-radius: 4px; /* 모서리 둥글게 */
+    margin-bottom: 8px; /* 광고 텍스트와의 간격 */
 }
+
+
+.ad-details h4 {
+    margin: 8px 0;
+}
+
 
 /* 검색창 */
 .search-bar {
@@ -194,6 +229,7 @@
     max-width: 1200px;
 }
 
+/* 프로필 카드 스타일 */
 .profile-card {
     display: flex;
     flex-direction: column;
@@ -204,12 +240,28 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-decoration: none; /* 밑줄 제거 */
+    color: inherit; /* 부모 요소 색상 상속 */
 }
 
 .profile-card:hover {
     transform: scale(1.05);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    text-decoration: none; /* hover 상태에서도 밑줄 제거 */
+    color: inherit; /* hover 상태에서도 색상 유지 */
 }
+
+/* 기본 a 태그 스타일 제거 */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+a:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
 
 .profile-card img {
     width: 100px;
@@ -289,6 +341,15 @@
 
 /* 반응형 스타일 */
 @media (max-width: 768px) {
+    .ad-card {
+        width: 100%; /* 광고 카드가 화면 너비에 맞게 조정 */
+        max-width: 300px; /* 최대 너비 제한 */
+    }
+
+    .ad-image {
+        max-width: 80%; /* 이미지 크기를 줄이기 */
+        max-height: 100px; /* 높이 제한 */
+    }
     .search-bar {
         flex-direction: column;
         gap: 10px;
@@ -326,6 +387,16 @@
 }
 
 @media (max-width: 480px) {
+
+    .ad-card {
+        width: 100%;
+        padding: 8px;
+    }
+
+    .ad-image {
+        max-width: 70%;
+        max-height: 80px;
+    }
 
     .search-bar input[type="text"],
     .search-bar button {

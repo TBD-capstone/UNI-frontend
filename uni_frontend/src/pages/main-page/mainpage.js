@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { useTranslation } from 'react-i18next';
 import './mainpage.css';
+import Select from "react-select";
+import {getAd, getSearch} from "../../api/homeAxios";
+
 
 const categories = [
     { icon: './icons/travel-guide.png', label: 'trip' },
@@ -29,75 +32,121 @@ const ProfileGrid = () => {
     const [ads, setAds] = useState([]);
     const [currentAd, setCurrentAd] = useState(null);
     const [language] = useState(Cookies.get('language') || 'en');
-    const [sortOrder, setSortOrder] = useState('highest_rating');
+    const [sortOrder, setSortOrder] = useState('newest');
     const [isLoading, setIsLoading] = useState(false);
     const [isProfilesEmpty, setIsProfilesEmpty] = useState(false);
+    const [totalPages, setTotalPages] = useState(1); // 페이지 수 상태 추가
+    const [univList, setUnivList] = useState([]); // 대학 리스트 상태
+    const [selectedUniversity, setSelectedUniversity] = useState(''); // 선택된 대학 상태
 
-    const fetchWithLanguage = async (url, options = {}) => {
-        const headers = {
-            ...(options.headers || {}),
-            'Accept-Language': language,
-        };
-        const response = await fetch(url, { ...options, headers });
-        return response.json();
+
+    // const fetchWithLanguage = async (url, options = {}) => {
+    //     const headers = {
+    //         ...(options.headers || {}),
+    //         'Accept-Language': language,
+    //     };
+    //     const response = await fetch(url, { ...options, headers });
+    //     return response.json();
+    // };
+
+    const fetchAds = async () => {
+        try {
+            const data = await getAd();
+            const activeAds = (data.ads || []).filter(ad => ad.adStatus === 'ACTIVE'); // "ACTIVE" 상태만 필터링
+            setAds(activeAds);
+        } catch (error) {
+            console.error('광고 데이터 가져오기 실패:', error);
+        }
     };
+
+    useEffect(() => {
+        fetchAds(); // 광고 데이터 가져오기
+    }, []);
+
 
     const fetchData = async () => {
         setIsLoading(true);
         try {
             const params = new URLSearchParams();
-            params.append('page', currentPage - 1);
+            params.append('page', currentPage - 1); // 0-based page index
+            params.append('size', ITEMS_PER_PAGE); // 페이지 크기 설정
             params.append('sort', sortOrder);
 
             if (hashtags.length > 0) {
                 params.append('hashtags', hashtags.join(','));
             }
+            if (selectedUniversity) {
+                params.append('univName', selectedUniversity); // 대학 필터 추가 (univName 사용)
+            }
+            const profileParams = `${params.toString()}`;
+            console.log(profileParams);
 
-            const profileUrl = `/api/home?${params.toString()}`;
-            const profileData = await fetchWithLanguage(profileUrl);
+            const profileData = await getSearch(profileParams);
 
+
+            // const profileUrl = `/api/home?${params.toString()}`;
+            // const profileData = await fetchWithLanguage(profileUrl);
+
+            // API 응답 데이터 매핑
             const fetchedProfiles = profileData.content || [];
-            setProfiles(fetchedProfiles);
-            setFilteredProfiles(fetchedProfiles);
+            setProfiles(fetchedProfiles); // 현재 페이지 데이터만 설정
+            setFilteredProfiles(fetchedProfiles); // 같은 데이터를 filteredProfiles에 설정
+            setTotalPages(profileData.totalPages || 1); // totalPages 값을 설정
+
             setIsProfilesEmpty(fetchedProfiles.length === 0);
-
-            const adsResponse = await fetch('/api/ads');
-            const adData = await adsResponse.json();
-            const activeAds = adData.filter(ad => ad.status === t('mainpage.active_ad_status'));
-
-            setAds(activeAds);
-            setCurrentAd(activeAds.length > 0 ? activeAds[0] : null);
         } catch (error) {
             console.error(t('mainpage.fetch_error'), error);
         } finally {
             setIsLoading(false);
         }
     };
+    useEffect(() => {
+        const fetchUnivList = async () => {
+            try {
+                const response = await fetch(`/api/auth/univ`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await response.json();
+
+                if (Array.isArray(data)) {
+                    setUnivList(
+                        data.map((university) => ({
+                            value: university.univName, // react-select에 사용할 값
+                            label: university.univName // react-select에 표시할 라벨
+                        }))
+                    );
+                } else {
+                    console.error("대학 리스트를 가져오지 못했습니다.");
+                }
+            } catch (error) {
+                console.error("대학 리스트를 가져오는 중 오류가 발생했습니다:", error);
+            }
+        };
+
+        fetchUnivList();
+    }, []);
+
 
     useEffect(() => {
         fetchData();
     }, [language, t, currentPage, sortOrder, hashtags]);
 
-    const handlePageChange = (page) => setCurrentPage(page);
-
-    const updateSearchQuery = (updatedHashtags) => {
-        setSearchQuery(updatedHashtags.map(tag => `#${tag}`).join(' ')); // 검색창 값 업데이트
+    const handlePageChange = (page) => {
+        setCurrentPage(page); // 페이지 상태 업데이트
     };
 
     const handleCategoryClick = (label) => {
         const categoryHashtag = t(`mainpage.categories.${label}`);
         if (hashtags.includes(categoryHashtag)) {
             // 해시태그 제거
-            const updatedHashtags = hashtags.filter((tag) => tag !== categoryHashtag);
-            setHashtags(updatedHashtags);
-            updateSearchQuery(updatedHashtags);
+            setHashtags(hashtags.filter((tag) => tag !== categoryHashtag));
         } else {
             // 해시태그 추가
-            const updatedHashtags = [...hashtags, categoryHashtag];
-            setHashtags(updatedHashtags);
-            updateSearchQuery(updatedHashtags);
+            setHashtags([...hashtags, categoryHashtag]);
         }
     };
+
 
     const handleSearchInputChange = (e) => {
         const input = e.target.value;
@@ -105,7 +154,7 @@ const ProfileGrid = () => {
 
         const inputHashtags = input
             .split(' ')
-            .map(tag => tag.trim().replace('#', ''))
+            .map(tag => tag.trim().replace('#'))
             .filter(tag => tag !== '');
         setHashtags(Array.from(new Set(inputHashtags))); // 중복 제거 후 업데이트
     };
@@ -120,18 +169,37 @@ const ProfileGrid = () => {
         (currentPage - 1) * ITEMS_PER_PAGE,
         currentPage * ITEMS_PER_PAGE
     );
-    const totalPages = Math.ceil(filteredProfiles.length / ITEMS_PER_PAGE);
 
     return (
         <div className="container">
-            {currentAd && (
-                <div className="ad-banner">
-                    <img src={currentAd.imageUrl} alt={t('mainpage.ad_banner_alt')} />
-                </div>
-            )}
+            <div className="ads-section">
+                {ads.length > 0 ? (
+                    ads.map((ad) => (
+                        <div key={ad.adId} className="ad-card">
+                            <img src={ad.imageUrl} alt={ad.title} className="ad-image" />
+                            <div className="ad-details">
+                                <h4>{ad.title}</h4>
+                                <p>{ad.advertiser}</p>
+                                <p>{`${ad.startDate} ~ ${ad.endDate}`}</p>
+                                <p>{`Status: ${ad.adStatus}`}</p>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <img src= '/default-ad-image.png' alt= "광고가 없습니다" className="default-ad-image"/>
+                )}
+            </div>
 
             <div className="header">
                 <div className="search-bar">
+                    <Select
+                        className="university-dropdown"
+                        options={univList} // 대학 리스트
+                        onChange={(selectedOption) => setSelectedUniversity(selectedOption?.value || '')} // 값 선택 핸들러
+                        placeholder={t('대학교 선택')} // 기본 안내 문구
+                        isSearchable // 검색 가능 여부 추가
+                        isClearable // 선택 취소 가능하도록 추가
+                    />
                     <input
                         type="text"
                         placeholder={t('mainpage.search_placeholder')}
@@ -161,13 +229,13 @@ const ProfileGrid = () => {
 
             <div className="profile-grid">
                 {isLoading ? (
-                    <div className="loading-message">{t('mainpage.loading')}</div>
+                    <div className="loading-message">{t('')}</div>
                 ) : isProfilesEmpty ? (
-                    <div className="no-profiles">{t('mainpage.no_profiles')}</div>
+                    <div className="no-profiles">{t('')}</div>
                 ) : (
                     currentProfiles.map((user) => (
                         <Link to={`/user/${user.userId}`} key={user.userId} className="profile-card">
-                            <img src={user.imgProf || '/path/to/default-image.jpg'} alt={t('mainpage.profile_alt')} />
+                            <img src={user.imgProf} alt={t('mainpage.profile_alt')} />
                             <div className="profile-name">{user.username}</div>
                             <div className="profile-university">{user.univName}</div>
                             <div className="rating">

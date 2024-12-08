@@ -2,6 +2,7 @@ import Modal from "./Modal";
 import './ReportModal.css';
 import {useTranslation} from "react-i18next";
 import {useState} from "react";
+import {postReport} from "../../api/reportAxios";
 
 const ReportModal = ({isOpen, handleClose, reportedId, reporterId}) => {
     const {t} = useTranslation();
@@ -9,7 +10,7 @@ const ReportModal = ({isOpen, handleClose, reportedId, reporterId}) => {
     const [reason, setReason] = useState("");
     const [title, setTitle] = useState("")
     const [detail, setDetail] = useState("");
-    const handleClickPost = () => {
+    const handleClickPost = async () => {
         if(category.length === 0 || reason.length === 0) {
             alert(t('reportModal.select_none'));
             return;
@@ -21,25 +22,20 @@ const ReportModal = ({isOpen, handleClose, reportedId, reporterId}) => {
             alert(t('reportModal.detail_none'));
             return;
         }
-        fetch(`/api/user/${reportedId}/report`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                "title": title,
-                "reportedUserId": reportedId,
-                "reporterUserId": reporterId,
-                "category": category,
-                "detailedReason": detail,
-                "reason": reason
-            })
-        })
-            .then(() => handleClose())
-            .catch((err) => {
-                console.log(err);
-                alert(t("userPage.chat_error"));
-            });
+        await postReport({
+            reporterId: reporterId,
+            title: title,
+            reportedUserId: reportedId,
+            reporterUserId: reporterId,
+            category: category,
+            detailedReason: detail,
+            reason: reason
+        });
+            handleClose();
+            // .catch((err) => {
+            //     console.log(err);
+            //     alert(t("userPage.chat_error"));
+            // });
     }
     const handleChangeTitle = (e) => {
         setTitle(() => e.target.value);
