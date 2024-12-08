@@ -4,6 +4,8 @@ import Cookies from 'js-cookie';
 import { useTranslation } from 'react-i18next';
 import './mainpage.css';
 import Select from "react-select";
+import {getAd, getSearch} from "../../api/homeAxios";
+
 
 const categories = [
     { icon: './icons/travel-guide.png', label: 'trip' },
@@ -38,22 +40,18 @@ const ProfileGrid = () => {
     const [selectedUniversity, setSelectedUniversity] = useState(''); // 선택된 대학 상태
 
 
-    const fetchWithLanguage = async (url, options = {}) => {
-        const headers = {
-            ...(options.headers || {}),
-            'Accept-Language': language,
-        };
-        const response = await fetch(url, { ...options, headers });
-        return response.json();
-    };
+    // const fetchWithLanguage = async (url, options = {}) => {
+    //     const headers = {
+    //         ...(options.headers || {}),
+    //         'Accept-Language': language,
+    //     };
+    //     const response = await fetch(url, { ...options, headers });
+    //     return response.json();
+    // };
 
     const fetchAds = async () => {
         try {
-            const response = await fetch('/api/ad', {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' },
-            });
-            const data = await response.json();
+            const data = await getAd();
             const activeAds = (data.ads || []).filter(ad => ad.adStatus === 'ACTIVE'); // "ACTIVE" 상태만 필터링
             setAds(activeAds);
         } catch (error) {
@@ -80,9 +78,14 @@ const ProfileGrid = () => {
             if (selectedUniversity) {
                 params.append('univName', selectedUniversity); // 대학 필터 추가 (univName 사용)
             }
+            const profileParams = `${params.toString()}`;
+            console.log(profileParams);
 
-            const profileUrl = `/api/home?${params.toString()}`;
-            const profileData = await fetchWithLanguage(profileUrl);
+            const profileData = await getSearch(profileParams);
+
+
+            // const profileUrl = `/api/home?${params.toString()}`;
+            // const profileData = await fetchWithLanguage(profileUrl);
 
             // API 응답 데이터 매핑
             const fetchedProfiles = profileData.content || [];

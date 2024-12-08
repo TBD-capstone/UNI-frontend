@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, {useState, useEffect} from 'react';
+import {useParams, useNavigate} from 'react-router-dom';
 import Cookies from 'js-cookie';
 import './review.css';
-import { AiFillStar, AiOutlineStar } from 'react-icons/ai'; // react-icons에서 별 아이콘 임포트
+import {AiFillStar, AiOutlineStar} from 'react-icons/ai';
+import {getMatchList, postReviewSubmit} from "../../api/matchAxios"; // react-icons에서 별 아이콘 임포트
 
 function Review() {
-    const { matchingId } = useParams(); // 매칭 ID 가져오기
+    const {matchingId} = useParams(); // 매칭 ID 가져오기
     const commenterId = Cookies.get('userId'); // 로그인한 사용자 ID
     const [profileOwnerId, setProfileOwnerId] = useState(null); // 리뷰 대상자 ID
     const [rating, setRating] = useState(0);
@@ -19,11 +20,11 @@ function Review() {
         const fetchProfileOwner = async () => {
             try {
                 console.log(`Fetching data for Matching ID: ${matchingId}`);
-                const response = await fetch(`/api/match/${matchingId}`);
-                if (!response.ok) {
+                const response = await getMatchList(matchingId);
+                if (response.status !== 200) {
                     throw new Error('Failed to fetch matching details');
                 }
-                const data = await response.json();
+                const data = await response.data;
                 console.log('Matching Details:', data);
                 setProfileOwnerId(data.profileOwnerId);
             } catch (error) {
@@ -54,22 +55,13 @@ function Review() {
             console.log(`Review Text: ${reviewText.trim()}`);
             console.log(`API Endpoint: /api/user/${profileOwnerId}/review/${commenterId}/matching/${matchingId}`);
 
-            const response = await fetch(`/api/user/${profileOwnerId}/review/${commenterId}/matching/${matchingId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    content: reviewText.trim(),
-                    star: rating,
-                }),
-            });
+            const response = await postReviewSubmit({profileOwnerId, commenterId, matchingId, content: reviewText.trim(), star: rating})
 
-            const data = await response.json();
+            const data = await response.data;
 
             console.log('API Response:', data);
 
-            if (response.ok) {
+            if (response.status === 200) {
                 setStatusMessage('Review submission completed!');
                 navigate('/matching-list');
             } else {

@@ -13,20 +13,20 @@ import MatchingStatus from './pages/navbar/matchingList';
 import ChatList from './pages/navbar/chatList';
 import Review from './pages/review-page/review';
 import Forget from "./pages/login-page/Forgat";
-import usePushNotification from "./Alarm";
+import usePushNotification from "./hooks/usePushNotification";
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
 
 // fetchWithLanguage 함수 정의
-const fetchWithLanguage = async (url, options = {}) => {
-    const selectedLanguage = Cookies.get('language') || 'en'; // 쿠키에서 언어 가져오기
-    const headers = {
-        ...options.headers,
-        'Accept-Language': selectedLanguage,
-    };
-    console.log(`Request to: ${url} with Accept-Language: ${selectedLanguage}`);
-    return fetch(url, { ...options, headers });
-};
+// const fetchWithLanguage = async (url, options = {}) => {
+//     const selectedLanguage = Cookies.get('language') || 'en'; // 쿠키에서 언어 가져오기
+//     const headers = {
+//         ...options.headers,
+//         'Accept-Language': selectedLanguage,
+//     };
+//     console.log(`Request to: ${url} with Accept-Language: ${selectedLanguage}`);
+//     return fetch(url, { ...options, headers });
+// };
 
 // PrivateRoute 컴포넌트: 로그인 확인 후 보호된 라우트로 이동
 const PrivateRoute = ({ element }) => {
@@ -51,7 +51,7 @@ function App() {
 
             stompClientInstance.debug = (str) => console.log(str);
 
-            stompClientInstance.connect({}, () => {
+            stompClientInstance.connect({Authorization: `Bearer ${localStorage.getItem('accessToken')}`}, () => {
                 console.log("Connected to WebSocket");
 
                 stompClientInstance.subscribe(`/sub/user/${userId}`, (msg) => {
@@ -104,14 +104,14 @@ function App() {
 
                 {/* 상단바가 포함된 레이아웃으로 렌더링 */}
                 <Route element={<Layout />}>
-                    <Route path="/main" element={<PrivateRoute element={<Mainpage fetchWithLanguage={fetchWithLanguage} />} />} />
-                    <Route path="/user/:userId" element={<PrivateRoute element={<UserPage fetchWithLanguage={fetchWithLanguage} />} />} />
-                    <Route path="/user/edit" element={<PrivateRoute element={<EditPage fetchWithLanguage={fetchWithLanguage} />} />} />
-                    <Route path="/chat/:roomId" element={<PrivateRoute element={<ChatPage fetchWithLanguage={fetchWithLanguage} changeAlarm={changeAlarm} />} />} />
-                    <Route path="/admin" element={<PrivateRoute element={<Admin fetchWithLanguage={fetchWithLanguage} />} />} />
-                    <Route path="/matching-list" element={<PrivateRoute element={<MatchingStatus fetchWithLanguage={fetchWithLanguage} />} />} />
-                    <Route path="/chat-list" element={<PrivateRoute element={<ChatList fetchWithLanguage={fetchWithLanguage} />} />} />
-                    <Route path="/review/:matchingId" element={<PrivateRoute element={<Review fetchWithLanguage={fetchWithLanguage} />} />} />
+                    <Route path="/main" element={<PrivateRoute element={<Mainpage />} />} />
+                    <Route path="/user/:userId" element={<PrivateRoute element={<UserPage />} />} />
+                    <Route path="/user/edit" element={<PrivateRoute element={<EditPage />} />} />
+                    <Route path="/chat/:roomId" element={<PrivateRoute element={<ChatPage changeAlarm={changeAlarm} />} />} />
+                    <Route path="/admin" element={<PrivateRoute element={<Admin />} />} />
+                    <Route path="/matching-list" element={<PrivateRoute element={<MatchingStatus />} />} />
+                    <Route path="/chat-list" element={<PrivateRoute element={<ChatList />} />} />
+                    <Route path="/review/:matchingId" element={<PrivateRoute element={<Review />} />} />
                 </Route>
             </Routes>
         </Router>
