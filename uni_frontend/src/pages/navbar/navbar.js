@@ -82,7 +82,7 @@ function Navbar({selectedLanguage, fetchWithLanguage}) {
             <div className="menu-icons">
                 <div className="language-icon-container">
                     <img
-                        src='/language-icon.png'
+                        src="/language-icon.png"
                         alt="언어 변경"
                         className="language-icon"
                         onClick={toggleLanguageMenu}

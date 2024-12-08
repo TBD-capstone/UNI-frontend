@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './admin.css';
 import { useNavigate } from 'react-router-dom';
+import Modal from "../../components/modal/Modal";
 import {
     getAdListByAdmin,
     getReportedUserListByAdmin,
@@ -8,6 +9,7 @@ import {
     patchUserStateByAdmin,
     postAdNewByAdmin
 } from "../../api/adminAxios";
+
 
 const ITEMS_PER_PAGE = 5;
 
@@ -24,6 +26,8 @@ function AdminPage() {
     const [banDays, setBanDays] = useState({});
     const [adForm, setAdForm] = useState({ advertiser: '', title: '', startDate: '', endDate: '' });
     const [adImage, setAdImage] = useState(null);
+    const [selectedReportedUser, setSelectedReportedUser] = useState(null); // 선택된 신고 유저
+
 
     const navigate = useNavigate();
 
@@ -76,6 +80,29 @@ function AdminPage() {
         }
     };
 
+    const handleReportClick = (user) => {
+        const reportDetails = user.reports[0]; // 첫 번째 신고 정보 가져오기
+        setSelectedReportedUser({
+            ...user,
+            title: reportDetails.title,
+            category: reportDetails.category,
+            detailedReason: reportDetails.detailedReason,
+        });
+    };
+
+
+    const handleCloseModal = () => {
+        setSelectedReportedUser(null); // 모달 닫기
+    };
+
+    const handleBanUser = () => {
+        if (selectedReportedUser) {
+            updateUserStatus(selectedReportedUser.userId, 'BANNED');
+            handleCloseModal(); // 모달 닫기
+        }
+    };
+
+
     const toggleAdDetails = (adId) => {
         if (expandedAdId === adId) {
             setExpandedAdId(null);
@@ -83,6 +110,39 @@ function AdminPage() {
             setExpandedAdId(adId);
         }
     };
+    const toggleAdStatus = async (adId, currentStatus) => {
+        const newStatus = currentStatus === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+        const formData = new FormData();
+        formData.append('adId', adId);
+        formData.append('status', newStatus);
+
+        try {
+            const response = await fetch('/api/admin/ad/update-status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ adId, newStatus }),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.message) {
+                    alert(result.message);
+                    setAdData((prevAdData) =>
+                        prevAdData.map((ad) =>
+                            ad.adId === adId ? { ...ad, adStatus: newStatus } : ad
+                        )
+                    );
+                }
+            } else {
+                console.error('HTTP 에러:', response.statusText);
+            }
+        } catch (error) {
+            console.error('광고 상태 변경 중 오류 발생:', error);
+        }
+    };
+
 
     const handleBanDaysChange = (userId, days) => {
         setBanDays((prev) => ({ ...prev, [userId]: days }));
@@ -115,11 +175,16 @@ function AdminPage() {
 
     const handleAdSubmit = async (e) => {
         e.preventDefault();
+
+        // FormData 생성
         const formData = new FormData();
         formData.append('advertiser', adForm.advertiser);
         formData.append('title', adForm.title);
         formData.append('startDate', adForm.startDate);
         formData.append('endDate', adForm.endDate);
+        formData.append('adStatus', adForm.adStatus || 'ACTIVE');
+
+        // 이미지 파일이 있을 경우 추가
         if (adImage) {
             formData.append('image', adImage);
         }
@@ -131,12 +196,13 @@ function AdminPage() {
                 setAdForm({ advertiser: '', title: '', startDate: '', endDate: '' });
                 setAdImage(null);
             } else {
-                console.error('광고 등록 실패:', result.message);
+                console.error('HTTP 에러:', response.statusText);
             }
         } catch (error) {
             console.error('광고 등록 중 오류가 발생했습니다:', error);
         }
     };
+
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -186,36 +252,54 @@ function AdminPage() {
                         </thead>
                         <tbody>
                         {reportedUsers.map((user) => (
-                            <React.Fragment key={user.userId}>
-                                <tr onClick={() => toggleUserDetails(user.userId)}>
-                                    <td>{user.userId}</td>
-                                    <td>{user.email}</td>
-                                    <td>{user.reportCount}</td>
-                                </tr>
-                                {expandedUserId === user.userId && (
-                                    <tr>
-                                        <td colSpan="3">
-                                            {user.reports.map((report, index) => (
-                                                <div key={index}>
-                                                    <p><strong>카테고리:</strong> {report.category}</p>
-                                                    <p><strong>이유:</strong> {report.reason}</p>
-                                                    <p><strong>상세 내용:</strong> {report.detailedReason}</p>
-                                                </div>
-                                            ))}
-                                        </td>
-                                    </tr>
-                                )}
-                            </React.Fragment>
+                            <tr key={user.userId} onClick={() => handleReportClick(user)}>
+                                <td>{user.userId}</td>
+                                <td>{user.email}</td>
+                                <td>{user.reportCount}</td>
+                            </tr>
                         ))}
                         </tbody>
                     </table>
                     {renderPagination()}
+
+                    {selectedReportedUser && (
+                        <Modal isOpen={!!selectedReportedUser} handleClose={handleCloseModal}>
+                            <div>
+                                <h4>신고 상세 정보</h4>
+                                <p><strong>ID:</strong> {selectedReportedUser.userId}</p>
+                                <p><strong>Email:</strong> {selectedReportedUser.email}</p>
+                                <p><strong>제목:</strong> {selectedReportedUser.title}</p>
+                                <p><strong>카테고리:</strong> {selectedReportedUser.category}</p>
+                                <p><strong>상세 사유:</strong> {selectedReportedUser.detailedReason}</p>
+                                <label>
+                                    밴 일수:
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        placeholder="일수를 입력하세요"
+                                        value={banDays[selectedReportedUser.userId] || ''}
+                                        onChange={(e) => handleBanDaysChange(selectedReportedUser.userId, e.target.value)}
+                                    />
+                                </label>
+                                <button onClick={handleBanUser}>밴 처리</button>
+                            </div>
+                        </Modal>
+                    )}
+
                 </div>
             )}
 
             {activeTab === '광고게시' && (
                 <div>
                     <h3>광고 리스트</h3>
+                    <div className="action-buttons">
+                        <button onClick={() => handleTabClick('광고등록')} className="btn-primary">
+                            광고 등록하기
+                        </button>
+                        <button onClick={() => fetchReportedUsers()} className="btn-secondary">
+                            새로고침
+                        </button>
+                    </div>
                     <table className="table">
                         <thead>
                         <tr>
@@ -237,6 +321,18 @@ function AdminPage() {
                                         <td colSpan="3">
                                             <p><strong>상세 설명:</strong> {ad.description}</p>
                                             <p><strong>이미지:</strong> <img src={ad.imageUrl} alt="광고 이미지" /></p>
+                                            <label>
+                                                광고 상태:
+                                                <select
+                                                    name="adStatus"
+                                                    value={adForm.adStatus || 'ACTIVE'}
+                                                    onChange={handleAdFormChange}
+                                                >
+                                                    <option value="ACTIVE">ACTIVE</option>
+                                                    <option value="INACTIVE">INACTIVE</option>
+                                                    <option value="ENDED">ENDED</option>
+                                                </select>
+                                            </label>
                                         </td>
                                     </tr>
                                 )}
@@ -244,6 +340,7 @@ function AdminPage() {
                         ))}
                         </tbody>
                     </table>
+                    {renderPagination()}
                 </div>
             )}
 
