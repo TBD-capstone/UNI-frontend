@@ -112,7 +112,7 @@ function AdminPage() {
         }
     };
     const toggleAdStatus = async (adId, currentStatus) => {
-        const newStatus = currentStatus === 'ACTIVE' ? 'BEFORE' : 'ACTIVE';
+        const newStatus = currentStatus === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
         const formData = new FormData();
         formData.append('adId', adId);
         formData.append('status', newStatus);
@@ -300,6 +300,14 @@ function AdminPage() {
             {activeTab === '광고게시' && (
                 <div>
                     <h3>광고 리스트</h3>
+                    <div className="action-buttons">
+                        <button onClick={() => handleTabClick('광고등록')} className="btn-primary">
+                            광고 등록하기
+                        </button>
+                        <button onClick={() => fetchReportedUsers()} className="btn-secondary">
+                            새로고침
+                        </button>
+                    </div>
                     <table className="table">
                         <thead>
                         <tr>
@@ -322,7 +330,7 @@ function AdminPage() {
                                             <p><strong>상세 설명:</strong> {ad.description}</p>
                                             <p><strong>이미지:</strong> <img src={ad.imageUrl} alt="광고 이미지" /></p>
                                             <p><strong>현재 상태:</strong> {ad.adStatus === 'ACTIVE' ? '게시 중' : '게시 안됨'}</p>
-                                            <button onClick={() => toggleAdStatus(ad.adId, ad.adStatus)}>
+                                            <button onClick={() => toggleAdStatus(ad.adId, ad.adStatus)} className="btn-toggle">
                                                 {ad.adStatus === 'ACTIVE' ? '게시 중지' : '게시하기'}
                                             </button>
                                         </td>
@@ -332,6 +340,7 @@ function AdminPage() {
                         ))}
                         </tbody>
                     </table>
+                    {renderPagination()}
                 </div>
             )}
 
