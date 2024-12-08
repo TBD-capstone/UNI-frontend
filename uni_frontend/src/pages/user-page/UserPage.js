@@ -51,11 +51,11 @@ const UserPage = () => {
             <div className="button-section">
                 {props.owner ?
                     <>
-                        {t('userPage.edit_explain')}
+                        <div>{t('userPage.edit_explain')}</div>
                         <button className="Edit" onClick={handleClickEdit}>{t('userPage.edit')}</button>
                     </> :
                     <>
-                        {t('userPage.chat_explain1')}{props.userName}{t('userPage.chat_explain2')}
+                        <div>{t('userPage.chat_explain1')}{props.userName}{t('userPage.chat_explain2')}</div>
                         <button className="Chatting" onClick={handleClickChat}>{t('userPage.chat')}</button>
                         <button className="Report" onClick={handleClickReport(userId)}>{t('userPage.report')}</button>
                     </>
@@ -316,6 +316,9 @@ const UserPage = () => {
                 setCommenterId(() => data.userId);
                 console.log(data);
             })
+                .catch((err) => {
+                    console.error(err);
+                });
             await getUserData({userId}).then((data) => {
                 setUser(() => data);
                 console.log(data); // for debug
@@ -339,8 +342,8 @@ const UserPage = () => {
             <div className='user-container'>
                 <ReportModal isOpen={report} handleClose={() => setReport(false)} reporterId={Number(commenterId)}
                              reportedId={reportedId}/>
-                <div className='Image-back-container'>
-                    <img className='Image-back' src={user.imgBack || '/basic_background.png'} alt="배경사진"/>
+                <div className='image-back-container'>
+                    <img className='image-back' src={user.imgBack || '/basic_background.png'} alt="배경사진"/>
                 </div>
                 <MoveButton owner={idSame(commenterId, userId)} userName={user.userName}/>
                 <div className="user-content-container">
