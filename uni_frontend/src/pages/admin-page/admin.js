@@ -38,16 +38,28 @@ function AdminPage() {
         }
     }, [navigate]);
 
-    useEffect(async () => {
-        if (activeTab === '광고게시') {
-            const data = await getAdListByAdmin();
-            setAdData(data.ads || []);
-        } else if (activeTab === '신고확인') {
-            fetchReportedUsers(currentPage - 1);
-        } else if (activeTab === '유저관리') {
-            fetchUsers(statusFilter, currentPage - 1);
-        }
+    useEffect(() => {
+        let isMounted = true;
+        const fetchData = async () => {
+            try {
+                if (activeTab === '광고게시') {
+                    const data = await getAdListByAdmin();
+                    if (isMounted) setAdData(data.ads || []);
+                } else if (activeTab === '신고확인') {
+                    fetchReportedUsers(currentPage - 1);
+                } else if (activeTab === '유저관리') {
+                    fetchUsers(statusFilter, currentPage - 1);
+                }
+            } catch (error) {
+                console.error('데이터 가져오기 실패:', error);
+            }
+        };
+        fetchData();
+        return () => {
+            isMounted = false;
+        };
     }, [activeTab, statusFilter, currentPage]);
+
 
     const fetchReportedUsers = async (page = 0) => {
         const data = await getReportedUserListByAdmin(`page=${page}&size=${ITEMS_PER_PAGE}`);
