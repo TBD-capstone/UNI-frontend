@@ -12,6 +12,10 @@ import {getReview, postReviewReply} from "../../api/reviewAxios";
 import {getMyData, getUserData} from "../../api/userAxios";
 import {getMarkers} from "../../api/markerAxios";
 
+const idSame = (idA, idB) => {
+    return `${idA}` === `${idB}`;
+}
+
 const UserPage = () => {
     const basicProfileImage = '/profile-image.png'
     const {t} = useTranslation();
@@ -338,7 +342,7 @@ const UserPage = () => {
                 <div className='Image-back-container'>
                     <img className='Image-back' src={user.imgBack || '/basic_background.png'} alt="배경사진"/>
                 </div>
-                <MoveButton owner={commenterId === userId} userName={user.userName}/>
+                <MoveButton owner={idSame(commenterId, userId)} userName={user.userName}/>
                 <div className="user-content-container">
                     <div className="image-prof-container">
                         <img className="image-prof" src={user.imgProf || basicProfileImage} alt="프로필사진"/>
