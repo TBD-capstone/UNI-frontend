@@ -229,6 +229,7 @@
     max-width: 1200px;
 }
 
+/* 프로필 카드 스타일 */
 .profile-card {
     display: flex;
     flex-direction: column;
@@ -239,12 +240,28 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-decoration: none; /* 밑줄 제거 */
+    color: inherit; /* 부모 요소 색상 상속 */
 }
 
 .profile-card:hover {
     transform: scale(1.05);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    text-decoration: none; /* hover 상태에서도 밑줄 제거 */
+    color: inherit; /* hover 상태에서도 색상 유지 */
 }
+
+/* 기본 a 태그 스타일 제거 */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+a:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
 
 .profile-card img {
     width: 100px;
