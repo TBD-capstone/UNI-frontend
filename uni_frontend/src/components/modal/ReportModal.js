@@ -10,15 +10,30 @@ const ReportModal = ({isOpen, handleClose, reportedId, reporterId}) => {
     const [reason, setReason] = useState("");
     const [title, setTitle] = useState("")
     const [detail, setDetail] = useState("");
+
+    const ReportRadio = ({children, value, name, defaultChecked}) => {
+        return (
+            <label>
+                <input
+                    type='radio'
+                    name={name}
+                    value={value}
+                    onChange={handleChangeReason}
+                    defaultChecked={defaultChecked}
+                />
+                {children}
+            </label>
+    )}
+
     const handleClickPost = async () => {
-        if(category.length === 0 || reason.length === 0) {
+        if (category.length === 0 || reason.length === 0) {
             alert(t('reportModal.select_none'));
             return;
         }
-        if(title.length < 5) {
+        if (title.length < 5) {
             alert(t('reportModal.title_none'))
         }
-        if(detail.length < 10) {
+        if (detail.length < 10) {
             alert(t('reportModal.detail_none'));
             return;
         }
@@ -31,11 +46,11 @@ const ReportModal = ({isOpen, handleClose, reportedId, reporterId}) => {
             detailedReason: detail,
             reason: reason
         });
-            handleClose();
-            // .catch((err) => {
-            //     console.log(err);
-            //     alert(t("userPage.chat_error"));
-            // });
+        handleClose();
+        // .catch((err) => {
+        //     console.log(err);
+        //     alert(t("userPage.chat_error"));
+        // });
     }
     const handleChangeTitle = (e) => {
         setTitle(() => e.target.value);
@@ -54,45 +69,36 @@ const ReportModal = ({isOpen, handleClose, reportedId, reporterId}) => {
             <h4>{t('reportModal.report_reason')}</h4>
             <div className={'report-purpose'}>
                 <div className='report-radio 1'>
-                    <div>
-                        <input type='radio' name={'radio-1'} id={'radio-1-1'} value={'PROFILE'} onChange={handleChangeReason}/>
-                        <label id={'radio-1-1'}>{t('reportModal.profile')}</label>
-                    </div>
-                    <div>
-                        <input type='radio' name={'radio-1'} id={'radio-1-2'} value={'CHAT'} onChange={handleChangeReason} />
-                        <label id={'radio-1-2'}>{t('reportModal.chat')}</label>
-                    </div>
-                    <div>
-                        <input type='radio' name={'radio-1'} id={'radio-1-3'} value={'QNA'} onChange={handleChangeReason}/>
-                        <label id={'radio-1-3'}>Q&A</label>
-                    </div>
-                    <div>
-                        <input type='radio' name={'radio-1'} id={'radio-1-4'} value={'REVIEW'} onChange={handleChangeReason}/>
-                        <label id={'radio-1-4'}>{t('reportModal.review')}</label>
-                    </div>
+                    <ReportRadio name={'radio-target'} value={'PROFILE'}>
+                        {t('reportModal.profile')}
+                    </ReportRadio>
+                    <ReportRadio name={'radio-target'} value={'CHAT'}>
+                        {t('reportModal.chat')}
+                    </ReportRadio>
+                    <ReportRadio name={'radio-target'} value={'QNA'}>
+                        Q&A
+                    </ReportRadio>
+                    <ReportRadio name={'radio-target'} value={'REVIEW'}>
+                        {t('reportModal.review')}
+                    </ReportRadio>
                 </div>
                 <hr width="1" size={'100'} color={'#D0D0D0'}/>
                 <div className='report-radio after'>
-                    <div>
-                        <input type='radio' name={'radio-2'} id={'radio-2-1'} value={'ABUSIVE_LANGUAGE'} onChange={handleChangeCategory}/>
-                        <label id={'radio-2-1'}>{t('reportModal.abusive_language')}</label>
-                    </div>
-                    <div>
-                        <input type='radio' name={'radio-2'} id={'radio-2-2'} value={'INAPPROPRIATE_CONTENT'} onChange={handleChangeCategory}/>
-                        <label id={'radio-2-2'}>{t('reportModal.inappropriate_content')}</label>
-                    </div>
-                    <div>
-                        <input type='radio' name={'radio-2'} id={'radio-2-3'} value={'ILLEGAL_ACTIVITY'} onChange={handleChangeCategory}/>
-                        <label id={'radio-2-3'}>{t('reportModal.illegal_activity')}</label>
-                    </div>
-                    <div>
-                        <input type='radio' name={'radio-2'} id={'radio-2-4'} value={'SPAM'} onChange={handleChangeCategory}/>
-                        <label id={'radio-2-4'}>{t('reportModal.spam')}</label>
-                    </div>
-                    <div>
-                        <input type='radio' name={'radio-2'} id={'radio-2-5'} value={'OTHER'} onChange={handleChangeCategory}/>
-                        <label id={'radio-2-5'}>{t('reportModal.other')}</label>
-                    </div>
+                    <ReportRadio name={'radio-reason'} value={'ABUSIVE_LANGUAGE'}>
+                        {t('reportModal.abusive_language')}
+                    </ReportRadio>
+                    <ReportRadio name={'radio-reason'} value={'INAPPROPRIATE_CONTENT'}>
+                        {t('reportModal.inappropriate_content')}
+                    </ReportRadio>
+                    <ReportRadio name={'radio-reason'} value={'ILLEGAL_ACTIVITY'}>
+                        {t('reportModal.illegal_activity')}
+                    </ReportRadio>
+                    <ReportRadio name={'radio-reason'} value={'SPAM'}>
+                        {t('reportModal.spam')}
+                    </ReportRadio>
+                    <ReportRadio name={'radio-reason'} value={'OTHER'}>
+                        {t('reportModal.other')}
+                    </ReportRadio>
                 </div>
             </div>
             <h4>{t('reportModal.detail')}</h4>
