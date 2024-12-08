@@ -16,7 +16,7 @@ const postLogout = async () => {
     return response.data;
 };
 const postSignup = async ({isKorean, email, univName, name, password}) => {
-    const response = await authInstance.post('/api/user/signup', {
+    const response = await authInstance.post('/api/auth/signup', {
         isKorean,
         email,
         univName,
@@ -39,9 +39,10 @@ const postValidate = async ({email, univName}) => {
     return response.data;
 };
 
-const postVerify = async ({email, code}) => {
+const postVerify = async ({email, univName, code}) => {
     const response = await authInstance.post('/api/auth/verify', {
         email,
+        univName,
         code
     });
     return response.data;

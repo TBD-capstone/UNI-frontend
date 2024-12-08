@@ -32,7 +32,7 @@ const ProfileGrid = () => {
     const [ads, setAds] = useState([]);
     const [currentAd, setCurrentAd] = useState(null);
     const [language] = useState(Cookies.get('language') || 'en');
-    const [sortOrder, setSortOrder] = useState('highest_rating');
+    const [sortOrder, setSortOrder] = useState('newest');
     const [isLoading, setIsLoading] = useState(false);
     const [isProfilesEmpty, setIsProfilesEmpty] = useState(false);
     const [totalPages, setTotalPages] = useState(1); // 페이지 수 상태 추가
@@ -154,7 +154,7 @@ const ProfileGrid = () => {
 
         const inputHashtags = input
             .split(' ')
-            .map(tag => tag.trim().replace('#', ''))
+            .map(tag => tag.trim().replace('#'))
             .filter(tag => tag !== '');
         setHashtags(Array.from(new Set(inputHashtags))); // 중복 제거 후 업데이트
     };
