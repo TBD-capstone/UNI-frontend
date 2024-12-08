@@ -118,9 +118,12 @@ function AdminPage() {
         formData.append('status', newStatus);
 
         try {
-            const response = await fetch('/api/admin/ad', {
+            const response = await fetch('/api/admin/ad/update-status', {
                 method: 'POST',
-                body: formData,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ adId, newStatus }),
             });
 
             if (response.ok) {
@@ -181,6 +184,7 @@ function AdminPage() {
         formData.append('title', adForm.title);
         formData.append('startDate', adForm.startDate);
         formData.append('endDate', adForm.endDate);
+        formData.append('adStatus', adForm.adStatus || 'ACTIVE');
 
         // 이미지 파일이 있을 경우 추가
         if (adImage) {
@@ -329,10 +333,18 @@ function AdminPage() {
                                         <td colSpan="3">
                                             <p><strong>상세 설명:</strong> {ad.description}</p>
                                             <p><strong>이미지:</strong> <img src={ad.imageUrl} alt="광고 이미지" /></p>
-                                            <p><strong>현재 상태:</strong> {ad.adStatus === 'ACTIVE' ? '게시 중' : '게시 안됨'}</p>
-                                            <button onClick={() => toggleAdStatus(ad.adId, ad.adStatus)} className="btn-toggle">
-                                                {ad.adStatus === 'ACTIVE' ? '게시 중지' : '게시하기'}
-                                            </button>
+                                            <label>
+                                                광고 상태:
+                                                <select
+                                                    name="adStatus"
+                                                    value={adForm.adStatus || 'ACTIVE'}
+                                                    onChange={handleAdFormChange}
+                                                >
+                                                    <option value="ACTIVE">ACTIVE</option>
+                                                    <option value="INACTIVE">INACTIVE</option>
+                                                    <option value="ENDED">ENDED</option>
+                                                </select>
+                                            </label>
                                         </td>
                                     </tr>
                                 )}

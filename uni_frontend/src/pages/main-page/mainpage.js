@@ -49,16 +49,18 @@ const ProfileGrid = () => {
 
     const fetchAds = async () => {
         try {
-            const response = await fetch('/api/ads', {
+            const response = await fetch('/api/ad', {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' },
             });
             const data = await response.json();
-            setAds(data.ads || []); // 광고 데이터를 상태에 저장
+            const activeAds = (data.ads || []).filter(ad => ad.adStatus === 'ACTIVE'); // "ACTIVE" 상태만 필터링
+            setAds(activeAds);
         } catch (error) {
             console.error('광고 데이터 가져오기 실패:', error);
         }
     };
+
     useEffect(() => {
         fetchAds(); // 광고 데이터 가져오기
     }, []);
@@ -176,6 +178,7 @@ const ProfileGrid = () => {
                                 <h4>{ad.title}</h4>
                                 <p>{ad.advertiser}</p>
                                 <p>{`${ad.startDate} ~ ${ad.endDate}`}</p>
+                                <p>{`Status: ${ad.adStatus}`}</p>
                             </div>
                         </div>
                     ))
