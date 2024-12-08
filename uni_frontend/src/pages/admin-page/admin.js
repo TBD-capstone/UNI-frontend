@@ -12,7 +12,7 @@ import {
 
 
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 10;
 
 function AdminPage() {
     const [activeTab, setActiveTab] = useState('신고확인');

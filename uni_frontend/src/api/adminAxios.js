@@ -1,7 +1,7 @@
 import instance from "./basicAxios";
 
-const getUserListByAdmin = async () => {
-    const response = await instance.get(`/api/admin/users`)
+const getUserListByAdmin = async (params) => {
+    const response = await instance.get(`/api/admin/users?${params}`)
         .catch((error) => console.error('유저 데이터 불러오기 실패:', error));
     return response.data;
 };
