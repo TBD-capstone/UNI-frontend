@@ -46,14 +46,23 @@ function AdminPage() {
                     const data = await getAdListByAdmin();
                     if (isMounted) setAdData(data.ads || []);
                 } else if (activeTab === '신고확인') {
-                    fetchReportedUsers(currentPage - 1);
+                    try {
+                        await fetchReportedUsers(currentPage - 1);
+                    } catch (error) {
+                        console.error('fetchReportedUsers 호출 중 오류:', error);
+                    }
                 } else if (activeTab === '유저관리') {
-                    fetchUsers(statusFilter, currentPage - 1);
+                    try {
+                        await fetchUsers(statusFilter, currentPage - 1);
+                    } catch (error) {
+                        console.error('fetchUsers 호출 중 오류:', error);
+                    }
                 }
             } catch (error) {
                 console.error('데이터 가져오기 실패:', error);
             }
         };
+
         fetchData();
         return () => {
             isMounted = false;
@@ -61,21 +70,30 @@ function AdminPage() {
     }, [activeTab, statusFilter, currentPage]);
 
 
-    const fetchReportedUsers = async (page = 0) => {
-        const data = await getReportedUserListByAdmin(`page=${page}&size=${ITEMS_PER_PAGE}`);
 
-        setReportedUsers(data.content || []);
-        setTotalPages(data.totalPages || 0);
+    const fetchReportedUsers = async (page = 0) => {
+        try {
+            const data = await getReportedUserListByAdmin(`page=${page}&size=${ITEMS_PER_PAGE}`);
+            setReportedUsers(data.content || []);
+            setTotalPages(data.totalPages || 0);
+        } catch (error) {
+            console.error('fetchReportedUsers 실패:', error);
+            setReportedUsers([]); // 기본값으로 설정
+        }
     };
 
     const fetchUsers = async (status = '', page = 0) => {
-        let params = `/api/admin/users?page=${page}&size=${ITEMS_PER_PAGE}`;
-        if (status) params += `&status=${status}`;
-
-        const data = await getUserListByAdmin(params);
-        setUsers(data.content || []);
-        setTotalPages(data.totalPages || 0);
+        try {
+            const params = `page=${page}&size=${ITEMS_PER_PAGE}${status ? `&status=${status}` : ''}`;
+            const data = await getUserListByAdmin(params);
+            setUsers(data.content || []);
+            setTotalPages(data.totalPages || 0);
+        } catch (error) {
+            console.error('fetchUsers 실패:', error);
+            setUsers([]); // 기본값으로 설정
+        }
     };
+
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -162,7 +180,8 @@ function AdminPage() {
 
     const updateUserStatus = async (userId, newStatus) => {
         const days = banDays[userId] || 0;
-        const params = `/${userId}/status?status=${newStatus}&banDays=${days}`;
+        const params = `${userId}/status?status=${newStatus}&banDays=${days}`;
+
         try {
             const result = await patchUserStateByAdmin(params);
             if (result.message) {
@@ -176,6 +195,7 @@ function AdminPage() {
         }
     };
 
+
     const handleAdFormChange = (e) => {
         const { name, value } = e.target;
         setAdForm((prev) => ({ ...prev, [name]: value }));
@@ -188,32 +208,33 @@ function AdminPage() {
     const handleAdSubmit = async (e) => {
         e.preventDefault();
 
-        // FormData 생성
-        const formData = new FormData();
-        formData.append('advertiser', adForm.advertiser);
-        formData.append('title', adForm.title);
-        formData.append('startDate', adForm.startDate);
-        formData.append('endDate', adForm.endDate);
-        formData.append('adStatus', adForm.adStatus || 'ACTIVE');
-
-        // 이미지 파일이 있을 경우 추가
-        if (adImage) {
-            formData.append('image', adImage);
-        }
-
         try {
-            const result = await postAdNewByAdmin({formData});
+            const formData = new FormData();
+            formData.append('advertiser', adForm.advertiser);
+            formData.append('title', adForm.title);
+            formData.append('startDate', adForm.startDate);
+            formData.append('endDate', adForm.endDate);
+            formData.append('adStatus', adForm.adStatus || 'ACTIVE');
+
+            if (adImage) {
+                formData.append('image', adImage);
+            }
+
+            const result = await postAdNewByAdmin(formData);
+
             if (result.status === 'success') {
                 alert('광고가 성공적으로 등록되었습니다.');
                 setAdForm({ advertiser: '', title: '', startDate: '', endDate: '' });
                 setAdImage(null);
             } else {
-                console.error('HTTP 에러');
+                console.error('광고 등록 실패:', result.message);
             }
         } catch (error) {
             console.error('광고 등록 중 오류가 발생했습니다:', error);
+            alert('광고 등록 실패. 다시 시도하세요.');
         }
     };
+
 
 
     const handlePageChange = (page) => {
