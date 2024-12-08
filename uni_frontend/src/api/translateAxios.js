@@ -1,10 +1,7 @@
-import axios from "axios";
-
-const translateAxios = axios.create();
-translateAxios.defaults.baseURL = `${process.env.REACT_APP_API_URL}`
+import instance from "./basicAxios";
 
 const getChatTranslate = async ({messageId}) => {
-    const response = await translateAxios.get(`/api/chat/translate/${messageId}`);
+    const response = await instance.get(`/api/chat/translate/${messageId}`);
     return response.data;
 };
 

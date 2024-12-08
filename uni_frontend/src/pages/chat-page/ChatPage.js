@@ -137,7 +137,7 @@ const ChatPage = (props) => {
                 setShowTranslate(() => true);
                 if (!translatedChat) {
                     (async () => {
-                        const data = getChatTranslate({messageId: props.messageId});
+                        const data = await getChatTranslate({messageId: props.messageId});
                         setTranslatedChat(() => data);
                     })();
                 }

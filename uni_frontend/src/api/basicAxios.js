@@ -61,25 +61,26 @@ instance.interceptors.response.use(async function (response) {
             logout();
         }
     }
-    if(status === 403){
-        try {
-            const tokenRefreshResult = await instance.post('/api/auth/refresh', {
-                refreshToken: localStorage.getItem('refreshToken')
-            });
-            if (tokenRefreshResult.status === 200) {
-                const { accessToken, refreshToken } = tokenRefreshResult.data
-                // 새로 발급받은 토큰을 스토리지에 저장
-                localStorage.setItem('accessToken', accessToken);
-                localStorage.setItem('refreshToken', refreshToken);
-                // 토큰 갱신 성공. API 재요청
-                return instance(config)
-            } else {
-                logout();
-            }
-        } catch (e) {
-            logout();
-        }
-    }
+    // 403시 refresh - 일반 오류시 무한 refresh 발생으로 주석처리
+    // if(status === 403){
+    //     try {
+    //         const tokenRefreshResult = await instance.post('/api/auth/refresh', {
+    //             refreshToken: localStorage.getItem('refreshToken')
+    //         });
+    //         if (tokenRefreshResult.status === 200) {
+    //             const { accessToken, refreshToken } = tokenRefreshResult.data
+    //             // 새로 발급받은 토큰을 스토리지에 저장
+    //             localStorage.setItem('accessToken', accessToken);
+    //             localStorage.setItem('refreshToken', refreshToken);
+    //             // 토큰 갱신 성공. API 재요청
+    //             return instance(config)
+    //         } else {
+    //             logout();
+    //         }
+    //     } catch (e) {
+    //         logout();
+    //     }
+    // }
 
     return Promise.reject(error);
 });
