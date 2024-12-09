@@ -8,8 +8,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/uni_frontend/src/api/adminAxios.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/api/adminAxios.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/uni_frontend/src/pages/admin-page/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/pages/admin-page/admin.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/pages/main-page/mainpage.css" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/pages/main-page/mainpage.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/pages/main-page/mainpage.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/pages/main-page/mainpage.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -161,25 +161,32 @@ function AdminPage() {
 
 
     const handleBanDaysChange = (userId, days) => {
-        setBanDays((prev) => ({ ...prev, [userId]: days }));
-    };
-
-    const updateUserStatus = async (userId, newStatus) => {
-        const days = banDays[userId] || 0;
-        const params = `${userId}/status?status=${newStatus}&banDays=${days}`;
-
-        try {
-            const result = await patchUserStateByAdmin(params);
-            if (result.message) {
-                alert(result.message);
-                fetchUsers(statusFilter, currentPage - 1);
-            } else {
-                console.error('유저 상태 업데이트 실패:', result);
-            }
-        } catch (error) {
-            console.error('유저 상태 업데이트 중 오류가 발생했습니다:', error);
+        const parsedDays = parseInt(days, 10);
+        if (!isNaN(parsedDays) && parsedDays >= 0) {
+            setBanDays((prev) => ({ ...prev, [userId]: parsedDays }));
         }
     };
+
+
+    const updateUserStatus = async (userId, newStatus) => {
+        const days = banDays[userId] || 0; // banDays 상태에서 값 가져오기
+
+        try {
+            const result = await patchUserStateByAdmin({
+                userId,
+                userStatus: newStatus,
+                banDays: days,
+            });
+
+
+            alert("유저 상태가 업데이트 되었습니다");
+            fetchUsers(statusFilter, currentPage - 1); // 유저 리스트 갱신
+
+        } catch (error) {
+            console.error('유저 상태 업데이트 중 에러:', error);
+        }
+    };
+
 
 
     const handleAdFormChange = (e) => {

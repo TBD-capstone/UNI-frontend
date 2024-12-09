@@ -24,10 +24,18 @@ const postAdNewByAdmin = async (formData) => {
     return response.data;
 };
 
-const patchUserStateByAdmin = async ({userStatus, banDays, data}) => {
-    const response = await instance.patch(`/api/admin/users/2/status?status=${userStatus}&banDays=${banDays}`, data);
-    return response.data;
+const patchUserStateByAdmin = async ({userId, userStatus = '', banDays = 0}) => {
+    try {
+        const response = await instance.patch(
+            `/api/admin/users/${userId}/status?status=${userStatus}&banDays=${banDays}`
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error in patchUserStateByAdmin:', error);
+        throw error;
+    }
 };
+
 
 const getReportedUserListByAdmin = async (params) => {
     const response = await instance.get(`/api/admin/reported-users?${params}`)
