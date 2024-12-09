@@ -269,9 +269,9 @@
     border-bottom: 3px solid #FFBA00;
 }
 
-/*@media (max-width: 768px) {*/
-/*    .button-section {*/
-/*        position: absolute;*/
-/*        right: 0;*/
-/*    }*/
-/*}*/
+@media (max-width: 768px) {
+    .button-section {
+        position: absolute;
+        right: 0;
+    }
+}
