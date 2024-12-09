@@ -21,6 +21,8 @@ const UserPage = () => {
     const {t} = useTranslation();
     const navigate = useNavigate();
     const {userId} = useParams();
+    const [isKorean, setIsKorean] = useState(false);
+    const [isKoreanMe, setIsKoreanMe] = useState(false);
     const [user, setUser] = useState(null);
     const [markers, setMarkers] = useState(null);
     const [activeTab, setActiveTab] = useState('Qna');
@@ -58,7 +60,7 @@ const UserPage = () => {
                     </> :
                     <>
                         <div>{t('userPage.chat_explain1')}{props.userName}{t('userPage.chat_explain2')}</div>
-                        <button className="Chatting" onClick={handleClickChat}>{t('userPage.chat')}</button>
+                        {!props.isKoreanMe && <button className="Chatting" onClick={handleClickChat}>{t('userPage.chat')}</button>}
                         <button className="Report" onClick={handleClickReport(userId)}>{t('userPage.report')}</button>
                     </>
                 }
@@ -321,6 +323,8 @@ const UserPage = () => {
                 return;
             await getMyData().then((data) => {
                 setCommenterId(() => data.userId);
+                const isKorean = data.role !== 'EXCHANGE';
+                setIsKoreanMe(() => isKorean);
                 console.log(data);
             })
                 .catch((err) => {
@@ -328,6 +332,8 @@ const UserPage = () => {
                 });
             await getUserData({userId}).then((data) => {
                 setUser(() => data);
+                const isKorean = data.role !== 'EXCHANGE';
+                setIsKorean(() => isKorean);
                 console.log(data); // for debug
             })
                 .catch((err) => {
@@ -352,7 +358,7 @@ const UserPage = () => {
                 <div className='image-back-container'>
                     <img className='image-back' src={user.imgBack || '/basic_background.png'} alt="배경사진"/>
                 </div>
-                <MoveButton owner={idSame(commenterId, userId)} userName={user.userName}/>
+                <MoveButton owner={idSame(commenterId, userId)} isKoreanMe={isKoreanMe} userName={user.userName}/>
                 <div className="user-content-container">
                     <div className="image-prof-container">
                         <img className="image-prof" src={user.imgProf || basicProfileImage} alt="프로필사진"/>
@@ -360,9 +366,9 @@ const UserPage = () => {
                     <div className="profile-container">
                         <h2>{user.userName}</h2>
                         <span>{user.univ}</span>
-                        <p className={'user-star'}><FaStar className={'yellow-star'}/> {user.star}</p>
-                        <p>{t("userPage.region")}: {user.region}</p>
-                        <p>{t("userPage.time")}: {user.time}</p>
+                        {(isKorean) && <p className={'user-star'}><FaStar className={'yellow-star'}/> {user.star}</p>}
+                        {(isKorean) && <p>{t("userPage.region")}: {user.region}</p>}
+                        {(isKorean) && <p>{t("userPage.time")}: {user.time}</p>}
                         <div className="hashtag-section">
                             {user.hashtags && user.hashtags.map((hashtag, i) => {
                                 return (
@@ -373,34 +379,40 @@ const UserPage = () => {
                             })}
                         </div>
                     </div>
-                    <div className="selfPR-container">
-                        <h3>{t("userPage.self_pr")}</h3>
-                        <p className="selfPR">{user.description}</p>
-                    </div>
-                    <div className="Map-section">
-                        <h3>{t("userPage.map")}</h3>
-                        <div className="Map-container">
-                            <GoogleMap markers={markers}/>
+                    {(isKorean) && <>
+                        <div className="selfPR-container">
+                            <h3>{t("userPage.self_pr")}</h3>
+                            <p className="selfPR">{user.description}</p>
                         </div>
-                    </div>
-                    <div className="user-tabs">
-                        <div className={`tab ${activeTab === 'Qna' ? 'active' : ''}`}
-                             onClick={() => handleTabClick('Qna')}>
-                            Q&A
+                        <div className="Map-section">
+                            <h3>{t("userPage.map")}</h3>
+                            <div className="Map-container">
+                                <GoogleMap markers={markers}/>
+                            </div>
                         </div>
-                        <div className={`tab ${activeTab === 'Review' ? 'active' : ''}`}
-                             onClick={() => handleTabClick('Review')}>
-                            Review
+                        <div className="user-tabs">
+                            <div className={`tab ${activeTab === 'Qna' ? 'active' : ''}`}
+                                 onClick={() => handleTabClick('Qna')}>
+                                Q&A
+                            </div>
+                            <div className={`tab ${activeTab === 'Review' ? 'active' : ''}`}
+                                 onClick={() => handleTabClick('Review')}>
+                                Review
+                            </div>
                         </div>
-                    </div>
-                    {activeTab === 'Qna' &&
-                        <QnaSection
-                            userId={userId} commenterId={commenterId}
-                            handleReport={handleClickReport}/>}
-                    {activeTab === 'Review' &&
-                        <ReviewSection
-                            userId={userId} commenterId={commenterId} reviews={reviews}
-                            owner={idSame(commenterId, userId)}/>}
+                        {
+                            activeTab === 'Qna' &&
+                            <QnaSection
+                                userId={userId} commenterId={commenterId}
+                                handleReport={handleClickReport}/>
+                        }
+                        {
+                            activeTab === 'Review' &&
+                            <ReviewSection
+                                userId={userId} commenterId={commenterId} reviews={reviews}
+                                owner={idSame(commenterId, userId)}/>
+                        }
+                    </>}
                 </div>
             </div>) : null
     );
