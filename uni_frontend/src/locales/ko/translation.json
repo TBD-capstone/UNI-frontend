@@ -63,7 +63,8 @@
     "chat_explain2": "님에게 채팅으로 물어볼 수 있습니다.",
     "no_qna": "아직 Q&A가 없습니다.",
     "no_review": "아직 리뷰가 없습니다.",
-    "review_reply_placeholder": "답글을 입력하세요..."
+    "review_reply_placeholder": "답글을 입력하세요...",
+    "write_error": "작성 중 오류가 발생했습니다. 다시 시도해주세요."
   },
   "editPage": {
     "user": "이름",

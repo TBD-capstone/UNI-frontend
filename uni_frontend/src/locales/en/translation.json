@@ -63,7 +63,8 @@
     "chat_explain2": " via chat.",
     "no_qna": "There is no Q&A yet.",
     "no_review": "There is no review yet.",
-    "review_reply_placeholder": "Write a reply..."
+    "review_reply_placeholder": "Write a reply...",
+    "write_error": "An error occurred while writing. Please try again."
   },
   "editPage": {
     "user": "User",

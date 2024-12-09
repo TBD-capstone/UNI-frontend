@@ -145,16 +145,17 @@
 .qna-button {
     margin-left: auto;
     margin-bottom: auto;
+    width: 50px;
 }
 
 .qna-user {
     font-weight: bold;
 }
 .qna-content {
-    /*padding: 10px 15px;*/
     font-size: 14px;
     color: #333;
-    max-width: 200px;
+    width: auto;
+    word-break:break-all;
 }
 
 .reply-container {
@@ -219,6 +220,9 @@
     border-radius: 50%;
     margin: 10px;
     object-fit: cover;
+}
+.review p {
+    word-break:break-all;
 }
 .review-profile {
     display: flex;

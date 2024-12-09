@@ -62,7 +62,8 @@
     "chat_explain2": "。",
     "no_qna": "目前还没有Q&A。",
     "no_review": "还没有写评论。",
-    "review_reply_placeholder": "请输入回复..."
+    "review_reply_placeholder": "请输入回复...",
+    "write_error": "写入时发生错误。请再试一次。"
   },
   "editPage": {
     "edit": "编辑",
