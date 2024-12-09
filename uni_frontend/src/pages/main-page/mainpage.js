@@ -49,6 +49,32 @@ const ProfileGrid = () => {
     //     return response.json();
     // };
 
+    useEffect(() => {
+        const categoryContainer = document.querySelector('.category');
+        if (categoryContainer) {
+            // 모든 자식 요소의 너비 합산 계산
+            const totalWidth = Array.from(categoryContainer.children).reduce(
+                (sum, item) => sum + item.offsetWidth + 10, // 10은 gap
+                0
+            );
+            categoryContainer.style.width = `${totalWidth}px`; // 동적으로 너비 설정
+        }
+    }, []);
+
+
+
+    useEffect(() => {
+        const filterButtons = document.querySelector('.filter-buttons');
+        if (filterButtons) {
+            const totalWidth = Array.from(filterButtons.children).reduce(
+                (sum, item) => sum + item.offsetWidth + 15, // 15은 gap
+                0
+            );
+            filterButtons.style.width = `${totalWidth}px`;
+        }
+    }, []);
+
+
     const fetchAds = async () => {
         try {
             const data = await getAd();
@@ -90,9 +116,7 @@ const ProfileGrid = () => {
             // API 응답 데이터 매핑
             const fetchedProfiles = profileData.content || [];
             setProfiles(fetchedProfiles); // 현재 페이지 데이터만 설정
-            setFilteredProfiles(fetchedProfiles); // 같은 데이터를 filteredProfiles에 설정
             setTotalPages(profileData.totalPages || 1); // totalPages 값을 설정
-
             setIsProfilesEmpty(fetchedProfiles.length === 0);
         } catch (error) {
             console.error(t('mainpage.fetch_error'), error);
@@ -129,11 +153,15 @@ const ProfileGrid = () => {
 
 
     useEffect(() => {
+        console.log("Current Page:", currentPage);
         fetchData();
     }, [language, t, currentPage, sortOrder, hashtags]);
 
     const handlePageChange = (page) => {
-        setCurrentPage(page); // 페이지 상태 업데이트
+        console.log("Changing to page:", page);
+        if (page !== currentPage) {
+            setCurrentPage(page); // 페이지 상태 업데이트
+        }
     };
 
     const handleCategoryClick = (label) => {
@@ -153,8 +181,8 @@ const ProfileGrid = () => {
         setSearchQuery(input); // 검색창 값 업데이트
 
         const inputHashtags = input
-            .split(' ')
-            .map(tag => tag.trim().replace('#'))
+            .split(',')
+            .map(tag => tag.trim())
             .filter(tag => tag !== '');
         setHashtags(Array.from(new Set(inputHashtags))); // 중복 제거 후 업데이트
     };
@@ -165,10 +193,7 @@ const ProfileGrid = () => {
 
     const handleSortChange = (e) => setSortOrder(e.target.value);
 
-    const currentProfiles = filteredProfiles.slice(
-        (currentPage - 1) * ITEMS_PER_PAGE,
-        currentPage * ITEMS_PER_PAGE
-    );
+    const currentProfiles = profiles;
 
     return (
         <div className="container">
@@ -229,6 +254,7 @@ const ProfileGrid = () => {
                     >
                     {t(`mainpage.categories.${category.label}`)}
                     </button>
+
                 ))}
                 </div>
             </div>
