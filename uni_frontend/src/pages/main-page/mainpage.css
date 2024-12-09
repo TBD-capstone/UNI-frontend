@@ -6,6 +6,7 @@
     gap: 16px;
     padding: 20px;
     font-family: Arial, sans-serif;
+    overflow-x: hidden; /* 가로 스크롤 방지 */
 }
 
 .ads-section {
@@ -107,7 +108,7 @@
 .filter-buttons {
     display: flex;
     gap: 10px;
-    overflow-x: auto;
+    overflow-y: scroll;
     /* 가로 스크롤 활성화 */
     padding: 10px 0;
     white-space: nowrap;
@@ -130,17 +131,16 @@
 }
 
 .filter-button {
-    padding: 10px 15px;
-    border-radius: 20px;
-    border: 1px solid #ddd;
-    background-color: #f9f9f9;
-    color: #333;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    white-space: nowrap;
-    /* 텍스트 줄바꿈 방지 */
+    display: flex;
+    flex-wrap: nowrap; /* 한 줄로 표시 */
+    overflow-x: auto; /* 좌우 스크롤 활성화 */
+    padding: 10px 0;
+    white-space: nowrap; /* 버튼이 한 줄에 표시되도록 */
+    scrollbar-width: thin; /* 스크롤바 폭 조절 */
+    scrollbar-color: #ccc transparent; /* 스크롤바 색상 */
+    -webkit-overflow-scrolling: touch; /* 터치 스크롤 지원 */
+    width: 100%; /* 부모 너비를 넘지 않도록 설정 */
+    box-sizing: border-box; /* 패딩 포함 너비 계산 */
 }
 
 .filter-button:hover {
@@ -181,28 +181,51 @@
     cursor: pointer;
 }
 
-/* 카테고리 */
 .category {
     display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 15px;
-    width: 100%;
-    max-width: 1200px;
-    margin-bottom: 20px;
+    flex-wrap: nowrap; /* 한 줄로 유지 */
+    overflow-x: auto; /* 좌우 스크롤 활성화 */
+    white-space: nowrap; /* 줄바꿈 방지 */
+    gap: 10px;
+    scrollbar-width: thin; /* 스크롤바 폭 조정 */
+    scrollbar-color: #ccc transparent; /* 스크롤바 색상 */
+    -webkit-overflow-scrolling: touch; /* 부드러운 스크롤 지원 */
+    max-width: 1200px; /* 상단바와 동일한 최대 너비 */
+    padding: 0 20px; /* 상단바와 동일한 좌우 여백 */
+    margin: 0 auto; /* 좌우 중앙 정렬 */
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
 }
 
+
 .category-item {
+    flex-shrink: 0; /* 크기 줄어들지 않도록 설정 */
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    padding: 10px 15px;
-    border-radius: 10px;
+    padding: 10px;
+    min-width: fit-content; /* 텍스트에 맞게 크기 조정 */
+    max-width: fit-content; /* 텍스트에 맞게 크기 조정 */
     background-color: #f9f9f9;
+    border-radius: 10px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    text-align: center; /* 텍스트 중앙 정렬 */
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
 }
+
+.category::-webkit-scrollbar {
+    height: 5px; /* 스크롤바 높이 */
+}
+
+.category::-webkit-scrollbar-thumb {
+    background-color: #aaa; /* 스크롤바 색상 */
+    border-radius: 10px;
+}
+
+.category::-webkit-scrollbar-track {
+    background: transparent; /* 트랙 색상 */
+}
+
 
 .category-item.active {
     background-color: #E9AE58;
@@ -218,6 +241,7 @@
     font-size: 14px;
     font-weight: 500;
 }
+
 
 /* Profile card grid */
 .profile-grid {
@@ -371,18 +395,17 @@ a:hover {
     }
 
     .category {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        padding: 10px;
-    }
-
-    .category-item {
-        flex: 0 0 auto;
+        padding: 0px 15px; /* 모바일에서도 좌우 여백 유지 */
+        max-width: 100%; /* 부모 요소에 맞게 확장 */
     }
 
     .filter-buttons {
-        justify-content: flex-start;
-        overflow-x: auto;
+        overflow-x: auto; /* 모바일에서도 스크롤 가능하도록 */
+        white-space: nowrap; /* 줄바꿈 방지 */
+    }
+
+    .category-item {
+        min-width: 80px; /* 모바일 환경에서 최소 너비 */
     }
 }
 
@@ -406,5 +429,18 @@ a:hover {
     .profile-card {
         width: 100%;
         margin-bottom: 10px;
+    }
+    .category {
+        padding: 0px 10px; /* 모바일에서도 좌우 여백 유지 */
+        max-width: 100%; /* 부모 요소에 맞게 확장 */
+    }
+
+    .filter-buttons {
+        overflow-x: auto; /* 모바일에서도 스크롤 가능하도록 */
+        white-space: nowrap; /* 줄바꿈 방지 */
+    }
+
+    .category-item {
+        min-width: 70px; /* 작은 화면에서 최소 너비 */
     }
 }

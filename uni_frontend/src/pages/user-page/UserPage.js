@@ -33,7 +33,7 @@ const UserPage = () => {
 
     const handleClickReport = useCallback((reportedId) => {
         return () => {
-            setReportedId(() => reportedId);
+            setReportedId(() => Number(reportedId));
             setReport(() => true);
         }
     }, []);
@@ -43,7 +43,9 @@ const UserPage = () => {
         };
         const handleClickChat = () => {
             (async () => {
-                const data = await postRequestChat({receiverId: userId});
+                const data = await postRequestChat({receiverId: userId}).catch((err) => {
+                    alert(t('userPage.chat_error'));
+                });
                 navigate(`/chat/${data.chatRoomId}`, {state: data});
             })();
         };
@@ -51,11 +53,11 @@ const UserPage = () => {
             <div className="button-section">
                 {props.owner ?
                     <>
-                        {t('userPage.edit_explain')}
+                        <div>{t('userPage.edit_explain')}</div>
                         <button className="Edit" onClick={handleClickEdit}>{t('userPage.edit')}</button>
                     </> :
                     <>
-                        {t('userPage.chat_explain1')}{props.userName}{t('userPage.chat_explain2')}
+                        <div>{t('userPage.chat_explain1')}{props.userName}{t('userPage.chat_explain2')}</div>
                         <button className="Chatting" onClick={handleClickChat}>{t('userPage.chat')}</button>
                         <button className="Report" onClick={handleClickReport(userId)}>{t('userPage.report')}</button>
                     </>
@@ -71,7 +73,7 @@ const UserPage = () => {
     const QnaSection = (props) => {
         const handleDeleteQna = (qnaId) => {
             return () => {
-                deleteQna(qnaId).catch((err) => {
+                deleteQna({qnaId}).catch((err) => {
                     console.log(err);
                     alert(t("userPage.delete_error"));
                 });
@@ -80,7 +82,7 @@ const UserPage = () => {
 
         const handleDeleteReply = (replyId) => {
             return () => {
-                deleteReply(replyId).catch((err) => {
+                deleteReply({replyId}).catch((err) => {
                     console.log(err);
                     alert(t("userPage.delete_error"));
                 });
@@ -144,7 +146,7 @@ const UserPage = () => {
                     {props.owner ?
                         <button className={'qna-button'} onClick={props.handleDelete}>{t('userPage.delete')}</button> :
                         <button className={'qna-button'}
-                                onClick={props.handleReport(props.data.commenterAuthor ? props.data.commenterAuthor.userId : props.data.commenterId)}>{t('userPage.report')}</button>
+                                onClick={props.handleReport(props.data.commentAuthor ? props.data.commentAuthor.userId : props.data.commenterId)}>{t('userPage.report')}</button>
                     }
                 </div>
             );
@@ -221,15 +223,20 @@ const UserPage = () => {
                 setContent(() => e.target.value);
             }
             const handleClickPost = async () => {
-                const fetchPOST = () => {
-                    postReviewReply({reviewId: props.reviewId, commenterId: props.commenterId})
+                const fetchPOST = async () => {
+                    postReviewReply({
+                        reviewId: props.reviewId,
+                        commenterId: props.commenterId,
+                        content: content
+                    }).then(() => {
+                        return fetchGetReivews(userId);
+                    })
                         .catch((err) => {
                             console.log(err);
-                            alert(t("userPage.chat_error"));
+                            alert(t("userPage.write_error"));
                         });
                 };
                 await fetchPOST();
-                await fetchGetReivews(userId);
                 setContent(() => "");
             };
             const handleKeyDownPost = (e) => {
@@ -249,7 +256,7 @@ const UserPage = () => {
 
         const Review = (props) => {
             return (
-                <div className="review">
+                <div className="review" key={`reviews-${props.data.reviewId}`}>
                     <div className={'review-profile'}>
                         <img src={props.data.commenterImgProf ? props.data.commenterImgProf : basicProfileImage}
                              alt={'./profile'}/>
@@ -277,7 +284,7 @@ const UserPage = () => {
             <div className="review-section">
                 {reviews.length > 0 ? reviews.map((data, i) => {
                     return (
-                        <Review data={data} key={`reviews-${i}`} owner={owner} commenterId={commenterId}/>);
+                        <Review data={data} i={i} owner={owner} commenterId={commenterId}/>);
                 }) : <p>{t('userPage.no_review')}</p>}
             </div>
         )
@@ -316,6 +323,9 @@ const UserPage = () => {
                 setCommenterId(() => data.userId);
                 console.log(data);
             })
+                .catch((err) => {
+                    console.error(err);
+                });
             await getUserData({userId}).then((data) => {
                 setUser(() => data);
                 console.log(data); // for debug
@@ -339,8 +349,8 @@ const UserPage = () => {
             <div className='user-container'>
                 <ReportModal isOpen={report} handleClose={() => setReport(false)} reporterId={Number(commenterId)}
                              reportedId={reportedId}/>
-                <div className='Image-back-container'>
-                    <img className='Image-back' src={user.imgBack || '/basic_background.png'} alt="배경사진"/>
+                <div className='image-back-container'>
+                    <img className='image-back' src={user.imgBack || '/basic_background.png'} alt="배경사진"/>
                 </div>
                 <MoveButton owner={idSame(commenterId, userId)} userName={user.userName}/>
                 <div className="user-content-container">
@@ -390,7 +400,7 @@ const UserPage = () => {
                     {activeTab === 'Review' &&
                         <ReviewSection
                             userId={userId} commenterId={commenterId} reviews={reviews}
-                            owner={commenterId === `${userId}`}/>}
+                            owner={idSame(commenterId, userId)}/>}
                 </div>
             </div>) : null
     );

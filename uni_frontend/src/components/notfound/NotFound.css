@@ -1,0 +1,38 @@
+.not-found {
+    text-align: center;
+    padding: 50px;
+    font-family: Arial, sans-serif;
+}
+
+.not-found-image {
+    max-width: 400px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.not-found h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.not-found p {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    color: #666;
+}
+
+.not-found-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: white;
+    background-color: #7BB05B;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.not-found-button:hover {
+    background-color: #5aa042;
+}

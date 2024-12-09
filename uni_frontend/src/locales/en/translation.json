@@ -10,6 +10,7 @@
     "match_accepted": "Matching is accepted."
   },
   "mainpage": {
+    "search_univ": "Search by university",
     "fetch_profiles_error": "Error fetching profile data:",
     "fetch_ads_error": "Error fetching ad data:",
     "active_ad_status": "active",
@@ -63,7 +64,8 @@
     "chat_explain2": " via chat.",
     "no_qna": "There is no Q&A yet.",
     "no_review": "There is no review yet.",
-    "review_reply_placeholder": "Write a reply..."
+    "review_reply_placeholder": "Write a reply...",
+    "write_error": "An error occurred while writing. Please try again."
   },
   "editPage": {
     "user": "User",
@@ -105,7 +107,8 @@
     "sign_up": "Sign up",
     "status_success": "Login successful!",
     "status_fail": "Login failed: Invalid information.",
-    "status_error": "An error occurred during login."
+    "status_error": "An error occurred during login.",
+    "login_failed": "Wrong information."
   },
   "navbar": {
     "language_change_request": "Change language request",
@@ -132,7 +135,7 @@
     "verify_email_button": "Verify E-mail",
     "verification_code_placeholder": "Verification code",
     "verify_code_button": "Verify Code",
-    "name_placeholder": "English Name",
+    "nickname_explaination": "Nickname to be seen by others.\nPlease make a careful decision",
     "password_placeholder": "Password",
     "confirm_password_placeholder": "Confirm Password",
     "signup_button": "Sign Up",
@@ -153,10 +156,12 @@
     "already_member": "Already a member? Login"
   },
   "reportModal": {
+    "category": "Category",
+    "reason": "Reason",
     "report": "Report",
     "report_reason": "Reasons for reporting",
     "profile": "Profile",
-    "chat": "chat",
+    "chat": "Chat",
     "review": "Review",
     "abusive_language": "Swearing/Hate/Discrimination",
     "inappropriate_content": "inappropriate content",

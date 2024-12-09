@@ -10,6 +10,7 @@
     "match_accepted": "매칭이 수락되었습니다."
   },
   "mainpage": {
+    "search_univ": "대학교 검색",
     "fetch_profiles_error": "프로필 데이터를 불러오는 중 오류가 발생했습니다:",
     "fetch_ads_error": "광고 데이터를 불러오는 중 오류가 발생했습니다:",
     "active_ad_status": "개시중",
@@ -63,7 +64,8 @@
     "chat_explain2": "님에게 채팅으로 물어볼 수 있습니다.",
     "no_qna": "아직 Q&A가 없습니다.",
     "no_review": "아직 리뷰가 없습니다.",
-    "review_reply_placeholder": "답글을 입력하세요..."
+    "review_reply_placeholder": "답글을 입력하세요...",
+    "write_error": "작성 중 오류가 발생했습니다. 다시 시도해주세요."
   },
   "editPage": {
     "user": "이름",
@@ -104,7 +106,7 @@
     "forgot_password": "비밀번호를 잊으셨나요?",
     "sign_up": "회원가입",
     "status_success": "로그인 성공!",
-    "status_fail": "로그인 실패: 정보가 올바르지 않습니다.",
+    "login_failed": "잘못된 정보입니다.",
     "status_error": "로그인 중 오류가 발생했습니다."
   },
   "navbar": {
@@ -132,7 +134,7 @@
     "verify_email_button": "이메일 인증",
     "verification_code_placeholder": "인증 코드",
     "verify_code_button": "인증 확인",
-    "name_placeholder": "영문 이름",
+    "nickname_explaination": "다른 사람에게 보일 닉네임이에요.\n신중하게 결정해주세요",
     "password_placeholder": "비밀번호",
     "confirm_password_placeholder": "비밀번호 확인",
     "signup_button": "회원가입",
@@ -153,8 +155,10 @@
     "already_member": "이미 회원이신가요? 로그인"
   },
   "reportModal": {
+    "category": "카테고리",
+    "reason": "사유",
     "report": "신고",
-    "report_reason": "신고 사유",
+    "report_reason": "상세 사유",
     "profile": "프로필",
     "chat": "채팅",
     "review": "후기",
@@ -168,6 +172,6 @@
     "detail_placeholder": "신고 내용을 작성해주세요.",
     "select_none": "신고 대상과 신고 분류를 선택해주세요.",
     "title_none": "신고 제목은 최소 5자 이상이어야 합니다.",
-    "detail_none": "신고 사유는 최소 10자 이상이어야 합니다."
+    "detail_none": "상세 사유는 최소 10자 이상이어야 합니다."
   }
 }
