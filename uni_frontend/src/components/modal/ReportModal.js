@@ -6,109 +6,112 @@ import {postReport} from "../../api/reportAxios";
 
 const ReportModal = ({isOpen, handleClose, reportedId, reporterId}) => {
     const {t} = useTranslation();
-    const [category, setCategory] = useState("");
-    const [reason, setReason] = useState("");
-    const [title, setTitle] = useState("")
-    const [detail, setDetail] = useState("");
-    const handleClickPost = async () => {
-        if(category.length === 0 || reason.length === 0) {
+
+    const ReportRadio = ({children, value, name, defaultChecked}) => {
+        return (
+            <label>
+                <input
+                    type='radio'
+                    name={name}
+                    value={value}
+                    defaultChecked={defaultChecked}
+                />
+                {children}
+            </label>
+        )
+    }
+
+    const RadioGroup = ({label, children}) => (
+        <fieldset className="radio-container">
+            <legend>{label}</legend>
+            {children}
+        </fieldset>
+    );
+
+    const handleClickPost = async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+        console.log(data);
+        if (!data.category || !data.reason) {
             alert(t('reportModal.select_none'));
             return;
         }
-        if(title.length < 5) {
+        if (!data.title || data.title.length < 5) {
             alert(t('reportModal.title_none'))
+            return;
         }
-        if(detail.length < 10) {
+        if (!data.detail || data.detail.length < 10) {
             alert(t('reportModal.detail_none'));
             return;
         }
         await postReport({
             reporterId: reporterId,
-            title: title,
-            reportedUserId: reportedId,
-            reporterUserId: reporterId,
-            category: category,
-            detailedReason: detail,
-            reason: reason
+            reportedId: reportedId,
+            title: data.title,
+            category: data.category,
+            detail: data.detail,
+            reason: data.reason
         });
-            handleClose();
-            // .catch((err) => {
-            //     console.log(err);
-            //     alert(t("userPage.chat_error"));
-            // });
-    }
-    const handleChangeTitle = (e) => {
-        setTitle(() => e.target.value);
-    }
-    const handleChangeReason = (e) => {
-        setCategory(() => e.target.value);
-    }
-    const handleChangeCategory = (e) => {
-        setReason(() => e.target.value)
-    }
-    const handleChangeReportReason = (e) => {
-        setDetail(() => e.target.value);
+        handleClose();
+        // .catch((err) => {
+        //     console.log(err);
+        //     alert(t("userPage.chat_error"));
+        // });
+
     };
     return (
         <Modal className={'report-modal'} isOpen={isOpen} handleClose={handleClose} title={t('reportModal.report')}>
-            <h4>{t('reportModal.report_reason')}</h4>
-            <div className={'report-purpose'}>
-                <div className='report-radio 1'>
-                    <div>
-                        <input type='radio' name={'radio-1'} id={'radio-1-1'} value={'PROFILE'} onChange={handleChangeReason}/>
-                        <label id={'radio-1-1'}>{t('reportModal.profile')}</label>
-                    </div>
-                    <div>
-                        <input type='radio' name={'radio-1'} id={'radio-1-2'} value={'CHAT'} onChange={handleChangeReason} />
-                        <label id={'radio-1-2'}>{t('reportModal.chat')}</label>
-                    </div>
-                    <div>
-                        <input type='radio' name={'radio-1'} id={'radio-1-3'} value={'QNA'} onChange={handleChangeReason}/>
-                        <label id={'radio-1-3'}>Q&A</label>
-                    </div>
-                    <div>
-                        <input type='radio' name={'radio-1'} id={'radio-1-4'} value={'REVIEW'} onChange={handleChangeReason}/>
-                        <label id={'radio-1-4'}>{t('reportModal.review')}</label>
-                    </div>
-                </div>
-                <hr width="1" size={'100'} color={'#D0D0D0'}/>
-                <div className='report-radio after'>
-                    <div>
-                        <input type='radio' name={'radio-2'} id={'radio-2-1'} value={'ABUSIVE_LANGUAGE'} onChange={handleChangeCategory}/>
-                        <label id={'radio-2-1'}>{t('reportModal.abusive_language')}</label>
-                    </div>
-                    <div>
-                        <input type='radio' name={'radio-2'} id={'radio-2-2'} value={'INAPPROPRIATE_CONTENT'} onChange={handleChangeCategory}/>
-                        <label id={'radio-2-2'}>{t('reportModal.inappropriate_content')}</label>
-                    </div>
-                    <div>
-                        <input type='radio' name={'radio-2'} id={'radio-2-3'} value={'ILLEGAL_ACTIVITY'} onChange={handleChangeCategory}/>
-                        <label id={'radio-2-3'}>{t('reportModal.illegal_activity')}</label>
-                    </div>
-                    <div>
-                        <input type='radio' name={'radio-2'} id={'radio-2-4'} value={'SPAM'} onChange={handleChangeCategory}/>
-                        <label id={'radio-2-4'}>{t('reportModal.spam')}</label>
-                    </div>
-                    <div>
-                        <input type='radio' name={'radio-2'} id={'radio-2-5'} value={'OTHER'} onChange={handleChangeCategory}/>
-                        <label id={'radio-2-5'}>{t('reportModal.other')}</label>
-                    </div>
-                </div>
-            </div>
-            <h4>{t('reportModal.detail')}</h4>
-            <input
-                type={'text'}
-                value={title}
-                onChange={handleChangeTitle}
-                placeholder={t('reportModal.title_placeholder')}
-                maxLength={25}
-            />
-            <textarea
-                value={detail}
-                onChange={handleChangeReportReason}
-                placeholder={t('reportModal.detail_placeholder')}
-            />
-            <button className={'report-modal-button'} onClick={handleClickPost}>{t('reportModal.report')}</button>
+            <form
+                className={'report-purpose'}
+                onSubmit={handleClickPost}
+            >
+                <h4>{t('reportModal.report_reason')}</h4>
+                <RadioGroup label={t('reportModal.category')}>
+                    <ReportRadio name={'category'} value={'PROFILE'}>
+                        {t('reportModal.profile')}
+                    </ReportRadio>
+                    <ReportRadio name={'category'} value={'CHAT'}>
+                        {t('reportModal.chat')}
+                    </ReportRadio>
+                    <ReportRadio name={'category'} value={'QNA'}>
+                        Q&A
+                    </ReportRadio>
+                    <ReportRadio name={'category'} value={'REVIEW'}>
+                        {t('reportModal.review')}
+                    </ReportRadio>
+                </RadioGroup>
+                <RadioGroup label={t('reportModal.reason')}>
+                    <ReportRadio name={'reason'} value={'ABUSIVE_LANGUAGE'}>
+                        {t('reportModal.abusive_language')}
+                    </ReportRadio>
+                    <ReportRadio name={'reason'} value={'INAPPROPRIATE_CONTENT'}>
+                        {t('reportModal.inappropriate_content')}
+                    </ReportRadio>
+                    <ReportRadio name={'reason'} value={'ILLEGAL_ACTIVITY'}>
+                        {t('reportModal.illegal_activity')}
+                    </ReportRadio>
+                    <ReportRadio name={'reason'} value={'SPAM'}>
+                        {t('reportModal.spam')}
+                    </ReportRadio>
+                    <ReportRadio name={'reason'} value={'OTHER'}>
+                        {t('reportModal.other')}
+                    </ReportRadio>
+                </RadioGroup>
+                <h4>{t('reportModal.detail')}</h4>
+                <input
+                    name={'title'}
+                    type={'text'}
+                    placeholder={t('reportModal.title_placeholder')}
+                    maxLength={25}
+                />
+                <textarea
+                    name={'detail'}
+                    placeholder={t('reportModal.detail_placeholder')}
+                    maxLength={100}
+                />
+                <button type={'submit'} className={'report-modal-button'}>{t('reportModal.report')}</button>
+            </form>
         </Modal>
     )
 }

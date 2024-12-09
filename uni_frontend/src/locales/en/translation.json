@@ -63,7 +63,8 @@
     "chat_explain2": " via chat.",
     "no_qna": "There is no Q&A yet.",
     "no_review": "There is no review yet.",
-    "review_reply_placeholder": "Write a reply..."
+    "review_reply_placeholder": "Write a reply...",
+    "write_error": "An error occurred while writing. Please try again."
   },
   "editPage": {
     "user": "User",
@@ -153,10 +154,12 @@
     "already_member": "Already a member? Login"
   },
   "reportModal": {
+    "category": "Category",
+    "reason": "Reason",
     "report": "Report",
     "report_reason": "Reasons for reporting",
     "profile": "Profile",
-    "chat": "chat",
+    "chat": "Chat",
     "review": "Review",
     "abusive_language": "Swearing/Hate/Discrimination",
     "inappropriate_content": "inappropriate content",

@@ -63,7 +63,8 @@
     "chat_explain2": "님에게 채팅으로 물어볼 수 있습니다.",
     "no_qna": "아직 Q&A가 없습니다.",
     "no_review": "아직 리뷰가 없습니다.",
-    "review_reply_placeholder": "답글을 입력하세요..."
+    "review_reply_placeholder": "답글을 입력하세요...",
+    "write_error": "작성 중 오류가 발생했습니다. 다시 시도해주세요."
   },
   "editPage": {
     "user": "이름",
@@ -153,8 +154,10 @@
     "already_member": "이미 회원이신가요? 로그인"
   },
   "reportModal": {
+    "category": "카테고리",
+    "reason": "사유",
     "report": "신고",
-    "report_reason": "신고 사유",
+    "report_reason": "상세 사유",
     "profile": "프로필",
     "chat": "채팅",
     "review": "후기",
@@ -168,6 +171,6 @@
     "detail_placeholder": "신고 내용을 작성해주세요.",
     "select_none": "신고 대상과 신고 분류를 선택해주세요.",
     "title_none": "신고 제목은 최소 5자 이상이어야 합니다.",
-    "detail_none": "신고 사유는 최소 10자 이상이어야 합니다."
+    "detail_none": "상세 사유는 최소 10자 이상이어야 합니다."
   }
 }

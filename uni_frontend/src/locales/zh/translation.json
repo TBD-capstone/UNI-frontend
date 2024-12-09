@@ -62,7 +62,8 @@
     "chat_explain2": "。",
     "no_qna": "目前还没有Q&A。",
     "no_review": "还没有写评论。",
-    "review_reply_placeholder": "请输入回复..."
+    "review_reply_placeholder": "请输入回复...",
+    "write_error": "写入时发生错误。请再试一次。"
   },
   "editPage": {
     "edit": "编辑",
@@ -151,6 +152,8 @@
     "already_member": "已经是会员？登录"
   },
   "reportModal": {
+    "category": "类别",
+    "reason": "原因",
     "report": "举报",
     "report_reason": "举报原因",
     "profile": "轮廓",

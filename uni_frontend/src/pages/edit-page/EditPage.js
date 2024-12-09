@@ -45,6 +45,10 @@ const EditMarkerInput = (props) => {
                 name: markerName,
                 description: markerDescription
             }
+        }).then(() => {
+            alert('마커를 성공적으로 추가하였습니다.')
+        }).catch(() => {
+            alert('마커를 추가하는데 실패하였습니다. 다시 시도해주십시오.')
         });
 
         props.initMarker();
@@ -61,7 +65,11 @@ const EditMarkerInput = (props) => {
             alert(t('editPage.no_target_marker'));
             return;
         }
-        await deleteMarker({markerId: props.markers[i].id});
+        await deleteMarker({markerId: props.markers[i].id}).then(() => {
+            alert('마커를 성공적으로 삭제하였습니다.')
+        }).catch(() => {
+            alert('마커를 삭제하는데 실패하였습니다. 다시 시도해주십시오.')
+        })
 
         props.initMarker();
 
@@ -71,32 +79,32 @@ const EditMarkerInput = (props) => {
     return <>
         <div className={"edit-select"}>
             <button className={"edit-select"}
-                    onClick={handleClickMarkerAdd}>{props.t}</button>
+                    onClick={handleClickMarkerAdd}>{t("editPage.marker_add")}</button>
             <button className={"edit-select"}
-                    onClick={handleClickMarkerDelete}>{props.t1}</button>
+                    onClick={handleClickMarkerDelete}>{t("editPage.marker_delete")}</button>
         </div>
         {/*<button className={'edit-select'} onClick={handleClickMarkerUpdate}>Marker Update</button>*/}
         {markerAction === "add" &&
             <>
-                <p>{props.t2}</p>
+                <p>{t('editPage.marker_add_explain')}</p>
                 <input
                     type="text"
-                    placeholder={props.placeholder}
+                    placeholder={t("editPage.marker_title_placeholder")}
                     value={markerName}
                     onChange={handleChangeMarkerName}
                 />
                 <input
                     type="text"
-                    placeholder={props.placeholder1}
-                    value={props.value1}
+                    placeholder={t("editPage.marker_description_placeholder")}
+                    value={markerDescription}
                     onChange={handleChangeMarkerDescription}
                 />
-                <button className={"edit-button"} onClick={handleClickAdd}>{props.t3}</button>
+                <button className={"edit-button"} onClick={handleClickAdd}>{t("editPage.add")}</button>
             </>
         }
         {markerAction === "delete" &&
             <>
-                <p>{props.t4}</p>
+                <p>{t('editPage.marker_delete_explain')}</p>
                 <input
                     type="text"
                     placeholder={props.placeholder}
@@ -104,7 +112,7 @@ const EditMarkerInput = (props) => {
                     onChange={handleChangeMarkerName}
                 />
                 <button className={"edit-button"}
-                        onClick={handleClickDelete}>{props.t5}</button>
+                        onClick={handleClickDelete}>{t("editPage.delete")}</button>
             </>
         }
         {/*{markerUpdate && <button onClick={handleClickUpdate}>Update</button>}*/}
@@ -205,6 +213,11 @@ const EditPage = () => {
             description: user.description,
             time: user.time,
             hashtags: user.hashtags
+        }).then((data) => {
+            setUser(data);
+            alert('기본 정보를 변경하였습니다.');
+        }).catch((err) => {
+            alert('기본 정보를 변경하는 과정에서 오류가 발생했습니다. 다시 시도해주십시오.');
         });
 
         setIsOpenBasic(() => false);
@@ -248,10 +261,16 @@ const EditPage = () => {
         if (backgroundImage)
             formData.append('backgroundImage', backgroundImage);
 
-        const data = await postUserImage({userId, formData});
+        await postUserImage({userId, formData}).then((data) => {
+            setUser((prev) => ({...prev, imgBack: data.imgBack, imgProf: data.imgProf}));
+            setIsOpenImage(() => false);
+        }).then(() => {
+            alert('이미지 업로드 완료!');
+        }).catch((err) => {
+            alert('이미지 업로드에 문제가 발생했습니다. 다시 시도해주십시오.')
+        })
 
-        setUser((prev) => ({...prev, imgBack: data.imgBack, imgProf: data.imgProf}));
-        setIsOpenImage(() => false);
+
     };
 
     const setting = (latLng) => {
@@ -328,8 +347,8 @@ const EditPage = () => {
     return (
         user ? (
             <div className={'edit-container'}>
-                <div className="Image-back-container">
-                    <img className="Image-back" src={user.imgBack ? user.imgBack : '/basic_background.png'} alt="배경사진"/>
+                <div className="image-back-container">
+                    <img className="image-back" src={user.imgBack ? user.imgBack : '/basic_background.png'} alt="배경사진"/>
                 </div>
                 <div className={'button-section'}>
                     <button className="complete-button"
@@ -428,15 +447,7 @@ const EditPage = () => {
                             </div>
                         </div>
                         <EditMarkerInput markers={markers} mapClose={mapClose} position={position}
-                                         userId={userId} initMarker={initMarker}
-                                         t={t("editPage.marker_add")}
-                                         t1={t("editPage.marker_delete")}
-                                         t2={t('editPage.marker_add_explain')}
-                                         placeholder={t("editPage.marker_title_placeholder")}
-                                         placeholder1={t("editPage.marker_description_placeholder")}
-                                         t3={t("editPage.add")}
-                                         t4={t('editPage.marker_delete_explain')}
-                                         t5={t("editPage.delete")}/>
+                                         userId={userId} initMarker={initMarker}/>
                     </EditModal>
                 </div>
             </div>) : null
