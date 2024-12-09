@@ -103,6 +103,12 @@
     cursor: pointer;
 }
 
+.filter-container {
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
 /* 필터링 버튼 (유튜브 스타일) */
 .filter-buttons {
     display: flex;

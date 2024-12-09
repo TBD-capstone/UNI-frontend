@@ -215,16 +215,22 @@ const ProfileGrid = () => {
                 </div>
             </div>
 
-            <div className="filter-buttons">
+            <div className='filter-container'>
+                <div className='filter-buttons'>
                 {categories.map((category) => (
                     <button
-                        key={category.label}
-                        className={`filter-button ${hashtags.includes(t(`mainpage.categories.${category.label}`)) ? 'active' : ''}`}
-                        onClick={() => handleCategoryClick(category.label)}
+                    key={category.label}
+                    className={`filter-button ${
+                        hashtags.includes(t(`mainpage.categories.${category.label}`))
+                        ? "active"
+                        : ""
+                    }`}
+                    onClick={() => handleCategoryClick(category.label)}
                     >
-                        {t(`mainpage.categories.${category.label}`)}
+                    {t(`mainpage.categories.${category.label}`)}
                     </button>
                 ))}
+                </div>
             </div>
 
             <div className="profile-grid">
