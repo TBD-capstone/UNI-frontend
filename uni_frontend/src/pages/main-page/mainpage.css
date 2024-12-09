@@ -107,7 +107,7 @@
 .filter-buttons {
     display: flex;
     gap: 10px;
-    overflow-x: auto;
+    overflow-y: scroll;
     /* 가로 스크롤 활성화 */
     padding: 10px 0;
     white-space: nowrap;

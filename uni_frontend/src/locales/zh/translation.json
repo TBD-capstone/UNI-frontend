@@ -10,6 +10,7 @@
     "match_accepted": "匹配已接受。"
   },
   "mainpage": {
+    "search_univ": "大学搜索",
     "fetch_profiles_error": "获取个人资料数据时出错：",
     "fetch_ads_error": "获取广告数据时出错：",
     "active_ad_status": "活跃",
@@ -104,7 +105,8 @@
     "sign_up": "注册",
     "status_success": "登录成功！",
     "status_fail": "登录失败：信息无效。",
-    "status_error": "登录时发生错误。"
+    "status_error": "登录时发生错误。",
+    "login_failed": "错误的信息。"
   },
   "navbar": {
     "language_change_request": "语言更改请求",

@@ -10,6 +10,7 @@
     "match_accepted": "매칭이 수락되었습니다."
   },
   "mainpage": {
+    "search_univ": "대학교 검색",
     "fetch_profiles_error": "프로필 데이터를 불러오는 중 오류가 발생했습니다:",
     "fetch_ads_error": "광고 데이터를 불러오는 중 오류가 발생했습니다:",
     "active_ad_status": "개시중",
@@ -105,7 +106,7 @@
     "forgot_password": "비밀번호를 잊으셨나요?",
     "sign_up": "회원가입",
     "status_success": "로그인 성공!",
-    "status_fail": "로그인 실패: 정보가 올바르지 않습니다.",
+    "login_failed": "잘못된 정보입니다.",
     "status_error": "로그인 중 오류가 발생했습니다."
   },
   "navbar": {

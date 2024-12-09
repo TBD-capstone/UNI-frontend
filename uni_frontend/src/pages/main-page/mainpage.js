@@ -196,7 +196,7 @@ const ProfileGrid = () => {
                         className="university-dropdown"
                         options={univList} // 대학 리스트
                         onChange={(selectedOption) => setSelectedUniversity(selectedOption?.value || '')} // 값 선택 핸들러
-                        placeholder={t('대학교 선택')} // 기본 안내 문구
+                        placeholder={t('mainpage.search_univ')} // 기본 안내 문구
                         isSearchable // 검색 가능 여부 추가
                         isClearable // 선택 취소 가능하도록 추가
                     />
