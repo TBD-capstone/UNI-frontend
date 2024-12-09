@@ -132,7 +132,11 @@ function Register() {
     return (
         <div className="signup-page">
             <div className="main-logo"></div>
-            <h1 className="signup-title">{t("registerPage.title")}</h1>
+            <h1 className="signup-title">{t(
+                isKorean
+                    ? t("회원가입")
+                    : t("Sign up")
+            )}</h1>
 
             <div className="user-type">
                 <button
@@ -219,7 +223,8 @@ function Register() {
                 isKorean
                     ? t("다른 사람에게 보일 닉네임이에요.\n신중하게 결정해주세요")
                     : t("Nickname to be seen by others.\nPlease make a careful decision")
-                )}>
+                )}
+                position='bottom'>
             </TooltipCircle>
 
             <input
