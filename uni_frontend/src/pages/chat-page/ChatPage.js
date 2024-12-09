@@ -18,7 +18,7 @@ const ChatPage = (props) => {
     const {t} = useTranslation();
     const {roomId} = useParams();
     const {state} = useLocation();
-    const [userId, setUserId] = useState(null);
+    // const [userId, setUserId] = useState(null);
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState("");
     const [matchingId, setMatchingId] = useState(null);
@@ -28,12 +28,11 @@ const ChatPage = (props) => {
     // const language = Cookies.get('language');
     const [unreadMessageIds, setUnreadMessageIds] = useState([]);
     const unreadMessageIdsRef = useRef(unreadMessageIds);
-    const [stompClientInstance, setStompClientInstance] = useState(null);
-    const location = useLocation();
+    // const [stompClientInstance, setStompClientInstance] = useState(null);
+    // const location = useLocation();
     const navigate = useNavigate();
 
     const leaveChatRoom = async () => {
-        const apiURL = `${process.env.REACT_APP_API_URL}/api/chat/room/${roomId}/leave`;
         console.log("Attempting to leave chat room with roomId:", roomId);
 
         try {
@@ -232,8 +231,8 @@ const ChatPage = (props) => {
     useEffect(() => {
         const initChat = async () => {
             const meData = await getMyData();
-            const isKorean = meData.role !== 'EXCHANGE'
-            setIsKorean(isKorean);
+            const isKorean = meData.role !== 'EXCHANGE';
+            setIsKorean(()=>isKorean);
 
             if (!state || !roomId) {
                 console.error("No initial chat messages provided. Defaulting to empty array.");
