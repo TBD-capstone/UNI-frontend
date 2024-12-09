@@ -1,7 +1,7 @@
 import instance from "./basicAxios";
 
-const getUserListByAdmin = async () => {
-    const response = await instance.get(`/api/admin/users`)
+const getUserListByAdmin = async (params) => {
+    const response = await instance.get(`/api/admin/users?${params}`)
         .catch((error) => console.error('유저 데이터 불러오기 실패:', error));
     return response.data;
 };
@@ -15,15 +15,27 @@ const postAdStateByAdmin = async ({data}) => {
     return response.data;
 };
 
-const postAdNewByAdmin = async ({formData}) => {
-    const response = await instance.post(`/api/admin/ad/new`, formData);
+const postAdNewByAdmin = async (formData) => {
+    const response = await instance.post(`/api/admin/ad/new`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
     return response.data;
 };
 
-const patchUserStateByAdmin = async ({userStatus, banDays, data}) => {
-    const response = await instance.patch(`/api/admin/users/2/status?status=${userStatus}&banDays=${banDays}`, data);
-    return response.data;
+const patchUserStateByAdmin = async ({userId, userStatus = '', banDays = 0}) => {
+    try {
+        const response = await instance.patch(
+            `/api/admin/users/${userId}/status?status=${userStatus}&banDays=${banDays}`
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error in patchUserStateByAdmin:', error);
+        throw error;
+    }
 };
+
 
 const getReportedUserListByAdmin = async (params) => {
     const response = await instance.get(`/api/admin/reported-users?${params}`)
