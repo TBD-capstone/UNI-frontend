@@ -363,7 +363,7 @@ const UserPage = () => {
                     <div className="profile-container">
                         <h2>{user.userName}</h2>
                         <span>{user.univ}</span>
-                        {isKorean && <p className={'user-star'}><FaStar className={'yellow-star'}/> {user.star}</p>}
+                        {(!idSame(commenterId, userId) || isKorean) && <p className={'user-star'}><FaStar className={'yellow-star'}/> {user.star}</p>}
                         <p>{t("userPage.region")}: {user.region}</p>
                         <p>{t("userPage.time")}: {user.time}</p>
                         <div className="hashtag-section">
@@ -376,7 +376,7 @@ const UserPage = () => {
                             })}
                         </div>
                     </div>
-                    {isKorean && <>
+                    {(!idSame(commenterId, userId) || isKorean) && <>
                         <div className="selfPR-container">
                             <h3>{t("userPage.self_pr")}</h3>
                             <p className="selfPR">{user.description}</p>
