@@ -49,6 +49,32 @@ const ProfileGrid = () => {
     //     return response.json();
     // };
 
+    useEffect(() => {
+        const categoryContainer = document.querySelector('.category');
+        if (categoryContainer) {
+            // 모든 자식 요소의 너비 합산 계산
+            const totalWidth = Array.from(categoryContainer.children).reduce(
+                (sum, item) => sum + item.offsetWidth + 10, // 10은 gap
+                0
+            );
+            categoryContainer.style.width = `${totalWidth}px`; // 동적으로 너비 설정
+        }
+    }, []);
+
+
+
+    useEffect(() => {
+        const filterButtons = document.querySelector('.filter-buttons');
+        if (filterButtons) {
+            const totalWidth = Array.from(filterButtons.children).reduce(
+                (sum, item) => sum + item.offsetWidth + 15, // 15은 gap
+                0
+            );
+            filterButtons.style.width = `${totalWidth}px`;
+        }
+    }, []);
+
+
     const fetchAds = async () => {
         try {
             const data = await getAd();
@@ -216,15 +242,17 @@ const ProfileGrid = () => {
 
             <div className="filter-buttons">
                 {categories.map((category) => (
-                    <button
+                    <div
                         key={category.label}
-                        className={`filter-button ${hashtags.includes(t(`mainpage.categories.${category.label}`)) ? 'active' : ''}`}
+                        className={`category-item ${hashtags.includes(t(`mainpage.categories.${category.label}`)) ? 'active' : ''}`}
                         onClick={() => handleCategoryClick(category.label)}
                     >
-                        {t(`mainpage.categories.${category.label}`)}
-                    </button>
+                        <span>{t(`mainpage.categories.${category.label}`)}</span>
+                    </div>
                 ))}
             </div>
+
+
 
             <div className="profile-grid">
                 {isLoading ? (

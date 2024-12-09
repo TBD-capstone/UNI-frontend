@@ -15,8 +15,12 @@ const postAdStateByAdmin = async ({data}) => {
     return response.data;
 };
 
-const postAdNewByAdmin = async ({formData}) => {
-    const response = await instance.post(`/api/admin/ad/new`, formData);
+const postAdNewByAdmin = async (formData) => {
+    const response = await instance.post(`/api/admin/ad/new`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
     return response.data;
 };
 
