@@ -66,7 +66,11 @@ function Login() {
                 // console.log('한국인 여부:', Cookies.get('isKorean'));
                 // console.log('프로필 이미지:', Cookies.get('imgProf'));
                 // console.log('배경화면 이미지:', Cookies.get('imgBack'));
-
+                if (data.role == 'ADMIN'){
+                    navigate('/admin');
+                } else{
+                    navigate('/main');
+                }
                 alert(data.message || t("loginPage.status_messages.success"));
                 navigate('/main'); // 메인 페이지로 이동
             } else {

@@ -69,16 +69,26 @@ function AdminPage() {
         };
     }, [activeTab, statusFilter, currentPage]);
 
+
+
+    // 함수는 컴포넌트 함수 내부에 정의 (useEffect 외부로 이동)
     const fetchReportedUsers = async (page = 0) => {
         try {
             const data = await getReportedUserListByAdmin(`page=${page}&size=${ITEMS_PER_PAGE}`);
+            // 개별 신고 데이터를 reportedUsers에 저장
             setReportedUsers(data.content || []);
             setTotalPages(data.totalPages || 0);
         } catch (error) {
-            console.error('fetchReportedUsers 실패:', error);
-            setReportedUsers([]); // 기본값으로 설정
+            console.error("fetchReportedUsers 실패:", error);
+            setReportedUsers([]);
         }
     };
+
+    useEffect(() => {
+        if (activeTab === "신고확인") {
+            fetchReportedUsers(currentPage - 1);
+        }
+    }, [activeTab, currentPage]);
 
     const fetchUsers = async (status = '', page = 0) => {
         try {
@@ -108,20 +118,14 @@ function AdminPage() {
         }
     };
 
-    const handleReportClick = (user) => {
-        const reportDetails = user.reports[0]; // 첫 번째 신고 정보 가져오기
-        setSelectedReportedUser({
-            ...user,
-            title: reportDetails.title,
-            category: reportDetails.category,
-            detailedReason: reportDetails.detailedReason,
-        });
+    const handleReportClick = (report) => {
+        setSelectedReportedUser(report); // 선택된 신고 데이터 저장
     };
-
 
     const handleCloseModal = () => {
         setSelectedReportedUser(null); // 모달 닫기
     };
+
 
     const handleBanUser = () => {
         if (selectedReportedUser) {
@@ -265,7 +269,7 @@ function AdminPage() {
                     신고확인
                 </div>
                 <div className={`tab ${activeTab === '광고게시' ? 'active' : ''}`} onClick={() => handleTabClick('광고게시')}>
-                    광고게시
+                    광고 상태 관리
                 </div>
                 <div className={`tab ${activeTab === '광고등록' ? 'active' : ''}`} onClick={() => handleTabClick('광고등록')}>
                     광고등록
@@ -277,21 +281,23 @@ function AdminPage() {
 
             {activeTab === '신고확인' && (
                 <div>
-                    <h3>신고된 유저 목록</h3>
+                    <h3>신고 리스트</h3>
                     <table className="table">
                         <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Email</th>
-                            <th>신고 횟수</th>
+                            <th>번호</th>
+                            <th>신고일</th>
+                            <th>제목</th>
+                            <th>신고자</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {reportedUsers.map((user) => (
-                            <tr key={user.userId} onClick={() => handleReportClick(user)}>
-                                <td>{user.userId}</td>
-                                <td>{user.email}</td>
-                                <td>{user.reportCount}</td>
+                        {reportedUsers.map((report, index) => (
+                            <tr key={report.reportId} onClick={() => handleReportClick(report)}>
+                                <td>{index + 1}</td>
+                                <td>{report.reportDate}</td>
+                                <td>{report.title}</td>
+                                <td>{report.reporterName}</td>
                             </tr>
                         ))}
                         </tbody>
@@ -302,25 +308,32 @@ function AdminPage() {
                         <Modal isOpen={!!selectedReportedUser} handleClose={handleCloseModal}>
                             <div>
                                 <h4>신고 상세 정보</h4>
-                                <p><strong>ID:</strong> {selectedReportedUser.userId}</p>
-                                <p><strong>Email:</strong> {selectedReportedUser.email}</p>
+                                <p><strong>신고 번호:</strong> {selectedReportedUser.reportId}</p>
+                                <p><strong>피신고 대상:</strong> {selectedReportedUser.targetName}</p>
+                                <p><strong>신고자:</strong> {selectedReportedUser.reporterName}</p>
+                                <p><strong>신고일:</strong> {selectedReportedUser.reportDate}</p>
                                 <p><strong>제목:</strong> {selectedReportedUser.title}</p>
                                 <p><strong>카테고리:</strong> {selectedReportedUser.category}</p>
-                                <p><strong>상세 사유:</strong> {selectedReportedUser.detailedReason}</p>
+                                <p><strong>신고 사유:</strong> {selectedReportedUser.reason}</p>
                                 <label>
                                     밴 일수:
                                     <input
                                         type="number"
                                         min="1"
                                         placeholder="일수를 입력하세요"
-                                        value={banDays[selectedReportedUser.userId] || ''}
-                                        onChange={(e) => handleBanDaysChange(selectedReportedUser.userId, e.target.value)}
+                                        value={banDays[selectedReportedUser.targetId] || ""}
+                                        onChange={(e) =>
+                                            handleBanDaysChange(selectedReportedUser.targetId, e.target.value)
+                                        }
                                     />
                                 </label>
-                                <button onClick={handleBanUser}>밴 처리</button>
+                                <button onClick={() => updateUserStatus(selectedReportedUser.targetId, "BANNED")}>
+                                    밴 처리
+                                </button>
                             </div>
                         </Modal>
                     )}
+
 
                 </div>
             )}
