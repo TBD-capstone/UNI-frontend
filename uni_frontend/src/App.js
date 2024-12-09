@@ -15,6 +15,7 @@ import Review from './pages/review-page/review';
 import Forget from "./pages/login-page/Forgat";
 import usePushNotification from "./hooks/usePushNotification";
 import SockJS from "sockjs-client";
+import NotFound from './components/notfound/NotFound';
 import { Stomp } from "@stomp/stompjs";
 
 // fetchWithLanguage 함수 정의
@@ -112,6 +113,7 @@ function App() {
                     <Route path="/matching-list" element={<PrivateRoute element={<MatchingStatus />} />} />
                     <Route path="/chat-list" element={<PrivateRoute element={<ChatList />} />} />
                     <Route path="/review/:matchingId" element={<PrivateRoute element={<Review />} />} />
+                    <Route path="*" element={<NotFound />} />
                 </Route>
             </Routes>
         </Router>

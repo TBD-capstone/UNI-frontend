@@ -107,16 +107,16 @@
 /* 필터링 버튼 (유튜브 스타일) */
 .filter-buttons {
     display: flex;
-    flex-wrap: nowrap; /* 한 줄로 유지 */
-    overflow-x: auto; /* 가로 스크롤 활성화 */
-    padding: 10px;
-    gap: 15px;
-    white-space: nowrap; /* 줄바꿈 방지 */
-    scrollbar-width: thin; /* 스크롤바 폭 조정 */
-    scrollbar-color: #ccc transparent; /* 스크롤바 색상 */
-    -webkit-overflow-scrolling: touch; /* 터치 스크롤 지원 */
-    width: 100%; /* 부모 요소 너비에 맞게 설정 */
-    box-sizing: border-box; /* 패딩 포함 너비 계산 */
+    gap: 10px;
+    overflow-y: scroll;
+    /* 가로 스크롤 활성화 */
+    padding: 10px 0;
+    white-space: nowrap;
+    /* 버튼이 한 줄에 표시되도록 */
+    scrollbar-width: thin;
+    /* 스크롤바 폭 조절 */
+    scrollbar-color: #ccc transparent;
+    /* 스크롤바 색상 */
 }
 
 .filter-buttons::-webkit-scrollbar {

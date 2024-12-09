@@ -5,31 +5,34 @@ import './navbar.css';
 import {useTranslation} from "react-i18next";
 import i18n from "i18next";
 import {getMyData} from "../../api/userAxios";
+import useClickOutside from '../../hooks/useClickOutside';
 
 function Navbar({selectedLanguage, fetchWithLanguage}) {
     const {t} = useTranslation();
 
     const [menuOpen, setMenuOpen] = useState(false);
-    const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
+    const [languageOpen, setLanguageOpen] = useState(false);
     const [username, setUsername] = useState('');
     const [userId, setUserId] = useState('');
     const [profileImage, setProfileImage] = useState('');
+    const [role, setRole] = useState('');
     const navigate = useNavigate();
+    
     const menuRef = useRef(null);
+    const languageRef = useRef(null);
 
+    const toggleLanguageMenu = () => {
+        setLanguageOpen((prevState) => !prevState);
+    };
 
     useEffect(() => {
         const fetchProfileImage = async () => {
             try {
                 const data = await getMyData();
-                // if (response.ok) {
-                //     const data = await response.json();
                 setUserId(data.userId);
                 setUsername(data.name);
                 setProfileImage(data.imgProf || './profile-image.jpg');
-                // } else {
-                //     console.error('Failed to fetch profile image');
-                // }
+                setRole(data.role);
             } catch (error) {
                 console.error('Error fetching profile image:', error);
             }
@@ -51,9 +54,6 @@ function Navbar({selectedLanguage, fetchWithLanguage}) {
         navigate('/login');
     };
 
-    const toggleLanguageMenu = () => {
-        setLanguageMenuOpen((prevState) => !prevState);
-    };
 
     const handleLanguageChange = (newLanguage) => {
         Cookies.set('language', newLanguage, {path: '/'});
@@ -61,18 +61,8 @@ function Navbar({selectedLanguage, fetchWithLanguage}) {
         window.location.reload();
     };
 
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (menuRef.current && !menuRef.current.contains(event.target)) {
-                setMenuOpen(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
+    useClickOutside(menuRef, () => setMenuOpen(false));
+    useClickOutside(languageRef, () => setLanguageOpen(false));
 
     return (
         <div className="navbar">
@@ -80,15 +70,24 @@ function Navbar({selectedLanguage, fetchWithLanguage}) {
                 <img src="/UNI_Logo.png" alt="UNI Logo" className="uni-logo"/>
             </div>
             <div className="menu-icons">
-                <div className="language-icon-container">
+                {role === 'ADMIN' && (
+                <div className="icon-container">
+                    <img
+                        src="/admin-icon.png"
+                        alt="관리자 페이지"
+                        className="admin-icon"
+                        onClick={() => navigate('/admin')}
+                    />
+                </div>)}
+                <div className="icon-container">
                     <img
                         src="/language-icon.png"
                         alt="언어 변경"
                         className="language-icon"
                         onClick={toggleLanguageMenu}
                     />
-                    {languageMenuOpen && (
-                        <div className="language-dropdown">
+                    {languageOpen && (
+                        <div className="language-dropdown" ref={languageRef}>
                             <ul>
                                 <li onClick={() => handleLanguageChange('ko')}>한국어</li>
                                 <li onClick={() => handleLanguageChange('en')}>English</li>

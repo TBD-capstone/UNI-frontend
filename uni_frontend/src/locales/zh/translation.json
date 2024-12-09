@@ -10,6 +10,7 @@
     "match_accepted": "匹配已接受。"
   },
   "mainpage": {
+    "search_univ": "大学搜索",
     "fetch_profiles_error": "获取个人资料数据时出错：",
     "fetch_ads_error": "获取广告数据时出错：",
     "active_ad_status": "活跃",
@@ -62,7 +63,8 @@
     "chat_explain2": "。",
     "no_qna": "目前还没有Q&A。",
     "no_review": "还没有写评论。",
-    "review_reply_placeholder": "请输入回复..."
+    "review_reply_placeholder": "请输入回复...",
+    "write_error": "写入时发生错误。请再试一次。"
   },
   "editPage": {
     "edit": "编辑",
@@ -103,7 +105,8 @@
     "sign_up": "注册",
     "status_success": "登录成功！",
     "status_fail": "登录失败：信息无效。",
-    "status_error": "登录时发生错误。"
+    "status_error": "登录时发生错误。",
+    "login_failed": "错误的信息。"
   },
   "navbar": {
     "language_change_request": "语言更改请求",
@@ -130,7 +133,7 @@
     "verify_email_button": "验证电子邮件",
     "verification_code_placeholder": "验证码",
     "verify_code_button": "验证代码",
-    "name_placeholder": "姓名",
+    "nickname_explaination": "昵称给别人看。\n关于我们请慎重决定",
     "password_placeholder": "密码",
     "confirm_password_placeholder": "确认密码",
     "signup_button": "注册",
@@ -151,6 +154,8 @@
     "already_member": "已经是会员？登录"
   },
   "reportModal": {
+    "category": "类别",
+    "reason": "原因",
     "report": "举报",
     "report_reason": "举报原因",
     "profile": "轮廓",
