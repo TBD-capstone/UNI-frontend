@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="7141e09f-2a8e-40b4-9e35-8450a5e64986" name="Changes" comment="[HOTFIX] 카테고리 번역 키 추가 작성">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/api/adminAxios.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/api/adminAxios.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/public/default-ad-image.png" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/public/default-ad-image.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/uni_frontend/src/pages/admin-page/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/pages/admin-page/admin.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -62,27 +62,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Node.js.App.js.executor": "Run",
-    "Node.js.Register.js.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "emergency-fix",
-    "last_opened_file_path": "C:/Users/asdf9/OneDrive/바탕 화면/School/4-2/캡스톤/frontend",
-    "list.type.of.created.stylesheet": "CSS",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs.jest.jest_package": "C:/Users/asdf9/OneDrive/바탕 화면/School/4-2/캡스톤/frontend/UNI-frontend/uni_frontend/node_modules/react-scripts",
-    "nodejs_package_manager_path": "npm",
-    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2024.2.0.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Node.js.App.js.executor&quot;: &quot;Run&quot;,
+    &quot;Node.js.Register.js.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;emergency-fix&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/asdf9/OneDrive/바탕 화면/School/4-2/캡스톤/frontend&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs.jest.jest_package&quot;: &quot;C:/Users/asdf9/OneDrive/바탕 화면/School/4-2/캡스톤/frontend/UNI-frontend/uni_frontend/node_modules/react-scripts&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\IntelliJ IDEA 2024.2.0.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\asdf9\OneDrive\바탕 화면\School\4-2\캡스톤\frontend\UNI-frontend\uni_frontend\public" />
@@ -162,6 +162,7 @@
       <workItem from="1733479556205" duration="866000" />
       <workItem from="1733562122790" duration="16082000" />
       <workItem from="1733648686172" duration="14418000" />
+      <workItem from="1733719123017" duration="5329000" />
     </task>
     <servers />
   </component>
