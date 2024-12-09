@@ -32,7 +32,7 @@ const ProfileGrid = () => {
     const [ads, setAds] = useState([]);
     const [currentAd, setCurrentAd] = useState(null);
     const [language] = useState(Cookies.get('language') || 'en');
-    const [sortOrder, setSortOrder] = useState('highest_rating');
+    const [sortOrder, setSortOrder] = useState('newest');
     const [isLoading, setIsLoading] = useState(false);
     const [isProfilesEmpty, setIsProfilesEmpty] = useState(false);
     const [totalPages, setTotalPages] = useState(1); // 페이지 수 상태 추가
@@ -154,7 +154,7 @@ const ProfileGrid = () => {
 
         const inputHashtags = input
             .split(' ')
-            .map(tag => tag.trim().replace('#', ''))
+            .map(tag => tag.trim().replace('#'))
             .filter(tag => tag !== '');
         setHashtags(Array.from(new Set(inputHashtags))); // 중복 제거 후 업데이트
     };
@@ -235,7 +235,7 @@ const ProfileGrid = () => {
                 ) : (
                     currentProfiles.map((user) => (
                         <Link to={`/user/${user.userId}`} key={user.userId} className="profile-card">
-                            <img src={user.imgProf || '/profile-image.png'} alt={t('mainpage.profile_alt')} />
+                            <img src={user.imgProf} alt={t('mainpage.profile_alt')} />
                             <div className="profile-name">{user.username}</div>
                             <div className="profile-university">{user.univName}</div>
                             <div className="rating">

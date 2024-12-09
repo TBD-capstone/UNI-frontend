@@ -70,6 +70,7 @@ function Register() {
         try {
             const data = await postVerify({
                 email: email,
+                univName: univName,
                 code: parseInt(verificationCode)
             });
             if (data.status === 'success') {

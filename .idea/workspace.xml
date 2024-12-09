@@ -6,7 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="7141e09f-2a8e-40b4-9e35-8450a5e64986" name="Changes" comment="[HOTFIX] 카테고리 번역 키 추가 작성">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uni_frontend/src/pages/admin-page/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/pages/admin-page/admin.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/api/authAxios.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/api/authAxios.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/api/matchAxios.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/api/matchAxios.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/pages/main-page/mainpage.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/pages/main-page/mainpage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uni_frontend/src/pages/register-page/Register.js" beforeDir="false" afterPath="$PROJECT_DIR$/uni_frontend/src/pages/register-page/Register.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,7 +27,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="70-admin-fix" />
+        <entry key="$PROJECT_DIR$" value="dev" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -101,18 +104,19 @@
       <test-file value="$PROJECT_DIR$/uni_frontend/src/App.test.js" />
       <method v="2" />
     </configuration>
-    <configuration name="App.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/uni_frontend/src/pages/style/App.js" working-dir="$PROJECT_DIR$/uni_frontend/src">
+    <configuration name="App.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/uni_frontend/src/App.js" working-dir="$PROJECT_DIR$/uni_frontend/src">
       <method v="2" />
     </configuration>
-    <configuration name="Register.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/uni_frontend/src/pages/register-page/Register.js" working-dir="$PROJECT_DIR$/uni_frontend/src">
+    <configuration name="Register.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/uni_frontend/src/Register.js" working-dir="$PROJECT_DIR$/uni_frontend/src">
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Node.js.Register.js" />
         <item itemvalue="Node.js.App.js" />
-        <item itemvalue="Node.js.App.js" />
         <item itemvalue="Node.js.Register.js" />
+        <item itemvalue="Node.js.App.js" />
+        <item itemvalue="Node.js.App.js" />
       </list>
     </recent_temporary>
   </component>
@@ -159,7 +163,7 @@
       <workItem from="1733273602364" duration="2103000" />
       <workItem from="1733479556205" duration="866000" />
       <workItem from="1733562122790" duration="16082000" />
-      <workItem from="1733648686172" duration="5580000" />
+      <workItem from="1733648686172" duration="14418000" />
     </task>
     <servers />
   </component>

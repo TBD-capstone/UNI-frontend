@@ -27,7 +27,7 @@ const getPendingMatch = async ({requesterId, receiverId}) => {
 
 const getMatchList = async (matchingId) => {
     const response = await instance.get(`/api/match/${matchingId}`);
-    return response.data;
+    return response;
 };
 
 const postReviewSubmit = async ({profileOwnerId, commenterId, matchingId, content, star}) => {
