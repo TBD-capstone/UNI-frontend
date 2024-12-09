@@ -68,17 +68,63 @@ function AdminPage() {
             isMounted = false;
         };
     }, [activeTab, statusFilter, currentPage]);
+    // 신고 데이터를 전처리하여 단일 리스트로 반환
+    const processReportedUsers = (data) => {
+        const processedReports = [];
 
+        data.forEach((user) => {
+            user.reports.forEach((report) => {
+                processedReports.push({
+                    ...report,
+                    email: user.email, // 신고된 유저의 이메일
+                    userId: user.userId, // 신고된 유저의 ID
+                });
+            });
+        });
+
+        return processedReports;
+    };
+
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await getReportedUserListByAdmin(
+                    `page=${currentPage - 1}&size=${ITEMS_PER_PAGE}`
+                );
+
+                if (response.content) {
+                    const processedReports = processReportedUsers(response.content);
+                    setReportedUsers(processedReports); // 전처리된 데이터를 상태로 저장
+                }
+            } catch (error) {
+                console.error("데이터 가져오기 실패:", error);
+            }
+        };
+
+        fetchData();
+    }, [currentPage]);
+
+
+
+    // 함수는 컴포넌트 함수 내부에 정의 (useEffect 외부로 이동)
     const fetchReportedUsers = async (page = 0) => {
         try {
             const data = await getReportedUserListByAdmin(`page=${page}&size=${ITEMS_PER_PAGE}`);
+            // 개별 신고 데이터를 reportedUsers에 저장
             setReportedUsers(data.content || []);
             setTotalPages(data.totalPages || 0);
         } catch (error) {
-            console.error('fetchReportedUsers 실패:', error);
-            setReportedUsers([]); // 기본값으로 설정
+            console.error("fetchReportedUsers 실패:", error);
+            setReportedUsers([]);
         }
     };
+
+    useEffect(() => {
+        if (activeTab === "신고확인") {
+            fetchReportedUsers(currentPage - 1);
+        }
+    }, [activeTab, currentPage]);
 
     const fetchUsers = async (status = '', page = 0) => {
         try {
@@ -108,20 +154,16 @@ function AdminPage() {
         }
     };
 
-    const handleReportClick = (user) => {
-        const reportDetails = user.reports[0]; // 첫 번째 신고 정보 가져오기
-        setSelectedReportedUser({
-            ...user,
-            title: reportDetails.title,
-            category: reportDetails.category,
-            detailedReason: reportDetails.detailedReason,
-        });
+    const handleReportClick = (report) => {
+        console.log("선택된 신고 데이터:", report); // 디버깅용 로그
+        setSelectedReportedUser(report);
     };
 
 
     const handleCloseModal = () => {
         setSelectedReportedUser(null); // 모달 닫기
     };
+
 
     const handleBanUser = () => {
         if (selectedReportedUser) {
@@ -265,7 +307,7 @@ function AdminPage() {
                     신고확인
                 </div>
                 <div className={`tab ${activeTab === '광고게시' ? 'active' : ''}`} onClick={() => handleTabClick('광고게시')}>
-                    광고게시
+                    광고 상태 관리
                 </div>
                 <div className={`tab ${activeTab === '광고등록' ? 'active' : ''}`} onClick={() => handleTabClick('광고등록')}>
                     광고등록
@@ -277,24 +319,37 @@ function AdminPage() {
 
             {activeTab === '신고확인' && (
                 <div>
-                    <h3>신고된 유저 목록</h3>
+                    <h3>신고 리스트</h3>
                     <table className="table">
                         <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Email</th>
-                            <th>신고 횟수</th>
+                            <th>번호</th>
+                            <th>신고일</th>
+                            <th>제목</th>
+                            <th>신고자</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {reportedUsers.map((user) => (
-                            <tr key={user.userId} onClick={() => handleReportClick(user)}>
-                                <td>{user.userId}</td>
-                                <td>{user.email}</td>
-                                <td>{user.reportCount}</td>
+                        {reportedUsers.length > 0 ? (
+                            reportedUsers.map((report, index) => (
+                                <tr key={report.reportId} onClick={() => handleReportClick(report)}>
+                                    <td>{index + 1}</td>
+                                    <td>
+                                        {report.reportedAt
+                                            ? new Date(report.reportedAt).toLocaleString()
+                                            : "N/A"}
+                                    </td>
+                                    <td>{report.title || "제목 없음"}</td>
+                                    <td>{report.reporterName || "신고자 없음"}</td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="4">신고 데이터가 없습니다.</td>
                             </tr>
-                        ))}
+                        )}
                         </tbody>
+
                     </table>
                     {renderPagination()}
 
@@ -302,25 +357,53 @@ function AdminPage() {
                         <Modal isOpen={!!selectedReportedUser} handleClose={handleCloseModal}>
                             <div>
                                 <h4>신고 상세 정보</h4>
-                                <p><strong>ID:</strong> {selectedReportedUser.userId}</p>
-                                <p><strong>Email:</strong> {selectedReportedUser.email}</p>
-                                <p><strong>제목:</strong> {selectedReportedUser.title}</p>
-                                <p><strong>카테고리:</strong> {selectedReportedUser.category}</p>
-                                <p><strong>상세 사유:</strong> {selectedReportedUser.detailedReason}</p>
-                                <label>
+                                <p>
+                                    <strong>신고 번호:</strong> {selectedReportedUser.reportId || "N/A"}
+                                </p>
+                                <p>
+                                    <strong>피신고 대상:</strong>{" "}
+                                    {selectedReportedUser.reportedUserName || "N/A"}
+                                </p>
+                                <p>
+                                    <strong>신고자:</strong> {selectedReportedUser.reporterName || "N/A"}
+                                </p>
+                                <p>
+                                    <strong>신고일:</strong>{" "}
+                                    {selectedReportedUser.reportedAt
+                                        ? new Date(selectedReportedUser.reportedAt).toLocaleString()
+                                        : "N/A"}
+                                </p>
+                                <p>
+                                    <strong>제목:</strong> {selectedReportedUser.title || "제목 없음"}
+                                </p>
+                                <p>
+                                    <strong>카테고리:</strong> {selectedReportedUser.category || "없음"}
+                                </p>
+                                <p>
+                                    <strong>신고 사유:</strong> {selectedReportedUser.reason || "없음"}
+                                </p>
+                                <p>
+                                    <strong>상세 내용:</strong>{" "}
+                                    {selectedReportedUser.detailedReason || "없음"}
+                                </p><label>
                                     밴 일수:
                                     <input
                                         type="number"
                                         min="1"
                                         placeholder="일수를 입력하세요"
-                                        value={banDays[selectedReportedUser.userId] || ''}
-                                        onChange={(e) => handleBanDaysChange(selectedReportedUser.userId, e.target.value)}
+                                        value={banDays[selectedReportedUser.userId] || ""}
+                                        onChange={(e) =>
+                                            handleBanDaysChange(selectedReportedUser.userId, e.target.value)
+                                        }
                                     />
                                 </label>
-                                <button onClick={handleBanUser}>밴 처리</button>
+                                <button onClick={() => updateUserStatus(selectedReportedUser.targetId, "BANNED")}>
+                                    밴 처리
+                                </button>
                             </div>
                         </Modal>
                     )}
+
 
                 </div>
             )}
