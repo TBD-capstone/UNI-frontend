@@ -8,6 +8,7 @@ import EditModal from "../../components/modal/EditModal.js";
 import TimeSelector from "../../components/TimeSelector";
 import {getMyData, getUserData, postUserData, postUserImage} from "../../api/userAxios";
 import {deleteMarker, getMarkers, postAddMarker} from "../../api/markerAxios";
+import TooltipCircle from "../../components/TooltipCircle.js";
 
 const EditMarkerInput = (props) => {
     const {t} = useTranslation();
@@ -355,7 +356,8 @@ const EditPage = () => {
                         />
                         <h3>{t("editPage.time")}</h3>
                         <TimeSelector onChange={handleChangeTime} initTime={time}/>
-                        <h3>{t("editPage.basic_hashtag")}</h3>
+                        <h3>{t("editPage.basic_hashtag")}<TooltipCircle message="기본 해시태그는 외국어 검색 기능을 지원해요" position='right'>
+                        </TooltipCircle></h3>
                         <div className="hashtag-section">
                             {basicHashtags.map((basicHashtag, i) => {
                                 return (
@@ -384,6 +386,8 @@ const EditPage = () => {
                             />
                             <button onClick={handleClickTag}>Tag!</button>
                         </div>
+                        <TooltipCircle message="커스텀 해시태그는 다국어 검색을 지원하지 않아요" position='right'>
+                        </TooltipCircle>
                         <h3>{t("editPage.self_pr")}</h3>
                         <textarea
                             className="selfPR"

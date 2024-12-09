@@ -130,7 +130,7 @@
     "verify_email_button": "验证电子邮件",
     "verification_code_placeholder": "验证码",
     "verify_code_button": "验证代码",
-    "name_placeholder": "姓名",
+    "nickname_explaination": "昵称给别人看。\n关于我们请慎重决定",
     "password_placeholder": "密码",
     "confirm_password_placeholder": "确认密码",
     "signup_button": "注册",
