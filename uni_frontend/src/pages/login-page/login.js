@@ -30,20 +30,6 @@ function Login() {
             });
             console.log(data);
 
-            // const response = await fetch('/api/auth/login', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     body: JSON.stringify({
-            //         email: email,
-            //         password: password,
-            //     }),
-            // });
-            //
-            // const data = await response.json();
-            // console.log('로그인 응답 데이터:', data); // 응답 데이터 확인
-
             if (data.status === 'success') {
                 localStorage.setItem('accessToken', data.accessToken);
                 localStorage.setItem('refreshToken', data.refreshToken);
@@ -67,13 +53,12 @@ function Login() {
                 // console.log('프로필 이미지:', Cookies.get('imgProf'));
                 // console.log('배경화면 이미지:', Cookies.get('imgBack'));
 
-                alert(data.message || t("loginPage.status_messages.success"));
                 navigate('/main'); // 메인 페이지로 이동
             } else {
                 alert(data.message || t("loginPage.status_messages.fail"));
             }
         } catch (error) {
-            alert(t("loginPage.status_messages.error"));
+            alert(t("loginPage.login_failed"));
             console.error('로그인 요청 중 오류:', error);
         }
     };
