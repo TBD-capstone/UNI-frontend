@@ -21,6 +21,7 @@ const UserPage = () => {
     const {t} = useTranslation();
     const navigate = useNavigate();
     const {userId} = useParams();
+    const [isKorean, setIsKorean] = useState(false);
     const [user, setUser] = useState(null);
     const [markers, setMarkers] = useState(null);
     const [activeTab, setActiveTab] = useState('Qna');
@@ -321,6 +322,8 @@ const UserPage = () => {
                 return;
             await getMyData().then((data) => {
                 setCommenterId(() => data.userId);
+                const isKorean = data.role !== 'EXCHANGE';
+                setIsKorean(() => isKorean);
                 console.log(data);
             })
                 .catch((err) => {
@@ -360,7 +363,7 @@ const UserPage = () => {
                     <div className="profile-container">
                         <h2>{user.userName}</h2>
                         <span>{user.univ}</span>
-                        <p className={'user-star'}><FaStar className={'yellow-star'}/> {user.star}</p>
+                        {isKorean && <p className={'user-star'}><FaStar className={'yellow-star'}/> {user.star}</p>}
                         <p>{t("userPage.region")}: {user.region}</p>
                         <p>{t("userPage.time")}: {user.time}</p>
                         <div className="hashtag-section">
@@ -373,34 +376,40 @@ const UserPage = () => {
                             })}
                         </div>
                     </div>
-                    <div className="selfPR-container">
-                        <h3>{t("userPage.self_pr")}</h3>
-                        <p className="selfPR">{user.description}</p>
-                    </div>
-                    <div className="Map-section">
-                        <h3>{t("userPage.map")}</h3>
-                        <div className="Map-container">
-                            <GoogleMap markers={markers}/>
+                    {isKorean && <>
+                        <div className="selfPR-container">
+                            <h3>{t("userPage.self_pr")}</h3>
+                            <p className="selfPR">{user.description}</p>
                         </div>
-                    </div>
-                    <div className="user-tabs">
-                        <div className={`tab ${activeTab === 'Qna' ? 'active' : ''}`}
-                             onClick={() => handleTabClick('Qna')}>
-                            Q&A
+                        <div className="Map-section">
+                            <h3>{t("userPage.map")}</h3>
+                            <div className="Map-container">
+                                <GoogleMap markers={markers}/>
+                            </div>
                         </div>
-                        <div className={`tab ${activeTab === 'Review' ? 'active' : ''}`}
-                             onClick={() => handleTabClick('Review')}>
-                            Review
+                        <div className="user-tabs">
+                            <div className={`tab ${activeTab === 'Qna' ? 'active' : ''}`}
+                                 onClick={() => handleTabClick('Qna')}>
+                                Q&A
+                            </div>
+                            <div className={`tab ${activeTab === 'Review' ? 'active' : ''}`}
+                                 onClick={() => handleTabClick('Review')}>
+                                Review
+                            </div>
                         </div>
-                    </div>
-                    {activeTab === 'Qna' &&
-                        <QnaSection
-                            userId={userId} commenterId={commenterId}
-                            handleReport={handleClickReport}/>}
-                    {activeTab === 'Review' &&
-                        <ReviewSection
-                            userId={userId} commenterId={commenterId} reviews={reviews}
-                            owner={idSame(commenterId, userId)}/>}
+                        {
+                            activeTab === 'Qna' &&
+                            <QnaSection
+                                userId={userId} commenterId={commenterId}
+                                handleReport={handleClickReport}/>
+                        }
+                        {
+                            activeTab === 'Review' &&
+                            <ReviewSection
+                                userId={userId} commenterId={commenterId} reviews={reviews}
+                                owner={idSame(commenterId, userId)}/>
+                        }
+                    </>}
                 </div>
             </div>) : null
     );

@@ -123,6 +123,7 @@ const EditPage = () => {
     const basicProfileImage = '/profile-image.png'
     const {t} = useTranslation();
     const [userId, setUserId] = useState(null);
+    const [isKorean, setIsKorean] = useState(false);
     const [user, setUser] = useState(null);
     const [time, setTime] = useState(['12', 'am', '12', 'am']);
     const [isOpenBasic, setIsOpenBasic] = useState(false);
@@ -325,7 +326,9 @@ const EditPage = () => {
         (async () => {
             const result = await getMyData();
             const userId = result.userId;
+            const isKorean = result.role !== 'EXCHANGE'
             setUserId(() => userId);
+            setIsKorean(() => isKorean);
             const userData = await getUserData({userId});
 
             setUser(() => userData);
@@ -365,57 +368,59 @@ const EditPage = () => {
                         <p>{user.univ}</p>
                     </div>
                     <h3>{t('editPage.profile_editing')}</h3>
-                    <EditModal title={t('editPage.basic_information')} isOpen={isOpenBasic}
-                               setIsOpen={handleSetIsOpenBasic}>
-                        <h3>{t("editPage.region")}</h3>
-                        <input
-                            type="text"
-                            value={user.region}
-                            onChange={handleChangeRegion}
-                        />
-                        <h3>{t("editPage.time")}</h3>
-                        <TimeSelector onChange={handleChangeTime} initTime={time}/>
-                        <h3>{t("editPage.basic_hashtag")}<TooltipCircle message="기본 해시태그는 외국어 검색 기능을 지원해요" position='right'>
-                        </TooltipCircle></h3>
-                        <div className="hashtag-section">
-                            {basicHashtags.map((basicHashtag, i) => {
-                                return (
-                                    <BasicHashtag basicHashtag={basicHashtag} key={`basicHashtag-${i}`}/>
-                                );
-                            })}
-                        </div>
-                        <div className="hashtag-section">
-                            {user.hashtags && user.hashtags.map((hashtag, i) => {
-                                return (
-                                    <div className="hashtag-item" key={`hashtag-${i}`}>
-                                        <span>#{hashtag}</span>
-                                        <button onClick={() => deleteHashtag(hashtag)}>X</button>
-                                    </div>
-                                )
-                            })}
-                        </div>
-                        <div className="hashtag-input">
+                    {isKorean &&
+                        <EditModal title={t('editPage.basic_information')} isOpen={isOpenBasic}
+                                   setIsOpen={handleSetIsOpenBasic}>
+                            <h3>{t("editPage.region")}</h3>
                             <input
                                 type="text"
-                                value={hashtag}
-                                placeholder="hashtag"
-                                onKeyDown={(e) => handleKeyDownHashtag(e)}
-                                onChange={handleChangeHashtag}
-                                maxLength={25}
+                                value={user.region}
+                                onChange={handleChangeRegion}
                             />
-                            <button onClick={handleClickTag}>Tag!</button>
-                        </div>
-                        <TooltipCircle message="커스텀 해시태그는 다국어 검색을 지원하지 않아요" position='right'>
-                        </TooltipCircle>
-                        <h3>{t("editPage.self_pr")}</h3>
-                        <textarea
-                            className="selfPR"
-                            value={user.description}
-                            onChange={handleChangeDescription}
-                            maxLength={1000}
-                        />
-                        <button className={'edit-button'} onClick={handleClickEdit}>{t("editPage.edit")}</button>
-                    </EditModal>
+                            <h3>{t("editPage.time")}</h3>
+                            <TimeSelector onChange={handleChangeTime} initTime={time}/>
+                            <h3>{t("editPage.basic_hashtag")}<TooltipCircle message="기본 해시태그는 외국어 검색 기능을 지원해요"
+                                                                            position='right'>
+                            </TooltipCircle></h3>
+                            <div className="hashtag-section">
+                                {basicHashtags.map((basicHashtag, i) => {
+                                    return (
+                                        <BasicHashtag basicHashtag={basicHashtag} key={`basicHashtag-${i}`}/>
+                                    );
+                                })}
+                            </div>
+                            <div className="hashtag-section">
+                                {user.hashtags && user.hashtags.map((hashtag, i) => {
+                                    return (
+                                        <div className="hashtag-item" key={`hashtag-${i}`}>
+                                            <span>#{hashtag}</span>
+                                            <button onClick={() => deleteHashtag(hashtag)}>X</button>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                            <div className="hashtag-input">
+                                <input
+                                    type="text"
+                                    value={hashtag}
+                                    placeholder="hashtag"
+                                    onKeyDown={(e) => handleKeyDownHashtag(e)}
+                                    onChange={handleChangeHashtag}
+                                    maxLength={25}
+                                />
+                                <button onClick={handleClickTag}>Tag!</button>
+                            </div>
+                            <TooltipCircle message="커스텀 해시태그는 다국어 검색을 지원하지 않아요" position='right'>
+                            </TooltipCircle>
+                            <h3>{t("editPage.self_pr")}</h3>
+                            <textarea
+                                className="selfPR"
+                                value={user.description}
+                                onChange={handleChangeDescription}
+                                maxLength={1000}
+                            />
+                            <button className={'edit-button'} onClick={handleClickEdit}>{t("editPage.edit")}</button>
+                        </EditModal>}
                     <EditModal title={t("editPage.image_upload")} isOpen={isOpenImage} setIsOpen={handleSetIsOpenImage}>
                         <h3>{t("editPage.profile_image")}</h3>
                         <label htmlFor='profile'>
@@ -440,15 +445,17 @@ const EditPage = () => {
                         <button className={'edit-button'}
                                 onClick={handleClickSubmit}>{t("editPage.image_upload")}</button>
                     </EditModal>
-                    <EditModal title={t("editPage.map")} isOpen={isOpenMap} setIsOpen={handleSetIsOpenMap}>
-                        <div>
-                            <div className="edit-map-container">
-                                <GoogleMap markers={markers} setting={setting}/>
+                    {isKorean &&
+                        <EditModal title={t("editPage.map")} isOpen={isOpenMap} setIsOpen={handleSetIsOpenMap}>
+                            <div>
+                                <div className="edit-map-container">
+                                    <GoogleMap markers={markers} setting={setting}/>
+                                </div>
                             </div>
-                        </div>
-                        <EditMarkerInput markers={markers} mapClose={mapClose} position={position}
-                                         userId={userId} initMarker={initMarker}/>
-                    </EditModal>
+                            <EditMarkerInput markers={markers} mapClose={mapClose} position={position}
+                                             userId={userId} initMarker={initMarker}/>
+                        </EditModal>
+                    }
                 </div>
             </div>) : null
     );
